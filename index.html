@@ -312,53 +312,173 @@
     </div>
   </section>
 
-  <!-- ===================== FIND YOUR FIT — CALCULATOR ===================== -->
-  <section class="section sizer" id="sizer" aria-labelledby="sizer-title" data-sizer>
-    <div class="sizer__card">
-      <div class="sizer__head">
-        <h2 id="sizer-title">Find your fit.</h2>
-        <p class="sizer__subhead">Start with what you already know: your monthly electric bill.</p>
+  <!-- ===================== FIND YOUR FIT — SDG&E SOLAR SAVINGS CALCULATOR ===================== -->
+  <section class="section calc" id="sizer" aria-labelledby="calc-title" data-calc>
+    <div class="calc__card">
+      <div class="calc__head">
+        <h2 id="calc-title">Find your fit.</h2>
+        <p class="calc__subhead">Tell us a little about your electric use. We&rsquo;ll show you a starting point.</p>
       </div>
 
-      <div class="sizer__input-group">
-        <label class="sizer__label" for="bill">Monthly electric bill</label>
-        <output class="sizer__bill" data-out="bill">$175</output>
-        <input class="sizer__range" id="bill" type="range"
-               min="75" max="350" step="5" value="175"
-               data-sizer-input>
-      </div>
+      <div class="calc__body">
 
-      <div class="sizer__progression">
-        YOUR BILL <span class="sizer__arrow">→</span> YOUR STARTING SYSTEM
-      </div>
+        <!-- LEFT — inputs -->
+        <div class="calc__inputs">
 
-      <div class="sizer__results-top" aria-live="polite">
-        <div class="sizer__result-card">
-          <b class="sizer__big-number" data-out="size">&mdash;</b>
-          <span class="sizer__big-label">Estimated system size</span>
-          <span class="sizer__plugin-note" data-out="pluginNote" hidden></span>
+          <div class="calc__field">
+            <div class="calc__field-head">
+              <span class="calc__field-label">Monthly electricity</span>
+              <div class="calc__mode-toggle" role="tablist" aria-label="Enter your electricity as">
+                <button type="button" class="calc__mode-btn is-active" data-calc-mode-btn="bill" role="tab" aria-selected="true">Bill</button>
+                <button type="button" class="calc__mode-btn" data-calc-mode-btn="usage" role="tab" aria-selected="false">Usage</button>
+              </div>
+            </div>
+
+            <div class="calc__mode-panel" data-calc-mode-panel="bill">
+              <output class="calc__bignum" data-calc-out="billDisplay">$175</output>
+              <input class="calc__range" type="range" id="calc-bill"
+                     min="50" max="600" step="5" value="175"
+                     data-calc-input="bill" aria-label="Monthly electric bill in dollars">
+            </div>
+
+            <div class="calc__mode-panel" data-calc-mode-panel="usage" hidden>
+              <output class="calc__bignum" data-calc-out="usageDisplay">600 kWh</output>
+              <input class="calc__range" type="range" id="calc-usage"
+                     min="300" max="1500" step="10" value="600"
+                     data-calc-input="usage" aria-label="Monthly usage in kilowatt hours">
+            </div>
+          </div>
+
+          <div class="calc__field">
+            <label class="calc__field-label" for="calc-rate">Rate plan</label>
+            <select class="calc__select" id="calc-rate" data-calc-input="rate">
+              <option value="touDr1" selected>TOU-DR1</option>
+              <option value="touElec">TOU-ELEC</option>
+              <option value="flat">Flat / tiered</option>
+              <option value="other">Other</option>
+            </select>
+            <p class="calc__hint" data-calc-out="rateHint" hidden>Estimate will be less precise.</p>
+          </div>
+
+          <div class="calc__field">
+            <span class="calc__field-label">Where do you live?</span>
+            <div class="calc__segmented" role="tablist" aria-label="Where do you live">
+              <button type="button" class="calc__seg-btn is-active" data-calc-input="location" data-value="inland" role="tab" aria-selected="true">Inland SDG&amp;E</button>
+              <button type="button" class="calc__seg-btn" data-calc-input="location" data-value="coastal" role="tab" aria-selected="false">Coastal SDG&amp;E</button>
+            </div>
+          </div>
+
+          <div class="calc__field">
+            <span class="calc__field-label">System size</span>
+            <div class="calc__segmented calc__segmented--system" role="tablist" aria-label="System size">
+              <button type="button" class="calc__seg-btn" data-calc-input="system" data-value="balcony" role="tab" aria-selected="false">
+                <b>Balcony</b><i>850 W</i>
+              </button>
+              <button type="button" class="calc__seg-btn is-active" data-calc-input="system" data-value="patio" role="tab" aria-selected="true">
+                <b>Patio / Townhome</b><i>1,200 W</i>
+              </button>
+              <button type="button" class="calc__seg-btn" data-calc-input="system" data-value="custom" role="tab" aria-selected="false">
+                <b>Custom</b><i data-calc-out="customLabel">400&ndash;1,200 W</i>
+              </button>
+            </div>
+            <input class="calc__range calc__range--custom" type="range" id="calc-custom-size"
+                   min="400" max="1200" step="50" value="800"
+                   data-calc-input="customSize" aria-label="Custom system size in watts" hidden>
+          </div>
+
+          <div class="calc__field calc__field--row">
+            <div>
+              <span class="calc__field-label">Add battery storage</span>
+              <p class="calc__field-sub">Store solar power to use after the sun goes down.</p>
+            </div>
+            <button type="button" class="calc__switch" data-calc-input="battery" aria-pressed="false" aria-label="Add battery storage">
+              <span class="calc__switch-track"><span class="calc__switch-thumb"></span></span>
+            </button>
+          </div>
+
+          <div class="calc__field">
+            <span class="calc__field-label">When is someone usually home?</span>
+            <div class="calc__segmented calc__segmented--three" role="tablist" aria-label="When is someone usually home">
+              <button type="button" class="calc__seg-btn" data-calc-input="occupancy" data-value="usuallyHome" role="tab" aria-selected="false">Usually home</button>
+              <button type="button" class="calc__seg-btn is-active" data-calc-input="occupancy" data-value="mixed" role="tab" aria-selected="true">Mixed</button>
+              <button type="button" class="calc__seg-btn" data-calc-input="occupancy" data-value="mostlyAway" role="tab" aria-selected="false">Mostly away</button>
+            </div>
+          </div>
+
         </div>
-        <div class="sizer__result-card">
-          <b class="sizer__big-number" data-out="storage">&mdash;</b>
-          <span class="sizer__big-label">Suggested storage</span>
+
+        <!-- RIGHT — results -->
+        <div class="calc__results" aria-live="polite">
+
+          <div class="calc__result-main">
+            <span class="calc__result-eyebrow">Your estimated savings</span>
+            <b class="calc__result-hero"><span data-calc-out="monthlyRange">$75&ndash;$90</span><i>/mo</i></b>
+            <span class="calc__result-annual" data-calc-out="annualRange">About $900&ndash;$1,050/year</span>
+          </div>
+
+          <div class="calc__compare" data-calc-compare hidden aria-hidden="true">
+            <div class="calc__compare-item">
+              <span>With storage</span>
+              <b data-calc-out="compareWith">&mdash;</b>
+            </div>
+            <span class="calc__compare-vs">vs.</span>
+            <div class="calc__compare-item">
+              <span>Without storage</span>
+              <b data-calc-out="compareWithout">&mdash;</b>
+            </div>
+          </div>
+
+          <div class="calc__grid">
+            <div class="calc__stat">
+              <span>Summer estimate</span>
+              <b data-calc-out="summerRange">&mdash;</b>
+            </div>
+            <div class="calc__stat">
+              <span>Winter / shoulder estimate</span>
+              <b data-calc-out="winterRange">&mdash;</b>
+            </div>
+            <div class="calc__stat">
+              <span>Your starting system</span>
+              <b data-calc-out="systemSize">&mdash;</b>
+            </div>
+            <div class="calc__stat">
+              <span>Battery</span>
+              <b data-calc-out="batteryStatus">Not included</b>
+            </div>
+            <div class="calc__stat">
+              <span>Estimated system cost</span>
+              <b data-calc-out="costRange">&mdash;</b>
+            </div>
+            <div class="calc__stat">
+              <span>Simple estimated payback</span>
+              <b data-calc-out="paybackRange">&mdash;</b>
+            </div>
+          </div>
+
+          <p class="calc__disclaimer">
+            Estimate only. Actual savings depend on sunlight, shading, system placement, electricity use, rate plan and future utility rates.
+          </p>
+          <details class="calc__assumptions">
+            <summary>See assumptions</summary>
+            <ul>
+              <li>5.75 average peak sun hours per day, a regional average - not your actual sunlight.</li>
+              <li data-calc-out="assumeRate">Rate assumptions for the selected plan and location.</li>
+              <li>Production estimates include approximate system losses.</li>
+              <li data-calc-out="assumeOccupancy">Daytime usage share is an approximation, not a measurement of your home.</li>
+              <li data-calc-out="assumeBattery">Battery and self-consumption capture are approximated, not guaranteed.</li>
+              <li>Summer (Jun&ndash;Sep) and winter/shoulder (Oct&ndash;May) are calculated separately and blended, not averaged evenly.</li>
+              <li>This does not model future utility rate changes, incentives, financing or maintenance.</li>
+            </ul>
+          </details>
+
+          <div class="calc__cta">
+            <p class="calc__cta-head">Get a real number for your home</p>
+            <a class="btn btn--primary" href="mailto:hello@terracesolar.com?subject=Terrace%20Solar%20bill%20review">Review my bill</a>
+            <p class="calc__cta-sub">We&rsquo;ll use your actual SDG&amp;E usage and your available solar space to refine the estimate.</p>
+          </div>
+
         </div>
       </div>
-
-      <div class="sizer__results-secondary">
-        <div class="sizer__result">
-          <span>Estimated monthly production</span>
-          <b data-out="kwh">&mdash;</b>
-        </div>
-        <div class="sizer__result">
-          <span>Estimated monthly savings</span>
-          <b data-out="savings">&mdash;</b>
-        </div>
-      </div>
-
-      <p class="sizer__note">
-        Storage needs vary based on when you use electricity. Actual production and savings
-        vary by location, sunlight, electricity rates and energy use.
-      </p>
     </div>
   </section>
 

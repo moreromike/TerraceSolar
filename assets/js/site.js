@@ -507,192 +507,525 @@ var TerraceFilm = (function () {
 
 
 /* ---------------------------------------------------------------------------
-   "What size fits you?" - a starting-point estimator, not an engineering tool.
+   SDG&E Solar Savings Calculator - "Find your fit."
 
-   EVERY assumption lives in CALC below. Nothing is hard-coded elsewhere.
-   The rate / sunlight / loss values are PROVISIONAL placeholders chosen so the
-   widget works; they were not researched and must be replaced before launch.
-   billToSize is the owner-specified mapping; systemSizesW is documented product
-   data (brochure p.2 and p.6).
+   Every assumption used anywhere in this calculator lives in
+   SOLAR_CALCULATOR_CONFIG below. Nothing is hard-coded in the calculation
+   functions or the render function - if a number changes, it changes here.
+
+   STATUS OF RATE FIGURES:
+   - rates.touDr1                 - supplied project assumptions
+   - rates.touElec, rates.flat,
+     rates.other                  - PROVISIONAL placeholders, NOT verified
+                                     against a published current tariff.
+                                     Do not present these as exact.
+   - averageRateForBillEstimate   - PROVISIONAL, used only to back-estimate
+                                     kWh usage from a dollar bill amount.
+   - estimatedCosts                - PROVISIONAL, for range-of-magnitude only.
+
+   This is a starting-point estimator, not an engineering tool, a quote, or
+   a guarantee. See the in-UI "See assumptions" disclosure for the customer-
+   facing version of these notes.
 --------------------------------------------------------------------------- */
 
-var CALC = {
-  /* PROVISIONAL - replace with a real figure for the target market */
-  electricityRateUsdPerKwh: 0.17,
+var SOLAR_CALCULATOR_CONFIG = {
 
-  /* PROVISIONAL - average daily peak sun hours */
-  peakSunHoursPerDay: 4.2,
-
-  /* PROVISIONAL - system losses, 1.0 = no loss */
-  systemDerate: 0.80,
-
-  /* PROVISIONAL - share of produced energy actually used on site. The system
-     does not export, so anything not used is throttled away. */
-  selfConsumptionShare: 0.90,
+  /* Regional average peak sun hours per day. Not the customer's actual
+     rooftop/balcony sunlight - shading, orientation and weather vary. */
+  peakSunHours: 5.75,
 
   daysPerMonth: 30.4,
 
-  /* DOCUMENTED - brochure p.2 and p.6: 400 W increments, 400 to 2000 W */
-  systemSizesW: [400, 800, 1200, 1600, 2000],
-
-  /* Bill-to-size anchor points, owner-specified. The slider INTERPOLATES
-     between these rather than stepping at them, so every dollar of movement
-     changes the estimate - the estimate does not visibly freeze mid-range.
-     The displayed size still snaps to a real 400 W increment (see
-     snapToSize); only the underlying production/savings math stays fully
-     continuous. bill is inclusive at each anchor. */
-  billSizeAnchors: [
-    { bill: 75,  w: 400 },
-    { bill: 125, w: 800 },
-    { bill: 175, w: 1200 },
-    { bill: 225, w: 1600 },
-    { bill: 275, w: 2000 },
-    { bill: 350, w: 2000 }
-  ],
-
-  /* ------------------------------------------------------------------
-     CALIFORNIA PLUG-IN CAP - editable.
-     SB 868 is a BILL, not enacted law. Nothing about it is published on the
-     public page. This never caps the main "estimated system size" figure -
-     it only adds a secondary note when the estimate exceeds the plug-in
-     ceiling, so a $300 bill still shows its real ~2000 W estimate instead
-     of a number frozen at 1200 W. Set enabled:false to hide the note.
-     ------------------------------------------------------------------ */
-  caPlugIn: {
-    enabled: true,
-    capW: 1200,
-    label: 'Plug-in starting configuration',
-    note: 'Larger configurations may have different requirements.'
+  seasons: {
+    summerMonths: 4,   // June - September
+    winterMonths: 8    // October - May
   },
 
-  /* DRAFT copy for a future California launch. NOT rendered anywhere. Only use
-     once the bill is enacted, effective, and confirmed to apply. Local building
-     and electrical permit requirements are NOT covered by this and must be
-     verified separately.
-     - 'No traditional utility interconnection agreement for qualifying systems.'
-     - 'No utility approval before use for qualifying systems.'
-     - 'A simple utility registration may still be required.' */
-  caLaunchDraftCopy: null,
+  /* Approximate blended $/kWh used ONLY to back-estimate monthly usage when
+     the customer enters a dollar bill instead of a kWh figure. Not a tariff
+     calculation - a rough conversion so the "Bill" input mode has something
+     to work from. */
+  averageRateForBillEstimate: {
+    touDr1:  { inland: 0.335, coastal: 0.205 },
+    touElec: { inland: 0.300, coastal: 0.190 },
+    flat:    { inland: 0.320, coastal: 0.280 },
+    other:   { inland: 0.320, coastal: 0.280 }
+  },
 
-  /* the slider tops out here; at or above it we show "+" and keep the largest */
-  billCapUsd: 350
+  /* Avoided-cost assumptions: what a self-consumed or battery-discharged
+     kWh is assumed to be worth, by plan / location / season. Generation +
+     delivery approximate the combined avoided rate SDG&E customers see on
+     TOU-DR1; touElec/flat/other are provisional placeholders in the same
+     shape so they stay swappable without touching calculation code. */
+  rates: {
+    touDr1: {
+      inland: {
+        summer: { generation: 0.43635, delivery: 0.29479 }, // combined ~$0.73/kWh
+        winter: { generation: 0.14748, delivery: 0.25353 }  // combined ~$0.40/kWh
+      },
+      coastal: {
+        summer: { generation: 0.43635, delivery: 0.11530 }, // combined ~$0.55/kWh
+        winter: { generation: 0.14748, delivery: 0.11530 }  // combined ~$0.26/kWh
+      }
+    },
+
+    /* PROVISIONAL - not verified against a current published tariff. */
+    touElec: {
+      inland:  { summer: { generation: 0.38, delivery: 0.24 }, winter: { generation: 0.16, delivery: 0.21 } },
+      coastal: { summer: { generation: 0.38, delivery: 0.10 }, winter: { generation: 0.16, delivery: 0.10 } }
+    },
+
+    /* PROVISIONAL - approximate flat/tiered blended rate, no TOU component. */
+    flat: {
+      inland:  { summer: { generation: 0.32, delivery: 0 }, winter: { generation: 0.30, delivery: 0 } },
+      coastal: { summer: { generation: 0.28, delivery: 0 }, winter: { generation: 0.26, delivery: 0 } }
+    },
+
+    /* Used for "Other" plans. Deliberately conservative and generic - the
+       UI tells the customer this estimate is less precise. */
+    other: {
+      inland:  { summer: { generation: 0.30, delivery: 0 }, winter: { generation: 0.28, delivery: 0 } },
+      coastal: { summer: { generation: 0.26, delivery: 0 }, winter: { generation: 0.24, delivery: 0 } }
+    }
+  },
+
+  /* Approximate share of monthly usage that falls in the 4-9pm peak window,
+     when no interval data is available. Used, on TOU plans only, to keep
+     the no-battery estimate conservative: without storage, daytime solar
+     mostly can't reach the evening peak window, so the value it displaces
+     is discounted by roughly this share. A battery can shift production
+     into that window, so the discount does not apply when battery is on. */
+  peakUsageShare: {
+    inland:  { min: 0.12, max: 0.15 },
+    coastal: { min: 0.08, max: 0.10 }
+  },
+
+  /* Share of gross production a battery can capture and make useful,
+     including shifting it into the peak window. */
+  batteryCapture: {
+    balcony: 0.80,
+    patio: 0.82,
+    customDefault: 0.82
+  },
+
+  /* Without a battery, only the share of production that coincides with
+     the home actually drawing power gets used - the rest is not exported
+     or credited. This is what keeps a no-battery estimate honest. */
+  selfConsumption: {
+    usuallyHome: { min: 0.40, max: 0.50 },
+    mixed:       { min: 0.30, max: 0.35 },
+    mostlyAway:  { min: 0.15, max: 0.25 }
+  },
+
+  systems: {
+    balcony: 850,
+    patio: 1200,
+    customMin: 400,
+    customMax: 1200,
+    customStep: 50
+  },
+
+  /* Gross daily production before losses, at the 5.75 peak-sun-hour
+     assumption above - kept explicit so the "~4.9 / ~6.9 kWh/day" figures
+     stay traceable to a config value rather than only a derived one. */
+  grossDailyKwh: {
+    balcony: 4.9,
+    patio: 6.9
+  },
+
+  /* Non-binding storage suggestion by system size - guidance only, never
+     presented as a requirement. */
+  storageSuggestion: {
+    balcony: '1 kWh',
+    patio: '1-2 kWh',
+    customDefault: '1-2 kWh'
+  },
+
+  estimatedCosts: {
+    solarOnly850:     { min: 900,  max: 1200 },
+    solarOnly1200:    { min: 1200, max: 1600 },
+    solarBattery850:  { min: 1900, max: 2500 },
+    solarBattery1200: { min: 2200, max: 2900 }
+  },
+
+  /* Applied around the primary modeled result so the calculator never shows
+     false dollar-level precision (e.g. "$83.17/mo"). */
+  uncertainty: 0.10
 };
 
 (function () {
   'use strict';
 
-  var root = document.querySelector('[data-sizer]');
+  var root = document.querySelector('[data-calc]');
   if (!root) return;
 
-  var input = root.querySelector('[data-sizer-input]');
-  if (!input) return;
+  var CFG = SOLAR_CALCULATOR_CONFIG;
 
-  var out = {
-    bill: root.querySelector('[data-out="bill"]'),
-    size: root.querySelector('[data-out="size"]'),
-    kwh: root.querySelector('[data-out="kwh"]'),
-    savings: root.querySelector('[data-out="savings"]'),
-    storage: root.querySelector('[data-out="storage"]'),
-    pluginNote: root.querySelector('[data-out="pluginNote"]')
+  var state = {
+    mode: 'bill',        // 'bill' | 'usage'
+    bill: 175,
+    usage: 600,
+    rate: 'touDr1',
+    location: 'inland',
+    system: 'patio',      // 'balcony' | 'patio' | 'custom'
+    customSize: 800,
+    battery: false,
+    occupancy: 'mixed'
   };
 
-  /* Linear interpolation between the anchor points. This is what makes the
-     slider feel responsive across its whole range instead of only at five
-     fixed jumps - moving from $201 to $230 moves this number too. */
-  function interpolateW(bill) {
-    var a = CALC.billSizeAnchors;
-    if (bill <= a[0].bill) return a[0].w;
-    for (var i = 0; i < a.length - 1; i++) {
-      if (bill >= a[i].bill && bill <= a[i + 1].bill) {
-        var t = (bill - a[i].bill) / (a[i + 1].bill - a[i].bill);
-        return a[i].w + t * (a[i + 1].w - a[i].w);
-      }
-    }
-    return a[a.length - 1].w;
+  var out = {};
+  [].slice.call(root.querySelectorAll('[data-calc-out]')).forEach(function (el) {
+    out[el.getAttribute('data-calc-out')] = el;
+  });
+  var compareBox = root.querySelector('[data-calc-compare]');
+
+  /* ------------------------------------------------------------------
+     Calculation engine. Every function below reads only from CFG and its
+     own arguments - no other hard-coded rates or thresholds.
+     ------------------------------------------------------------------ */
+
+  function mid(range) { return (range.min + range.max) / 2; }
+
+  function systemSizeW() {
+    if (state.system === 'balcony') return CFG.systems.balcony;
+    if (state.system === 'patio') return CFG.systems.patio;
+    return Math.max(CFG.systems.customMin, Math.min(CFG.systems.customMax, state.customSize));
   }
 
-  /* Snaps a continuous wattage to the nearest documented system size. A real
-     system ships in 400 W increments even though the underlying estimate
-     used for production/savings is continuous. */
-  function snapToSize(w) {
-    var sizes = CALC.systemSizesW;
-    var nearest = sizes[0];
-    var best = Math.abs(w - nearest);
-    for (var i = 1; i < sizes.length; i++) {
-      var d = Math.abs(w - sizes[i]);
-      if (d < best) { best = d; nearest = sizes[i]; }
-    }
-    return nearest;
+  function grossDailyKwhFor(sizeW) {
+    /* Interpolate/extrapolate off the two documented reference points
+       using the shared peak-sun-hour basis, so any custom wattage stays
+       consistent with the 850 W / 1200 W figures above. */
+    var perWatt = CFG.grossDailyKwh.patio / CFG.systems.patio;
+    return sizeW * perWatt;
   }
 
-  /* Suggested storage responds to the bill directly, in its own bands, so it
-     does not feel locked one-to-one to the system-size ladder. Editable,
-     non-binding guidance - never presented as a requirement. */
-  function suggestStorage(bill) {
-    if (bill < 125) return { label: '1 kWh', note: 'optional' };
-    if (bill < 200) return { label: '1 kWh', note: '' };
-    if (bill < 250) return { label: '1-2 kWh', note: '' };
-    if (bill < 300) return { label: '2 kWh', note: '' };
-    return { label: '2-4 kWh', note: '' };
+  function batteryCaptureFor() {
+    if (state.system === 'balcony') return CFG.batteryCapture.balcony;
+    if (state.system === 'patio') return CFG.batteryCapture.patio;
+    return CFG.batteryCapture.customDefault;
   }
 
-  function monthlyKwh(sizeW) {
-    return (sizeW / 1000) *
-           CALC.peakSunHoursPerDay *
-           CALC.systemDerate *
-           CALC.daysPerMonth;
+  /* Step 1 - estimate monthly usage */
+  function estimateMonthlyKwh() {
+    if (state.mode === 'usage') return state.usage;
+    var rateTable = CFG.averageRateForBillEstimate[state.rate] || CFG.averageRateForBillEstimate.other;
+    var avgRate = rateTable[state.location];
+    return state.bill / avgRate;
   }
 
-  function sizerRender() {
-    var bill = parseFloat(input.value) || 0;
-    var atCap = bill >= CALC.billCapUsd;
+  /* Step 3 + 4 combined for one season: production, applicable capture /
+     self-consumption share, avoided rate (with the peak-window discount
+     for TOU plans when there is no battery), then usable kWh x rate. */
+  function seasonSavings(seasonKey, usageKwh) {
+    var sizeW = systemSizeW();
+    var grossDaily = grossDailyKwhFor(sizeW);
+    var producedKwh = grossDaily * CFG.daysPerMonth;
 
-    /* estimatedW is continuous and uncapped - it drives production and
-       savings so they move on every dollar. recommendedW is the same
-       estimate snapped to a real increment for the headline number, and it
-       is never capped by the plug-in limit, so it keeps climbing to 2000 W
-       at the top of the range instead of freezing at 1200 W. */
-    var estimatedW = interpolateW(bill);
-    var recommendedW = snapToSize(estimatedW);
+    var isTou = state.rate === 'touDr1' || state.rate === 'touElec';
+    var rateTable = (CFG.rates[state.rate] || CFG.rates.other)[state.location][seasonKey];
+    var avoidedRate = rateTable.generation + rateTable.delivery;
 
-    var ca = CALC.caPlugIn;
-    var capped = ca && ca.enabled && recommendedW > ca.capW;
+    var usableKwh;
+    var effectiveRate = avoidedRate;
 
-    if (out.pluginNote) {
-      if (capped) {
-        out.pluginNote.innerHTML = ca.label + ': <b>' + ca.capW.toLocaleString() +
-          ' W</b><br>' + ca.note;
-        out.pluginNote.hidden = false;
-      } else {
-        out.pluginNote.hidden = true;
-        out.pluginNote.innerHTML = '';
+    if (state.battery) {
+      usableKwh = producedKwh * batteryCaptureFor();
+      /* battery can shift production into the peak window, so no discount */
+    } else {
+      var sc = CFG.selfConsumption[state.occupancy];
+      usableKwh = producedKwh * mid(sc);
+      if (isTou) {
+        var peak = CFG.peakUsageShare[state.location];
+        effectiveRate = avoidedRate * (1 - mid(peak));
       }
     }
 
-    var producedKwh = monthlyKwh(estimatedW);
-    var usedKwh = producedKwh * CALC.selfConsumptionShare;
-    var savings = usedKwh * CALC.electricityRateUsdPerKwh;
+    /* Step 5 - never offset more energy than the home actually uses */
+    usableKwh = Math.min(usableKwh, usageKwh);
 
-    if (out.bill) out.bill.textContent = '$' + Math.round(bill) + (atCap ? '+' : '');
-    if (out.size) out.size.textContent = recommendedW.toLocaleString() + ' W';
-
-    var st = suggestStorage(bill);
-    if (out.storage) out.storage.textContent = st.label + (st.note ? ' ' + st.note : '');
-
-    if (out.kwh) out.kwh.textContent = Math.round(producedKwh) + ' kWh';
-    if (out.savings) out.savings.textContent = '$' + Math.round(savings);
-
-    input.setAttribute('aria-valuetext',
-      '$' + Math.round(bill) + (atCap ? ' or more' : '') + ' per month');
-
-    /* Update slider gradient background */
-    var percent = ((bill - 75) / (350 - 75)) * 100;
-    percent = Math.max(0, Math.min(100, percent));
-    input.style.setProperty('--slider-percent', percent + '%');
+    var savings = usableKwh * effectiveRate;
+    return savings;
   }
 
-  input.addEventListener('input', sizerRender);
-  sizerRender();
+  function costRangeFor(sizeW, hasBattery) {
+    var c = CFG.estimatedCosts;
+    var lo = hasBattery ? c.solarBattery850 : c.solarOnly850;
+    var hi = hasBattery ? c.solarBattery1200 : c.solarOnly1200;
+    var t = (sizeW - CFG.systems.balcony) / (CFG.systems.patio - CFG.systems.balcony);
+    var min = lo.min + t * (hi.min - lo.min);
+    var max = lo.max + t * (hi.max - lo.max);
+    min = Math.max(0, Math.round(min / 50) * 50);
+    max = Math.max(min, Math.round(max / 50) * 50);
+    return { min: min, max: max };
+  }
+
+  function withUncertainty(value) {
+    var u = CFG.uncertainty;
+    return { min: value * (1 - u), max: value * (1 + u) };
+  }
+
+  /* Runs the full model for a given battery state (used both for the live
+     display and for the with/without storage comparison), returning every
+     figure the UI needs. */
+  function model(batteryOverride) {
+    var savedBattery = state.battery;
+    if (typeof batteryOverride === 'boolean') state.battery = batteryOverride;
+
+    var usageKwh = estimateMonthlyKwh();
+    var summerMonthly = seasonSavings('summer', usageKwh);
+    var winterMonthly = seasonSavings('winter', usageKwh);
+
+    /* Step 5, restated at the whole-bill level: an estimate should never
+       claim to save more than the customer's stated (or bill-mode-implied)
+       monthly bill. */
+    var impliedBill = state.mode === 'bill'
+      ? state.bill
+      : usageKwh * (CFG.averageRateForBillEstimate[state.rate] || CFG.averageRateForBillEstimate.other)[state.location];
+    summerMonthly = Math.min(summerMonthly, impliedBill);
+    winterMonthly = Math.min(winterMonthly, impliedBill);
+
+    /* Step 6 - seasonal blend, not a flat x12 multiply */
+    var annual = (summerMonthly * CFG.seasons.summerMonths) + (winterMonthly * CFG.seasons.winterMonths);
+    var blendedMonthly = annual / 12;
+
+    if (typeof batteryOverride === 'boolean') state.battery = savedBattery;
+
+    return {
+      usageKwh: usageKwh,
+      summerMonthly: summerMonthly,
+      winterMonthly: winterMonthly,
+      annual: annual,
+      blendedMonthly: blendedMonthly,
+      impliedBill: impliedBill
+    };
+  }
+
+  /* Applies the +/-uncertainty band around a value, then clamps the upper
+     bound so the DISPLAYED range never implies savings above the stated (or
+     implied) bill - the uncertainty band must not undo Step 5's cap. */
+  function withUncertaintyCapped(value, ceiling) {
+    var r = withUncertainty(value);
+    r.max = Math.min(r.max, ceiling);
+    r.min = Math.min(r.min, r.max);
+    return r;
+  }
+
+  /* ------------------------------------------------------------------
+     Formatting helpers
+     ------------------------------------------------------------------ */
+
+  function money(n) { return '$' + Math.round(Math.max(0, n)).toLocaleString(); }
+  function moneyRange(range) { return money(range.min) + '–' + money(range.max); }
+  function wattsLabel(w) { return Math.round(w).toLocaleString() + ' W'; }
+
+  /* Brief highlight so a changed number reads as "live" without a full
+     numeric tween - short count/number transition only, per spec. */
+  function pulse(el) {
+    if (!el) return;
+    el.classList.remove('is-pulsing');
+    // eslint-disable-next-line no-unused-expressions
+    void el.offsetWidth; // restart the CSS animation
+    el.classList.add('is-pulsing');
+  }
+
+  function setText(key, text) {
+    var el = out[key];
+    if (!el) return;
+    if (el.textContent !== text) {
+      el.textContent = text;
+      pulse(el);
+    }
+  }
+
+  /* ------------------------------------------------------------------
+     Render
+     ------------------------------------------------------------------ */
+
+  var compareTimer = null;
+
+  function showCompareBriefly() {
+    if (!compareBox) return;
+    var withM = model(true);
+    var withoutM = model(false);
+    setText('compareWith', money(withM.blendedMonthly) + '/mo');
+    setText('compareWithout', money(withoutM.blendedMonthly) + '/mo');
+    compareBox.hidden = false;
+    compareBox.setAttribute('aria-hidden', 'false');
+    compareBox.classList.add('is-visible');
+    if (compareTimer) clearTimeout(compareTimer);
+    compareTimer = setTimeout(function () {
+      compareBox.classList.remove('is-visible');
+      compareTimer = setTimeout(function () {
+        compareBox.hidden = true;
+        compareBox.setAttribute('aria-hidden', 'true');
+      }, 400);
+    }, 4200);
+  }
+
+  function render() {
+    var sizeW = systemSizeW();
+    var m = model();
+
+    var monthly = withUncertaintyCapped(m.blendedMonthly, m.impliedBill);
+    var annual = withUncertaintyCapped(m.annual, m.impliedBill * 12);
+    var summer = withUncertaintyCapped(m.summerMonthly, m.impliedBill);
+    var winter = withUncertaintyCapped(m.winterMonthly, m.impliedBill);
+
+    setText('monthlyRange', moneyRange(monthly));
+    setText('annualRange', 'About ' + moneyRange(annual) + '/year');
+    setText('summerRange', moneyRange(summer) + '/mo');
+    setText('winterRange', moneyRange(winter) + '/mo');
+    setText('systemSize', wattsLabel(sizeW));
+    setText('batteryStatus', state.battery ? 'Included' : 'Not included');
+
+    var cost = costRangeFor(sizeW, state.battery);
+    setText('costRange', moneyRange(cost));
+
+    var paybackFast = cost.min / (annual.max || 1);
+    var paybackSlow = cost.max / (annual.min || 1);
+    setText('paybackRange', paybackFast.toFixed(1) + '–' + paybackSlow.toFixed(1) + ' years');
+
+    var storageStat = root.querySelector('[data-calc-out="batteryStatus"]').closest('.calc__stat');
+    if (storageStat) storageStat.classList.toggle('calc__stat--on', state.battery);
+
+    if (out.assumeRate) {
+      var planNames = { touDr1: 'TOU-DR1', touElec: 'TOU-ELEC', flat: 'Flat/tiered', other: 'a generic' };
+      var locNames = { inland: 'Inland SDG&E', coastal: 'Coastal SDG&E' };
+      out.assumeRate.textContent = 'Rate assumptions for ' + (planNames[state.rate] || 'the selected') +
+        ' and ' + (locNames[state.location] || 'the selected location') + '.';
+    }
+    if (out.assumeOccupancy) {
+      var occNames = { usuallyHome: 'usually home', mixed: 'mixed', mostlyAway: 'mostly away' };
+      out.assumeOccupancy.textContent = 'Daytime usage share assumes "' +
+        (occNames[state.occupancy] || state.occupancy) + '" is representative of your home.';
+    }
+    if (out.assumeBattery) {
+      out.assumeBattery.textContent = state.battery
+        ? 'Battery capture assumes roughly ' + Math.round(batteryCaptureFor() * 100) + '% of production is usable, including shifting energy into the peak window.'
+        : 'Without a battery, only the modeled self-consumption share of production is credited - not full production.';
+    }
+
+    var rateHintEl = out.rateHint;
+    if (rateHintEl) rateHintEl.hidden = state.rate !== 'other';
+  }
+
+  /* ------------------------------------------------------------------
+     Input wiring
+     ------------------------------------------------------------------ */
+
+  function setActiveSeg(group, value) {
+    group.forEach(function (btn) {
+      var active = btn.getAttribute('data-value') === value;
+      btn.classList.toggle('is-active', active);
+      btn.setAttribute('aria-selected', active ? 'true' : 'false');
+    });
+  }
+
+  // mode toggle (bill / usage)
+  var modeButtons = [].slice.call(root.querySelectorAll('[data-calc-mode-btn]'));
+  modeButtons.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var m = btn.getAttribute('data-calc-mode-btn');
+      if (m === state.mode) return;
+      state.mode = m;
+      modeButtons.forEach(function (b) {
+        var active = b === btn;
+        b.classList.toggle('is-active', active);
+        b.setAttribute('aria-selected', active ? 'true' : 'false');
+      });
+      [].slice.call(root.querySelectorAll('[data-calc-mode-panel]')).forEach(function (panel) {
+        panel.hidden = panel.getAttribute('data-calc-mode-panel') !== m;
+      });
+      render();
+    });
+  });
+
+  // bill slider
+  var billInput = root.querySelector('[data-calc-input="bill"]');
+  if (billInput) {
+    billInput.addEventListener('input', function () {
+      state.bill = parseFloat(billInput.value) || 0;
+      setText('billDisplay', money(state.bill));
+      var pct = ((state.bill - billInput.min) / (billInput.max - billInput.min)) * 100;
+      billInput.style.setProperty('--slider-percent', pct + '%');
+      render();
+    });
+  }
+
+  // usage slider
+  var usageInput = root.querySelector('[data-calc-input="usage"]');
+  if (usageInput) {
+    usageInput.addEventListener('input', function () {
+      state.usage = parseFloat(usageInput.value) || 0;
+      setText('usageDisplay', Math.round(state.usage).toLocaleString() + ' kWh');
+      var pct = ((state.usage - usageInput.min) / (usageInput.max - usageInput.min)) * 100;
+      usageInput.style.setProperty('--slider-percent', pct + '%');
+      render();
+    });
+  }
+
+  // rate plan
+  var rateSelect = root.querySelector('[data-calc-input="rate"]');
+  if (rateSelect) {
+    rateSelect.addEventListener('change', function () {
+      state.rate = rateSelect.value;
+      render();
+    });
+  }
+
+  // location segmented control
+  var locationBtns = [].slice.call(root.querySelectorAll('[data-calc-input="location"]'));
+  locationBtns.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      state.location = btn.getAttribute('data-value');
+      setActiveSeg(locationBtns, state.location);
+      render();
+    });
+  });
+
+  // system size segmented control + custom slider
+  var systemBtns = [].slice.call(root.querySelectorAll('[data-calc-input="system"]'));
+  var customSizeInput = root.querySelector('[data-calc-input="customSize"]');
+  systemBtns.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      state.system = btn.getAttribute('data-value');
+      setActiveSeg(systemBtns, state.system);
+      if (customSizeInput) customSizeInput.hidden = state.system !== 'custom';
+      render();
+    });
+  });
+  if (customSizeInput) {
+    customSizeInput.addEventListener('input', function () {
+      state.customSize = parseFloat(customSizeInput.value) || CFG.systems.customMin;
+      if (out.customLabel) out.customLabel.textContent = wattsLabel(state.customSize);
+      render();
+    });
+  }
+
+  // battery switch
+  var batterySwitch = root.querySelector('[data-calc-input="battery"]');
+  if (batterySwitch) {
+    batterySwitch.addEventListener('click', function () {
+      state.battery = !state.battery;
+      batterySwitch.classList.toggle('is-on', state.battery);
+      batterySwitch.setAttribute('aria-pressed', state.battery ? 'true' : 'false');
+      render();
+      showCompareBriefly();
+    });
+  }
+
+  // daytime usage segmented control
+  var occupancyBtns = [].slice.call(root.querySelectorAll('[data-calc-input="occupancy"]'));
+  occupancyBtns.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      state.occupancy = btn.getAttribute('data-value');
+      setActiveSeg(occupancyBtns, state.occupancy);
+      render();
+    });
+  });
+
+  render();
 })();
 
 
