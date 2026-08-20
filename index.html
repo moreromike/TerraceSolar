@@ -298,41 +298,47 @@
   <!-- ===================== HOW THE POWER MOVES ===================== -->
   <!-- Original Terrace Solar flow diagram - concept only from the CraftStrom wiring
        reference page, no supplier layout, icon set or copy reused. -->
-  <section class="section flow-diagram" id="connection" aria-labelledby="sp-conn">
+  <section class="section flow-diagram conn" id="connection" aria-labelledby="sp-conn" data-conn>
+    <div class="conn__track" data-conn-track>
+      <div class="conn__stage">
+        <div class="wrap">
+          <div class="section-head conn__head">
+            <p class="eyebrow">How it works</p>
+            <h2 id="sp-conn">A few connections.<br><em>That&rsquo;s it.</em></h2>
+            <p class="lede">Panels make the power. The microinverter converts it. Plug into the home.</p>
+          </div>
+
+          <ol class="modstep__list flowline__steps" data-conn-list>
+            <li class="modstep__item" data-conn-step>
+              <b>Panels</b>
+              <span>Make electricity.</span>
+            </li>
+            <li class="modstep__arrow" data-conn-arrow aria-hidden="true"></li>
+            <li class="modstep__item" data-conn-step>
+              <b>Microinverter</b>
+              <span>Makes it usable by the home.</span>
+            </li>
+            <li class="modstep__arrow" data-conn-arrow aria-hidden="true"></li>
+            <li class="modstep__item" data-conn-step>
+              <b>Outlet</b>
+              <span>Connects to your existing wiring.</span>
+            </li>
+            <li class="modstep__arrow" data-conn-arrow aria-hidden="true"></li>
+            <li class="modstep__item" data-conn-step>
+              <b>Done!</b>
+              <span>Your solar is working with the home.</span>
+            </li>
+          </ol>
+
+          <div class="flowline__storage" data-conn-storage>
+            <p class="flowline__storage-label">Storage<span class="step__badge">Optional</span></p>
+            <p class="flowline__storage-sub">Add storage if you want to save some of that energy for later.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="wrap">
-      <div class="section-head">
-        <p class="eyebrow">Connection</p>
-        <h2 id="sp-conn">A few connections.<br><em>That&rsquo;s it.</em></h2>
-        <p class="lede">Panels make the power. The microinverter converts it. Plug into the home.</p>
-      </div>
-
-      <ol class="modstep__list flowline__steps">
-        <li class="modstep__item">
-          <b>Panels</b>
-          <span>Make electricity.</span>
-        </li>
-        <li class="modstep__arrow" aria-hidden="true"></li>
-        <li class="modstep__item">
-          <b>Microinverter</b>
-          <span>Makes it usable by the home.</span>
-        </li>
-        <li class="modstep__arrow" aria-hidden="true"></li>
-        <li class="modstep__item">
-          <b>Outlet</b>
-          <span>Connects to your existing wiring.</span>
-        </li>
-        <li class="modstep__arrow" aria-hidden="true"></li>
-        <li class="modstep__item">
-          <b>Done!</b>
-          <span>Your solar is working with the home.</span>
-        </li>
-      </ol>
-
-      <div class="flowline__storage">
-        <p class="flowline__storage-label">Storage<span class="step__badge">Optional</span></p>
-        <p class="flowline__storage-sub">Add storage if you want to save some of that energy for later.</p>
-      </div>
-
       <div class="modstep">
         <p class="modstep__label">Grows in 400&nbsp;W steps</p>
         <ol class="modstep__list">

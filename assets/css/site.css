@@ -2238,6 +2238,22 @@ h1 em, h2 em, .chapter__title em { font-style: normal; color: var(--accent); }
 .flow-diagram { background: var(--paper); }
 .flow-diagram .lede { max-width: 46ch; margin-inline: auto; }
 
+/* short sticky scrollytelling track for the four-step connection path.
+   Deliberately shorter than the 300vh product-overview track above - this
+   is meant to read as one quick beat, not another long scroll. No width
+   gate: unlike .steps, this stays scroll-linked on mobile too (see the JS),
+   just recomposed into a vertical stack there instead of a row. */
+.conn--on .conn__track { height: 220vh; }
+.conn--on .conn__stage {
+  position: sticky; top: 0; min-height: 100vh;
+  display: grid; align-items: center; padding-block: clamp(2rem, 5vw, 4rem);
+  /* the whole composition fades/lifts out together as one group when the
+     section is being left - driven by --cfade, written every scroll frame */
+  opacity: var(--cfade, 1);
+  transform: translateY(calc((1 - var(--cfade, 1)) * -22px));
+}
+.conn__head { margin-bottom: clamp(1.75rem, 4vw, 2.75rem); }
+
 /* the simplified four-step connection path reuses the modular-expansion
    progression's visual language (bold value + caption + arrow connector)
    for one consistent "step flow" pattern on this page, rather than a
@@ -2249,6 +2265,55 @@ h1 em, h2 em, .chapter__title em { font-style: normal; color: var(--accent); }
   white-space: nowrap;
 }
 .flowline__steps .modstep__arrow { flex: 0 0 auto; }
+
+/* progressive reveal: each step and its leading arrow animate in via
+   opacity + transform only (no bounce), the arrow's line growing in from
+   the step it's leaving via a horizontal scale */
+.conn--on .flowline__steps .modstep__item,
+.conn--on .flowline__steps .modstep__arrow {
+  opacity: 0;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.conn--on .flowline__steps .modstep__item { transform: translateY(14px); }
+.conn--on .flowline__steps .modstep__item.is-shown { opacity: 1; transform: none; }
+.conn--on .flowline__steps .modstep__arrow {
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+.conn--on .flowline__steps .modstep__arrow.is-shown {
+  opacity: 1;
+  transform: scaleX(1);
+}
+.conn--on .flowline__storage {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.conn--on .flowline__storage.is-shown { opacity: 1; transform: none; }
+
+/* mobile: vertical stack instead of a horizontal row, arrow rotated to
+   point down between stacked steps rather than sideways */
+@media (max-width: 767px) {
+  .conn__stage .flowline__steps { flex-direction: column; align-items: center; }
+  .conn__stage .flowline__steps .modstep__item { max-width: 280px; }
+  .conn__stage .flowline__steps .modstep__arrow { width: 10px; height: 22px; margin-block: 0.1rem; }
+  .conn__stage .flowline__steps .modstep__arrow::before {
+    left: 50%; top: 0; width: 1.5px; height: 100%;
+    transform: translateX(-50%);
+  }
+  .conn__stage .flowline__steps .modstep__arrow::after {
+    left: 50%; right: auto; top: auto; bottom: 0;
+    border-top: none; border-right: none;
+    border-bottom: 1.5px solid var(--accent);
+    border-left: 1.5px solid var(--accent);
+    transform: translateX(-50%) rotate(-45deg);
+  }
+  .conn--on .flowline__steps .modstep__arrow {
+    transform: scaleY(0);
+    transform-origin: top center;
+  }
+  .conn--on .flowline__steps .modstep__arrow.is-shown { transform: scaleY(1); }
+}
 
 .flowline__storage {
   margin: clamp(2rem, 4vw, 2.75rem) auto 0;
