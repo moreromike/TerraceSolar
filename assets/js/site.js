@@ -1196,9 +1196,13 @@ var SOLAR_CALCULATOR_CONFIG = {
    Same positional idea as the film and the "How it works" product-overview
    reveal above: scroll position (0-1) across a short sticky track drives
    which steps are shown. Once shown, a step stays shown - by the end of the
-   track all four steps plus the storage note are visible together - then
-   the whole composition fades out as one group as the section is left.
-   Purely positional, so scrolling back up reverses it exactly.
+   track all four steps plus the storage note are visible together, and they
+   STAY that way. There is no fade-out: once the track's progress reaches 1,
+   every item is locked to its final visible state and nothing further is
+   computed from scroll distance past that point - the sticky stage just
+   releases and normal page scrolling continues under it. Reverse scrolling
+   while still inside the track un-reveals items in exact reverse order,
+   same as the film's holds; nothing here is a one-time animation.
 
    Deliberately no width gate (unlike the section above): the request this
    implements specifically wants the progressive reveal on mobile too, not
@@ -1218,14 +1222,10 @@ var SOLAR_CALCULATOR_CONFIG = {
   var forced = window.location.search.indexOf('motion=full') !== -1;
   function reduced() { return motionQuery.matches && !forced; }
 
-  /* the four steps arrive across the first half of the track, storage
-     follows as one extra beat once they're all in, then the whole group
-     holds fully visible for a bit before fading out together approaching
-     the end of the track - keeps the section reading as one quick beat
-     rather than a long scroll */
-  var STEP_LEAD = 0.05, STEP_TAIL = 0.55;
-  var STORAGE_AT = 0.65;
-  var FADE_START = 0.85;
+  /* five even reveal beats across the track: Panels, Microinverter, Outlet,
+     Done, then Storage as the final beat - tune these to retime the reveal,
+     nothing else in apply() needs to change. */
+  var BEATS = [0, 0.2, 0.4, 0.6, 0.8];
 
   function apply() {
     ticking = false;
@@ -1241,17 +1241,13 @@ var SOLAR_CALCULATOR_CONFIG = {
     var travel = rect.height - window.innerHeight;
     var p = travel > 0 ? Math.max(0, Math.min(1, -rect.top / travel)) : 0;
 
-    var span = (STEP_TAIL - STEP_LEAD) / steps.length;
     for (var i = 0; i < steps.length; i++) {
-      var shown = p >= STEP_LEAD + i * span;
+      var shown = p >= BEATS[i];
       steps[i].classList.toggle('is-shown', shown);
       /* the arrow leading into a step arrives with that step, not before */
       if (arrows[i - 1]) arrows[i - 1].classList.toggle('is-shown', shown);
     }
-    if (storage) storage.classList.toggle('is-shown', p >= STORAGE_AT);
-
-    var fade = 1 - Math.max(0, Math.min(1, (p - FADE_START) / (1 - FADE_START)));
-    root.style.setProperty('--cfade', fade.toFixed(3));
+    if (storage) storage.classList.toggle('is-shown', p >= BEATS[4]);
   }
 
   function onScroll() {

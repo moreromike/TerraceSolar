@@ -2242,24 +2242,33 @@ h1 em, h2 em, .chapter__title em { font-style: normal; color: var(--accent); }
    Deliberately shorter than the 300vh product-overview track above - this
    is meant to read as one quick beat, not another long scroll. No width
    gate: unlike .steps, this stays scroll-linked on mobile too (see the JS),
-   just recomposed into a vertical stack there instead of a row. */
+   just recomposed into a vertical stack there instead of a row.
+
+   The composition never fades or dims on its own - once each item's
+   is-shown class lands it stays exactly as revealed (see the JS below).
+   There is deliberately no opacity/transform on .conn__stage itself tied
+   to scroll distance: once the track scrolls past and the sticky stage
+   releases, it's just normal page content from here on, not something
+   this CSS animates away. */
 .conn--on .conn__track { height: 220vh; }
 .conn--on .conn__stage {
-  position: sticky; top: 0; min-height: 100vh;
+  position: sticky; top: 0;
+  min-height: 100vh;
+  min-height: 100svh;
   display: grid; align-items: center; padding-block: clamp(2rem, 5vw, 4rem);
-  /* the whole composition fades/lifts out together as one group when the
-     section is being left - driven by --cfade, written every scroll frame */
-  opacity: var(--cfade, 1);
-  transform: translateY(calc((1 - var(--cfade, 1)) * -22px));
 }
 .conn__head { margin-bottom: clamp(1.75rem, 4vw, 2.75rem); }
 
 /* the simplified four-step connection path reuses the modular-expansion
    progression's visual language (bold value + caption + arrow connector)
    for one consistent "step flow" pattern on this page, rather than a
-   second bespoke diagram style */
+   second bespoke diagram style. flex:1 1 0 here is a DESKTOP-ONLY choice
+   (equal-width row columns) - the mobile block below replaces it with a
+   plain single-column stack instead of just letting it wrap. */
 .flowline__steps { margin-top: clamp(2.5rem, 5vw, 3.5rem); }
-.flowline__steps .modstep__item { flex: 1 1 0; min-width: 0; }
+@media (min-width: 768px) {
+  .flowline__steps .modstep__item { flex: 1 1 0; min-width: 0; }
+}
 .flowline__steps .modstep__item b {
   font-size: clamp(1.15rem, 0.95rem + 1vw, 1.5rem);
   white-space: nowrap;
@@ -2268,7 +2277,10 @@ h1 em, h2 em, .chapter__title em { font-style: normal; color: var(--accent); }
 
 /* progressive reveal: each step and its leading arrow animate in via
    opacity + transform only (no bounce), the arrow's line growing in from
-   the step it's leaving via a horizontal scale */
+   the step it's leaving via a horizontal scale. Only ever adds opacity/
+   transform toward the shown state - nothing here ever reduces opacity
+   again once .is-shown is set except a genuine reverse-scroll removing
+   the class, which is the intended deterministic behavior. */
 .conn--on .flowline__steps .modstep__item,
 .conn--on .flowline__steps .modstep__arrow {
   opacity: 0;
@@ -2291,12 +2303,39 @@ h1 em, h2 em, .chapter__title em { font-style: normal; color: var(--accent); }
 }
 .conn--on .flowline__storage.is-shown { opacity: 1; transform: none; }
 
-/* mobile: vertical stack instead of a horizontal row, arrow rotated to
-   point down between stacked steps rather than sideways */
+/* mobile: explicit single-column vertical stack, not the desktop row left
+   to wrap. flex-wrap is force-reset to nowrap here - flex-wrap:wrap
+   (inherited from the shared .modstep__list rule) combined with
+   flex-direction:column is what was folding this into a multi-column
+   jumble instead of one clean stack. */
 @media (max-width: 767px) {
-  .conn__stage .flowline__steps { flex-direction: column; align-items: center; }
-  .conn__stage .flowline__steps .modstep__item { max-width: 280px; }
-  .conn__stage .flowline__steps .modstep__arrow { width: 10px; height: 22px; margin-block: 0.1rem; }
+  .conn--on .conn__stage { padding-block: clamp(1.1rem, 3vw, 2rem); }
+  .conn__head { margin-bottom: clamp(1rem, 3vw, 1.5rem); }
+  .conn__head h2 { font-size: clamp(2.4rem, 1.6rem + 4vw, 3rem); }
+  .conn__stage .flowline__steps {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: center;
+    width: 100%;
+    margin-top: clamp(1.1rem, 3vw, 1.75rem);
+    gap: clamp(0.4rem, 1.5vw, 0.65rem);
+  }
+  .conn__stage .flowline__storage { margin-top: clamp(0.9rem, 3vw, 1.5rem); }
+  .conn__stage .flowline__steps .modstep__item {
+    flex: none;
+    width: 100%;
+    max-width: 280px;
+  }
+  .conn__stage .flowline__steps .modstep__item b {
+    font-size: clamp(1.4rem, 1rem + 3vw, 1.75rem);
+  }
+  .conn__stage .flowline__steps .modstep__item span {
+    font-size: clamp(0.95rem, 0.85rem + 0.5vw, 1.05rem);
+  }
+  .conn__stage .flowline__steps .modstep__arrow {
+    flex: none;
+    width: 10px; height: 22px; margin-block: 0.1rem;
+  }
   .conn__stage .flowline__steps .modstep__arrow::before {
     left: 50%; top: 0; width: 1.5px; height: 100%;
     transform: translateX(-50%);
