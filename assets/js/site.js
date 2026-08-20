@@ -190,6 +190,13 @@ var TerraceFilm = (function () {
     debug = window.location.search.indexOf('debug=1') !== -1;
   }
 
+  /* Ephemeral init-stage trace, ?debug=1 only - not for production reading,
+     just to make "which stage did it stop at" obvious when diagnosing. */
+  if (debug && window.console) {
+    console.log('[film] FILM INIT START');
+    console.log('[film] FILM ELEMENT FOUND', { track: true, video: true });
+  }
+
   /* No width gate: mobile phones run the same scrubbed film, recomposed by
      the mobile film CSS. This is only a genuine sanity floor for viewports
      too short to pin a stage in at all (a stray embedded iframe, a
@@ -260,6 +267,9 @@ var TerraceFilm = (function () {
 
     totalPx = timeline.reduce(function (sum, seg) { return sum + seg.px; }, 0);
     track.style.height = Math.round(totalPx + window.innerHeight) + 'px';
+    if (debug && window.console) {
+      console.log('[film] TIMELINE BUILT', { segments: timeline.length, trackPx: track.style.height });
+    }
   }
 
   /* Both scroll position (x, in px along the track) and overall progress
@@ -333,9 +343,14 @@ var TerraceFilm = (function () {
     }
   }
 
+  var loggedFirstFrame = false;
   function frame() {
     rafId = 0;
     if (!enabled) return;
+    if (debug && !loggedFirstFrame && window.console) {
+      loggedFirstFrame = true;
+      console.log('[film] SCRUB LOOP STARTED');
+    }
 
     /* Self-correcting gate. resize and matchMedia change events are the primary
        signal, but some embedded viewports never dispatch them. */
@@ -377,8 +392,15 @@ var TerraceFilm = (function () {
     if (debug) { paintDebug(); }
   }
 
+  /* inView is a performance hint only (skip work once the whole multi-
+     thousand-pixel track has scrolled fully out of view), never a
+     correctness gate. It's driven by an async IntersectionObserver that
+     can lag behind a page that's already mid-scroll or evaluate before
+     buildTimeline() has set the track's real height - blocking scheduling
+     on it risked the engine never starting at all if that first callback
+     landed at the wrong moment. schedule() no longer depends on it. */
   function schedule() {
-    if (rafId || !enabled || !inView) return;
+    if (rafId || !enabled) return;
     rafId = window.requestAnimationFrame(frame);
   }
 
@@ -390,6 +412,9 @@ var TerraceFilm = (function () {
     video.setAttribute('src', currentVideoSrc());
     video.preload = 'auto';
     video.load();
+    if (debug && window.console) {
+      console.log('[film] VIDEO SOURCE', currentVideoSrc());
+    }
   }
 
   video.addEventListener('loadedmetadata', function () {
@@ -517,6 +542,8 @@ var TerraceFilm = (function () {
       'reduced-motion ' + (motionQuery.matches ? 'YES' : 'no') +
         (forceMotion ? '  OVERRIDDEN' : ''),
       'film--on       ' + (enabled ? 'YES' : 'NO'),
+      'inView         ' + inView + '  (hint only, does not block scheduling)',
+      'rafId          ' + (rafId || 'none pending'),
       'fallback       ' + (fallbackReason() || '-'),
       'video src      ' + (v.getAttribute('src') || 'not attached'),
       'readyState     ' + v.readyState + '    networkState ' + v.networkState,
