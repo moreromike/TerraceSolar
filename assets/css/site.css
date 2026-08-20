@@ -1531,53 +1531,6 @@ h1 em, h2 em, .chapter__title em { font-style: normal; color: var(--accent); }
   .spot__text .specrow { justify-content: center; }
 }
 
-/* plug in, power on */
-.plug .wrap { text-align: center; }
-.plugflow {
-  list-style: none;
-  margin: 0 auto;
-  padding: 0;
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  max-width: 54rem;
-}
-.plugflow li { position: relative; }
-.plugflow span {
-  display: block;
-  padding: 0.6rem 1.25rem;
-  border-radius: 999px;
-  border: 1px solid var(--line);
-  background: var(--surface);
-  font-family: var(--display);
-  font-size: 0.95rem;
-  font-weight: 560;
-  letter-spacing: -0.01em;
-  color: var(--ink);
-}
-.plugflow li:nth-child(2) span { border-color: rgb(251 172 50 / 55%); color: var(--accent); }
-.plugflow li:not(:last-child)::after {
-  content: "";
-  position: absolute;
-  right: -0.4rem; top: 50%;
-  width: 0.36rem; height: 0.36rem;
-  border-top: 1.5px solid var(--accent);
-  border-right: 1.5px solid var(--accent);
-  transform: translateY(-50%) rotate(45deg);
-  opacity: 0.8;
-}
-.plug__line {
-  margin: clamp(1.75rem, 3.5vw, 2.5rem) auto 0;
-  max-width: 40ch;
-  font-family: var(--display);
-  font-size: clamp(1.1rem, 0.95rem + 0.8vw, 1.5rem);
-  font-weight: 540;
-  letter-spacing: -0.025em;
-  color: #fff;
-}
-.plug__sub { margin: 0.75rem auto 0; max-width: 40ch; color: var(--muted); font-size: 0.95rem; }
-
 /* faq + shop centred */
 .faq { max-width: 46rem; margin-inline: auto; text-align: left; }
 .shop__form { max-width: 46rem; margin-inline: auto; text-align: center; }
@@ -1611,20 +1564,6 @@ h1 em, h2 em, .chapter__title em { font-style: normal; color: var(--accent); }
   background:
     radial-gradient(120% 100% at 50% 15%, var(--stage-2) 0%, var(--stage) 70%);
   border: 1px solid var(--line);
-}
-.spot__media--diagram {
-  aspect-ratio: 4 / 3;
-  width: 100%;
-  display: grid;
-  place-content: center;
-  border-radius: 18px;
-  border: 1px solid var(--line);
-  background: radial-gradient(120% 100% at 50% 15%, var(--stage-2) 0%, var(--stage) 70%);
-}
-.spot__media--diagram .plugflow { flex-direction: column; gap: 0.55rem; }
-.spot__media--diagram .plugflow li:not(:last-child)::after {
-  right: 50%; top: auto; bottom: -0.45rem;
-  transform: translateX(50%) rotate(135deg);
 }
 .spot__close {
   margin: clamp(1.5rem, 3vw, 2.25rem) 0 0;
@@ -2099,4 +2038,315 @@ h1 em, h2 em, .chapter__title em { font-style: normal; color: var(--accent); }
 @media (max-width: 999px) {
   .calc__grid { grid-template-columns: repeat(2, 1fr); }
   .calc__card { position: static; }
+}
+
+/* ==========================================================================
+   HOW THE POWER MOVES — original Terrace Solar flow diagram
+   Concept only from the CraftStrom wiring reference; no supplier layout,
+   icon set or copy reused.
+   ========================================================================== */
+
+.flow-diagram { background: var(--paper); }
+.flow-diagram .lede { max-width: 46ch; margin-inline: auto; }
+
+.flowline {
+  margin: clamp(2.5rem, 5vw, 3.5rem) auto 0;
+  max-width: 60rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(0.9rem, 2.2vw, 1.4rem);
+}
+.flowline__main {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0;
+}
+.flowline__node {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 84px;
+  padding: 0.65rem 1.05rem;
+  border-radius: 14px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  font-family: var(--display);
+  font-weight: 620;
+  font-size: 0.9rem;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.flowline__node--panels,
+.flowline__node--hedy,
+.flowline__node--home {
+  background: var(--accent-wash);
+  border-color: rgba(251, 172, 50, 0.35);
+}
+
+/* a soft highlight travels the connector, reading as current moving through
+   the line rather than a literal wire trace */
+.flowline__conn {
+  width: clamp(24px, 3.6vw, 48px);
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent) 0%, var(--accent) 50%, transparent 50%, transparent 100%);
+  background-size: 200% 100%;
+  animation: flowline-travel 2.6s linear infinite;
+}
+@keyframes flowline-travel {
+  from { background-position: 200% 0; }
+  to   { background-position: -200% 0; }
+}
+
+.flowline__branch {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.flowline__branch-conn {
+  width: 2px;
+  height: clamp(18px, 2.6vw, 28px);
+  background: linear-gradient(180deg, var(--accent) 0%, var(--accent) 50%, transparent 50%, transparent 100%);
+  background-size: 100% 200%;
+  animation: flowline-travel-v 2.6s linear infinite;
+}
+@keyframes flowline-travel-v {
+  from { background-position: 0 200%; }
+  to   { background-position: 0 -200%; }
+}
+.flowline__node--battery {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  padding: 0.5rem 1rem;
+  border-radius: 14px;
+  border: 1px dashed var(--line);
+  background: var(--surface-2);
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 0.84rem;
+  color: var(--muted);
+}
+.flowline__node--battery i { font-style: normal; font-size: 0.72rem; color: var(--muted); }
+
+.flowline__note {
+  text-align: center;
+  margin: 0;
+  font-size: 0.92rem;
+  color: var(--muted);
+}
+
+/* modular expansion progression */
+.modstep {
+  margin: clamp(3rem, 6vw, 4.5rem) auto 0;
+  max-width: 54rem;
+  text-align: center;
+}
+.modstep__label {
+  font-size: 0.7rem;
+  font-weight: 650;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 1.25rem;
+}
+.modstep__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: clamp(0.6rem, 1.8vw, 1.25rem);
+}
+.modstep__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+}
+.modstep__item b {
+  font-family: var(--display);
+  font-size: clamp(1.5rem, 1.1rem + 1.4vw, 2.1rem);
+  font-weight: 650;
+  color: var(--accent);
+  letter-spacing: -0.03em;
+}
+.modstep__item span {
+  font-size: 0.8rem;
+  color: var(--muted);
+  line-height: 1.4;
+}
+.modstep__arrow {
+  width: 22px;
+  height: 10px;
+  position: relative;
+  flex: none;
+}
+.modstep__arrow::before {
+  content: "";
+  position: absolute;
+  left: 0; top: 50%;
+  width: 100%; height: 1.5px;
+  background: var(--line);
+  transform: translateY(-50%);
+}
+.modstep__arrow::after {
+  content: "";
+  position: absolute;
+  right: 0; top: 50%;
+  width: 6px; height: 6px;
+  border-top: 1.5px solid var(--accent);
+  border-right: 1.5px solid var(--accent);
+  transform: translateY(-50%) rotate(45deg);
+}
+.modstep__note {
+  margin: clamp(1.25rem, 2.5vw, 1.75rem) 0 0;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+@media (max-width: 720px) {
+  .flowline__main { row-gap: 0.6rem; }
+  .flowline__conn { width: 18px; }
+}
+
+/* ==========================================================================
+   USE SOLAR YOUR WAY — day / night / away explainer, combined with the
+   storage-help visual in one compact section. CSS-only state switching via
+   :has(); no runtime or appliance-specific claims - see products.json
+   "withheld_claims" for what is deliberately not shown here.
+   ========================================================================== */
+
+.useit { background: var(--surface); }
+
+.useit__panel {
+  max-width: 44rem;
+  margin: clamp(2rem, 4vw, 3rem) auto 0;
+  text-align: center;
+}
+.useit__modes { border: 0; margin: 0 0 clamp(1.5rem, 3vw, 2.25rem); padding: 0; display: flex; justify-content: center; }
+
+.useit__modepanel { display: none; }
+.useit__panel:has(input[value="day"]:checked) .useit__modepanel[data-useit-mode="day"],
+.useit__panel:has(input[value="night"]:checked) .useit__modepanel[data-useit-mode="night"],
+.useit__panel:has(input[value="away"]:checked) .useit__modepanel[data-useit-mode="away"] {
+  display: block;
+}
+
+.useit__mini {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+}
+.useit__mini-node {
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  font-family: var(--display);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+.useit__mini-conn {
+  width: 26px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent) 0%, var(--accent) 50%, transparent 50%, transparent 100%);
+  background-size: 200% 100%;
+  animation: flowline-travel 2.6s linear infinite;
+}
+
+.useit__modepanel h3 {
+  font-size: clamp(1.35rem, 1.05rem + 1vw, 1.75rem);
+  letter-spacing: -0.03em;
+  margin-bottom: 0.5rem;
+  color: var(--ink);
+}
+.useit__modepanel p {
+  color: var(--muted);
+  font-size: 0.96rem;
+  line-height: 1.55;
+  max-width: 40ch;
+  margin-inline: auto;
+}
+
+.useit__storage {
+  max-width: 46rem;
+  margin: clamp(3rem, 6vw, 4rem) auto 0;
+  padding-top: clamp(2rem, 4vw, 3rem);
+  border-top: 1px solid var(--line);
+  text-align: center;
+}
+.useit__storage-label {
+  font-family: var(--display);
+  font-size: clamp(1.1rem, 0.95rem + 0.6vw, 1.35rem);
+  font-weight: 620;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin: 0 0 1rem;
+}
+.useit__sizes { border: 0; margin: 0 0 0.75rem; padding: 0; display: flex; justify-content: center; }
+
+.useit__size-note {
+  display: none;
+  margin: 0 0 clamp(1.5rem, 3vw, 2rem);
+  font-size: 0.9rem;
+  color: var(--accent);
+  font-weight: 620;
+}
+.useit__storage:has(input[value="1"]:checked) .useit__size-note[data-useit-size="1"],
+.useit__storage:has(input[value="2"]:checked) .useit__size-note[data-useit-size="2"],
+.useit__storage:has(input[value="4"]:checked) .useit__size-note[data-useit-size="4"] {
+  display: block;
+}
+
+.useit__loads {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.55rem;
+}
+.useit__loads li {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 0.95rem;
+  border-radius: 999px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  font-size: 0.83rem;
+  font-weight: 560;
+  color: var(--ink);
+}
+.useit__icon {
+  width: 15px;
+  height: 15px;
+  flex: none;
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.useit__loads-caption {
+  margin: clamp(1rem, 2vw, 1.5rem) 0 0;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: var(--muted);
+  max-width: 52ch;
+  margin-inline: auto;
 }

@@ -274,24 +274,55 @@
     </div>
   </section>
 
-  <!-- ===================== SPOTLIGHT: CONNECTION ===================== -->
-  <section class="section spot spot--reverse" id="connection" aria-labelledby="sp-conn">
-    <div class="spot__inner">
-      <div class="spot__media spot__media--diagram">
-        <!-- No clean US-receptacle photograph exists in the supplied assets, and the
-             brochure wiring page shows a Schuko outlet, which contradicts the US
-             market decision. Shown as a typographic chain until real US imagery exists. -->
-        <ol class="plugflow" aria-label="How power reaches the home">
-          <li><span>Hedy</span></li>
-          <li><span>Cable</span></li>
-          <li><span>Outlet</span></li>
-          <li><span>Home</span></li>
-        </ol>
-      </div>
-      <div class="spot__text">
+  <!-- ===================== HOW THE POWER MOVES ===================== -->
+  <!-- Original Terrace Solar flow diagram - concept only from the CraftStrom wiring
+       reference page, no supplier layout, icon set or copy reused. -->
+  <section class="section flow-diagram" id="connection" aria-labelledby="sp-conn">
+    <div class="wrap">
+      <div class="section-head">
         <p class="eyebrow">Connection</p>
-        <h2 id="sp-conn">Plug into the home<br><em>you already have.</em></h2>
-        <p class="spot__sub">One cable reaches a standard household receptacle. The system runs on the wiring already in your walls.</p>
+        <h2 id="sp-conn">A few connections.<br><em>That&rsquo;s it.</em></h2>
+        <p class="lede">Panels make the power. Hedy converts it. The system connects to your home&rsquo;s existing wiring.</p>
+      </div>
+
+      <div class="flowline" role="img" aria-label="Panels connect to Hedy, then a cable, then a standard outlet, then your home. Storage is an optional branch that charges from Hedy and can power the home later.">
+        <ol class="flowline__main">
+          <li class="flowline__node flowline__node--panels"><span>Panels</span></li>
+          <li class="flowline__conn" aria-hidden="true"></li>
+          <li class="flowline__node flowline__node--hedy"><span>Hedy</span></li>
+          <li class="flowline__conn" aria-hidden="true"></li>
+          <li class="flowline__node"><span>Cable</span></li>
+          <li class="flowline__conn" aria-hidden="true"></li>
+          <li class="flowline__node"><span>Outlet</span></li>
+          <li class="flowline__conn" aria-hidden="true"></li>
+          <li class="flowline__node flowline__node--home"><span>Home</span></li>
+        </ol>
+        <div class="flowline__branch" aria-hidden="true">
+          <span class="flowline__branch-conn"></span>
+          <span class="flowline__node flowline__node--battery">Storage <i>optional</i></span>
+        </div>
+      </div>
+      <p class="flowline__note">Add storage if you want to save some of that energy for later.</p>
+
+      <div class="modstep">
+        <p class="modstep__label">Grows in 400 W steps</p>
+        <ol class="modstep__list">
+          <li class="modstep__item">
+            <b>400 W</b>
+            <span>2 &times; 200 W panels<br>1 &times; Hedy</span>
+          </li>
+          <li class="modstep__arrow" aria-hidden="true"></li>
+          <li class="modstep__item">
+            <b>800 W</b>
+            <span>4 &times; 200 W panels<br>2 &times; Hedy</span>
+          </li>
+          <li class="modstep__arrow" aria-hidden="true"></li>
+          <li class="modstep__item">
+            <b>1,200 W</b>
+            <span>6 &times; 200 W panels<br>3 &times; Hedy</span>
+          </li>
+        </ol>
+        <p class="modstep__note">Continues in the same 400 W steps, up to 2,000 W.</p>
       </div>
     </div>
   </section>
@@ -308,6 +339,89 @@
         <h2 id="sp-meter">Only make what<br><em>the home needs.</em></h2>
         <p class="spot__sub">It matches solar production to what your home is using.</p>
         <p class="spot__close">A few components. One simple connection.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== USE SOLAR YOUR WAY ===================== -->
+  <!-- Original Terrace Solar interactive: time-of-day explainer combined with the
+       storage-help visual, kept as one compact section per the requested consolidation.
+       CSS-only state switching via :has(), no runtime/appliance claims - see
+       assets/products/products.json "withheld_claims" for what is deliberately absent. -->
+  <section class="section useit" id="useit" aria-labelledby="useit-title">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">Everyday use</p>
+        <h2 id="useit-title">Use solar your way.</h2>
+      </div>
+
+      <div class="useit__panel">
+        <fieldset class="useit__modes">
+          <legend class="sr-only">Time of day</legend>
+          <div class="steps-chips">
+            <label class="step-chip"><input type="radio" name="useit-mode" value="day" checked><span>Day</span></label>
+            <label class="step-chip"><input type="radio" name="useit-mode" value="night"><span>Night</span></label>
+            <label class="step-chip"><input type="radio" name="useit-mode" value="away"><span>Away from home</span></label>
+          </div>
+        </fieldset>
+
+        <div class="useit__modepanel" data-useit-mode="day">
+          <div class="useit__mini" aria-hidden="true">
+            <span class="useit__mini-node">Sun</span>
+            <span class="useit__mini-conn"></span>
+            <span class="useit__mini-node">Panels</span>
+            <span class="useit__mini-conn"></span>
+            <span class="useit__mini-node">Home</span>
+          </div>
+          <h3>Make it. Use it.</h3>
+          <p>Solar helps power what your home is using during the day. If storage is included, available solar can also charge the battery.</p>
+        </div>
+
+        <div class="useit__modepanel" data-useit-mode="night">
+          <div class="useit__mini" aria-hidden="true">
+            <span class="useit__mini-node">Storage</span>
+            <span class="useit__mini-conn"></span>
+            <span class="useit__mini-node">Home</span>
+          </div>
+          <h3>Save it for later.</h3>
+          <p>Stored solar energy can be used after the sun goes down.</p>
+        </div>
+
+        <div class="useit__modepanel" data-useit-mode="away">
+          <div class="useit__mini" aria-hidden="true">
+            <span class="useit__mini-node">Storage</span>
+            <span class="useit__mini-conn"></span>
+            <span class="useit__mini-node">Small devices</span>
+          </div>
+          <h3>Power where the outlet isn&rsquo;t.</h3>
+          <p>The battery has its own port for charging small compatible electronics directly, independent of your home&rsquo;s wiring.</p>
+        </div>
+      </div>
+
+      <div class="useit__storage">
+        <p class="useit__storage-label">What can storage help power?</p>
+
+        <fieldset class="useit__sizes">
+          <legend class="sr-only">Storage size</legend>
+          <div class="steps-chips">
+            <label class="step-chip"><input type="radio" name="useit-size" value="1" checked><span>1 kWh</span></label>
+            <label class="step-chip"><input type="radio" name="useit-size" value="2"><span>2 kWh</span></label>
+            <label class="step-chip"><input type="radio" name="useit-size" value="4"><span>4 kWh</span></label>
+          </div>
+        </fieldset>
+
+        <p class="useit__size-note" data-useit-size="1">Good starting point.</p>
+        <p class="useit__size-note" data-useit-size="2">More evening flexibility.</p>
+        <p class="useit__size-note" data-useit-size="4">More stored energy available.</p>
+
+        <ul class="useit__loads">
+          <li><svg class="useit__icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="5" y1="11" x2="19" y2="11"/><line x1="8" y1="6" x2="8" y2="8"/><line x1="8" y1="15" x2="8" y2="17"/></svg>Refrigerator / freezer</li>
+          <li><svg class="useit__icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="10" r="6"/><line x1="9" y1="21" x2="15" y2="21"/><line x1="12" y1="16" x2="12" y2="21"/></svg>Lighting</li>
+          <li><svg class="useit__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8.5a15 15 0 0 1 18 0"/><path d="M6.5 12.5a10 10 0 0 1 11 0"/><path d="M10 16.5a5 5 0 0 1 4 0"/><circle cx="12" cy="20" r="1"/></svg>Wi-Fi / router</li>
+          <li><svg class="useit__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 5 5v6c0 5 3 8.5 7 9 4-.5 7-4 7-9V5z"/></svg>Security system</li>
+          <li><svg class="useit__icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="1.5"/><line x1="2" y1="20" x2="22" y2="20"/></svg>Laptop / electronics</li>
+        </ul>
+        <p class="useit__loads-caption">Examples of compatible loads, not a runtime guarantee. Actual available time depends on storage size, what&rsquo;s plugged in, and how it&rsquo;s used.</p>
       </div>
     </div>
   </section>
