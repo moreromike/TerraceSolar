@@ -3,26 +3,26 @@
 
 /* ---------- tokens ---------- */
 :root {
-  color-scheme: dark;
+  color-scheme: light;
 
-  /* The film ends in black, so the page continues in black. This is the only
-     theme now - there is no light variant below the cinematic section. */
-  --paper: #000000;        /* page ground - identical to the film's final frame */
-  --surface: #0c0c0e;      /* cards */
-  --surface-2: #131315;    /* raised / tinted bands */
-  --ink: #f2f1ef;          /* primary text */
-  --ink-2: #cfcdc8;
-  --muted: #b6afa4;        /* secondary text, warm */
-  --line: #242428;         /* hairlines and card borders */
+  /* Warm, sunlit palette emerging from the film's darkness back into light.
+     The page transitions from black through charcoal into cream and warm whites. */
+  --paper: #FAF8F3;        /* page ground - warm white */
+  --surface: #F3EFE7;      /* cards - soft cream */
+  --surface-2: #E8E3D9;    /* raised / tinted bands - light warm gray */
+  --ink: #101828;          /* primary text - deep navy */
+  --ink-2: #20242A;        /* secondary text - charcoal */
+  --muted: #6B6A62;        /* secondary text - medium gray */
+  --line: #D4CFC2;         /* hairlines and card borders - pale warm gray */
   --terrace-orange: #FBAC32;
   --terrace-navy: #101828;
-  --accent: #FBAC32;       /* Terrace Solar orange */
+  --accent: #FBAC32;       /* Terrace Solar orange - like sunlight */
   --accent-graphic: #FBAC32;
   --accent-ink: #101828;   /* navy on an orange fill */
-  --accent-wash: #191408;
-  --navy: #000000;         /* full-bleed dark bands */
+  --accent-wash: #FEF6E8;  /* pale cream wash behind orange */
+  --navy: #20242A;         /* charcoal for dark sections */
   --flag: #e8bb7a;
-  --flag-wash: #1b160d;
+  --flag-wash: #FEF6E8;
 
   --radius: 14px;
   --radius-lg: 22px;
@@ -245,28 +245,28 @@ a { color: inherit; }
 .film--ready .film__poster { opacity: 0; transition: opacity 0.5s ease; }
 .film__video::-webkit-media-controls { display: none !important; }
 
-/* legibility scrim — strongest where the copy sits */
+/* legibility scrim — reduced to let warmth show through */
 .film__scrim {
   position: absolute;
   inset: 0;
   pointer-events: none;
   background:
-    linear-gradient(to right, rgb(0 0 0 / 62%) 0%, rgb(0 0 0 / 34%) 38%, rgb(0 0 0 / 0%) 68%),
-    linear-gradient(to top, rgb(0 0 0 / 55%) 0%, rgb(0 0 0 / 0%) 45%);
+    linear-gradient(to right, rgb(0 0 0 / 32%) 0%, rgb(0 0 0 / 14%) 38%, rgb(0 0 0 / 0%) 68%),
+    linear-gradient(to top, rgb(0 0 0 / 28%) 0%, rgb(0 0 0 / 0%) 45%);
 }
 
 /* --- copy --- */
 .film__content { grid-area: 1 / 1; position: relative; display: grid; align-items: center; }
 .film__copy { max-width: 44rem; padding-block: clamp(2.5rem, 6vw, 4rem); }
 .film__copy .eyebrow { color: var(--accent-graphic); }
-.film__copy h1 { font-family: var(--display); color: #fff; margin-bottom: 1rem; text-shadow: 0 2px 30px rgb(0 0 0 / 45%); }
-.film__copy .lede { color: #ddd9d1; max-width: 44ch; }
+.film__copy h1 { font-family: var(--display); color: #fff; margin-bottom: 1rem; text-shadow: 0 4px 24px rgb(0 0 0 / 32%); }
+.film__copy .lede { color: #faf8f3; max-width: 44ch; }
 
 .film__captions { list-style: none; margin: 1.6rem 0 0; padding: 0; display: grid; gap: 0.6rem; }
 .film__caption {
   position: relative;
   padding-left: 1.6rem;
-  color: #e6e2da;
+  color: #faf8f3;
   font-size: 1.02rem;
 }
 .film__caption::before {
@@ -278,9 +278,9 @@ a { color: inherit; }
   background: var(--accent-graphic);
 }
 .film__caption .src {
-  background: rgb(255 255 255 / 10%);
-  border-color: rgb(255 255 255 / 20%);
-  color: #cfd6e4;
+  background: rgb(255 255 255 / 12%);
+  border-color: rgb(255 255 255 / 28%);
+  color: #faf8f3;
 }
 
 .film .actions { margin-top: 1.9rem; }
@@ -353,19 +353,19 @@ a { color: inherit; }
   text-align: center;
 }
 
-/* soft directional falloff instead of an opaque panel */
+/* soft directional falloff instead of an opaque panel — reduced opacity lets warmth show through */
 .film--on .chapter::before {
   content: "";
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: linear-gradient(to right, rgb(0 0 0 / 88%) 0%, rgb(0 0 0 / 52%) 38%, rgb(0 0 0 / 0%) 68%);
+  background: linear-gradient(to right, rgb(0 0 0 / 56%) 0%, rgb(0 0 0 / 28%) 38%, rgb(0 0 0 / 0%) 68%);
 }
 .film--on .chapter--right::before {
-  background: linear-gradient(to left, rgb(0 0 0 / 88%) 0%, rgb(0 0 0 / 52%) 38%, rgb(0 0 0 / 0%) 68%);
+  background: linear-gradient(to left, rgb(0 0 0 / 56%) 0%, rgb(0 0 0 / 28%) 38%, rgb(0 0 0 / 0%) 68%);
 }
 .film--on .chapter--bottom::before {
-  background: linear-gradient(to top, rgb(0 0 0 / 82%) 0%, rgb(0 0 0 / 34%) 34%, rgb(0 0 0 / 0%) 62%);
+  background: linear-gradient(to top, rgb(0 0 0 / 52%) 0%, rgb(0 0 0 / 18%) 34%, rgb(0 0 0 / 0%) 62%);
 }
 .chapter__inner > * { position: relative; }
 
@@ -800,6 +800,7 @@ th { font-weight: 650; color: var(--ink); background: var(--surface-2); }
 tbody tr:last-child td { border-bottom: 0; }
 
 /* ---------- FAQ ---------- */
+#faq { background: var(--paper); }
 .faq { border-top: 1px solid var(--line); }
 .faq details { border-bottom: 1px solid var(--line); }
 .faq summary {
@@ -808,6 +809,7 @@ tbody tr:last-child td { border-bottom: 0; }
   font-weight: 640;
   position: relative;
   list-style: none;
+  color: var(--ink);
 }
 .faq summary::-webkit-details-marker { display: none; }
 .faq summary::after {
@@ -817,7 +819,7 @@ tbody tr:last-child td { border-bottom: 0; }
   transform: translateY(-50%);
   font-size: 1.4rem;
   font-weight: 400;
-  color: var(--muted);
+  color: var(--accent);
   line-height: 1;
 }
 .faq details[open] summary::after { content: "\2212"; }
@@ -995,10 +997,9 @@ caption { color: #5f5c57; }
 .film--on .film__fadeout { opacity: calc((var(--p) - 0.978) * 46); }
 
 /* ---------- what size fits you ---------- */
-/* First static section. Emerges from the same black the film ends in, with a
-   deliberately short lead-in so there is never an empty black screen. */
+/* Brightest, most inviting section. Emerges from film fade through charcoal. */
 .sizer {
-  background: #000;
+  background: linear-gradient(180deg, #20242A 0%, #F3EFE7 40%, #FAF8F3 100%);
   padding-top: clamp(2.5rem, 5vw, 4.5rem);
 }
 .sizer .section-head { margin-bottom: clamp(2rem, 4vw, 3rem); }
@@ -1022,7 +1023,7 @@ caption { color: #5f5c57; }
   font-size: clamp(2.6rem, 1.8rem + 3vw, 4rem);
   font-weight: 620;
   letter-spacing: -0.04em;
-  color: #fff;
+  color: var(--accent);
   margin: 0.5rem 0 1.4rem;
   font-variant-numeric: tabular-nums;
 }
@@ -1098,9 +1099,12 @@ caption { color: #5f5c57; }
 }
 
 /* ---------- product moments ---------- */
-/* Real product photography carries these. One headline, one line, one spec. */
+/* Real product photography carries these. One headline, one line, one spec.
+   Alternating warm/cream/light backgrounds create visual rhythm. */
 
-.shot { position: relative; background: #000; }
+.shot { position: relative; background: var(--paper); }
+.shot:nth-of-type(odd) { background: var(--surface); }
+.shot:nth-of-type(even) { background: var(--paper); }
 
 /* full-bleed image with copy laid over its lower half */
 .shot--full { min-height: 78vh; display: grid; }
@@ -1110,13 +1114,14 @@ caption { color: #5f5c57; }
   height: 100%;
   min-height: 78vh;
   object-fit: cover;
+  filter: brightness(1.04) saturate(1.05);
 }
 .shot--full .shot__copy {
   grid-area: 1 / 1;
   align-self: end;
   z-index: 1;
   padding-block: clamp(2.5rem, 7vw, 5rem);
-  background: linear-gradient(to top, rgb(0 0 0 / 85%) 0%, rgb(0 0 0 / 0%) 100%);
+  background: linear-gradient(to top, rgb(32 36 42 / 78%) 0%, rgb(32 36 42 / 0%) 100%);
   margin-inline: auto;
   width: 100%;
 }
@@ -1126,8 +1131,9 @@ caption { color: #5f5c57; }
   line-height: 1;
   margin-bottom: 0.5rem;
   max-width: 14ch;
+  color: #fff;
 }
-.shot--full p { color: var(--muted); font-size: clamp(1rem, 0.95rem + 0.35vw, 1.2rem); line-height: 1.5; margin: 0; }
+.shot--full p { color: #e8e3d9; font-size: clamp(1rem, 0.95rem + 0.35vw, 1.2rem); line-height: 1.5; margin: 0; }
 
 /* image beside text, image gets the larger share */
 .shot--split {
@@ -1146,12 +1152,14 @@ caption { color: #5f5c57; }
   width: 100%;
   border-radius: 18px;
   display: block;
+  filter: brightness(1.05) saturate(1.03);
 }
 .shot__text h2 {
   font-size: clamp(2.2rem, 1.3rem + 3.4vw, 4rem);
   line-height: 1;
   letter-spacing: -0.045em;
   margin-bottom: 1.1rem;
+  color: var(--ink);
 }
 .shot__sub {
   color: var(--muted);
@@ -1177,14 +1185,15 @@ caption { color: #5f5c57; }
 }
 .shot__spec i { font-style: normal; color: var(--muted); font-size: 0.95rem; }
 
-/* the four parts, isolated on black */
-.shot--parts { padding-block: clamp(4rem, 9vw, 8rem); }
+/* the four parts, isolated on alternating backgrounds */
+.shot--parts { padding-block: clamp(4rem, 9vw, 8rem); background: var(--surface-2); }
 .shot__head { text-align: center; margin-bottom: clamp(2.5rem, 5vw, 4rem); }
 .shot__head h2 {
   font-size: clamp(2.2rem, 1.3rem + 3.4vw, 4rem);
   line-height: 1;
   letter-spacing: -0.045em;
   margin-bottom: 0.9rem;
+  color: var(--ink);
 }
 .shot__head .shot__sub { margin-inline: auto; }
 .parts {
@@ -1203,6 +1212,7 @@ caption { color: #5f5c57; }
   object-fit: cover;
   border-radius: 14px;
   background: var(--surface);
+  filter: brightness(1.04) saturate(1.02);
 }
 .parts__item b {
   display: block;
@@ -1351,7 +1361,7 @@ h1 em, h2 em, .chapter__title em { font-style: normal; color: var(--accent); }
 }
 
 /* ---------- sticky how-it-works ---------- */
-.steps { background: #000; }
+.steps { background: var(--paper); }
 .steps__stage { padding-block: clamp(3.5rem, 7vw, 6rem); }
 .steps--on .steps__track { height: 300vh; }
 .steps--on .steps__stage {
@@ -1362,6 +1372,7 @@ h1 em, h2 em, .chapter__title em { font-style: normal; color: var(--accent); }
 .steps__head h2 {
   font-size: clamp(2rem, 1.2rem + 2.8vw, 3.4rem);
   line-height: 1.03; letter-spacing: -0.04em; margin: 0;
+  color: var(--ink);
 }
 .steps__list {
   list-style: none; margin: 0; padding: 0;
@@ -1381,13 +1392,14 @@ h1 em, h2 em, .chapter__title em { font-style: normal; color: var(--accent); }
 .step img, .step__glyph {
   width: 100%; aspect-ratio: 4 / 3; object-fit: cover;
   border-radius: 12px; background: var(--surface); display: block;
+  filter: brightness(1.03) saturate(1.02);
 }
-.step__glyph { display: grid; place-content: center; gap: 6px; border: 1px solid var(--line); }
+.step__glyph { display: grid; place-content: center; gap: 6px; border: 1px solid var(--line); filter: none; }
 .step__glyph i { display: block; width: 46px; height: 2px; background: var(--accent); opacity: 0.85; }
 .step__glyph i:nth-child(2) { width: 30px; }
 .step b {
   display: block; margin-top: 0.85rem; font-family: var(--display);
-  font-size: 1.05rem; font-weight: 600; letter-spacing: -0.02em; color: #fff;
+  font-size: 1.05rem; font-weight: 600; letter-spacing: -0.02em; color: var(--ink);
 }
 .step__d { display: block; margin-top: 0.2rem; color: var(--muted); font-size: 0.9rem; line-height: 1.5; }
 
@@ -1422,12 +1434,13 @@ h1 em, h2 em, .chapter__title em { font-style: normal; color: var(--accent); }
 .kit__parts b { display: block; margin-top: 0.55rem; font-size: 0.86rem; color: var(--muted); font-weight: 520; text-align: center; }
 
 /* ---------- shop ---------- */
+.shop { background: var(--surface); }
 .shop__form { display: grid; gap: clamp(1.5rem, 3vw, 2.25rem); max-width: 46rem; margin-inline: auto; }
 .shop__form fieldset { border: 0; margin: 0; padding: 0; }
 .shop__form legend { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.9rem; padding: 0; }
 .shop__summary { text-align: center; padding-top: clamp(1rem, 2vw, 1.5rem); border-top: 1px solid var(--line); }
-.shop__line { font-family: var(--display); font-size: clamp(1.3rem, 1rem + 1.2vw, 1.9rem); font-weight: 600; letter-spacing: -0.03em; color: #fff; margin: 0 0 1.25rem; }
-.shop__note { margin: 1rem 0 0; font-size: 0.78rem; color: #6f6b64; }
+.shop__line { font-family: var(--display); font-size: clamp(1.3rem, 1rem + 1.2vw, 1.9rem); font-weight: 600; letter-spacing: -0.03em; color: var(--ink); margin: 0 0 1.25rem; }
+.shop__note { margin: 1rem 0 0; font-size: 0.78rem; color: var(--muted); }
 
 /* ---------- tighter static sections ---------- */
 .section { padding-block: clamp(3.75rem, 5.5vw, 5.75rem); }
@@ -1493,7 +1506,7 @@ h1 em, h2 em, .chapter__title em { font-style: normal; color: var(--accent); }
 .steps__branch a:hover { border-bottom-color: var(--accent); }
 
 /* ---- 5. calculator fits one view ---- */
-.sizer { padding-block: clamp(2.5rem, 3.5vw, 3.5rem); }
+.sizer { padding-block: clamp(2.5rem, 3.5vw, 3.5rem); background: linear-gradient(180deg, #20242A 0%, #F3EFE7 40%, #FAF8F3 100%); }
 .sizer .section-head { margin-bottom: clamp(1rem, 2vw, 1.5rem); }
 .sizer .section-head h2 { font-size: clamp(1.9rem, 1.2rem + 2.2vw, 2.9rem); }
 .sizer .section-head .lede { font-size: 1rem; }
@@ -1774,7 +1787,7 @@ h1 em, h2 em, .chapter__title em { font-style: normal; color: var(--accent); }
 
 /* ===== premium calculator section ===== */
 #sizer {
-  background: #0a0a0c;
+  background: linear-gradient(180deg, #20242A 0%, #F3EFE7 40%, #FAF8F3 100%);
   padding-block: clamp(3rem, 6vw, 5.5rem);
   position: relative;
 }
@@ -1796,12 +1809,12 @@ h1 em, h2 em, .chapter__title em { font-style: normal; color: var(--accent); }
   max-width: 950px;
   margin-inline: auto;
   padding: clamp(2.5rem, 5vw, 3.5rem);
-  background: #0f0f13;
-  border: 1px solid rgba(251, 172, 50, 0.25);
+  background: var(--surface);
+  border: 1px solid var(--line);
   border-radius: 20px;
-  box-shadow: 
-    inset 0 0 40px rgba(251, 172, 50, 0.06),
-    0 0 40px rgba(251, 172, 50, 0.1);
+  box-shadow:
+    inset 0 0 40px rgba(251, 172, 50, 0.04),
+    0 0 40px rgba(251, 172, 50, 0.08);
 }
 
 .sizer__head {
@@ -1814,6 +1827,7 @@ h1 em, h2 em, .chapter__title em { font-style: normal; color: var(--accent); }
   line-height: 1.05;
   letter-spacing: -0.045em;
   margin-bottom: 1rem;
+  color: var(--ink);
 }
 
 .sizer__subhead {
@@ -1844,7 +1858,7 @@ h1 em, h2 em, .chapter__title em { font-style: normal; color: var(--accent); }
   font-size: clamp(3.2rem, 2rem + 4vw, 4.8rem);
   font-weight: 700;
   letter-spacing: -0.05em;
-  color: #fff;
+  color: var(--accent);
   margin-bottom: 1.5rem;
   line-height: 1;
 }
@@ -1919,8 +1933,8 @@ h1 em, h2 em, .chapter__title em { font-style: normal; color: var(--accent); }
 }
 
 .sizer__result-card {
-  background: rgba(251, 172, 50, 0.05);
-  border: 1px solid rgba(251, 172, 50, 0.2);
+  background: var(--accent-wash);
+  border: 1px solid rgba(251, 172, 50, 0.25);
   border-radius: 16px;
   padding: clamp(1.5rem, 3vw, 2.25rem);
   text-align: center;
@@ -1971,7 +1985,7 @@ h1 em, h2 em, .chapter__title em { font-style: normal; color: var(--accent); }
   font-family: var(--display);
   font-size: clamp(1.25rem, 0.95rem + 1vw, 1.8rem);
   font-weight: 620;
-  color: #fff;
+  color: var(--ink);
   font-variant-numeric: tabular-nums;
 }
 
