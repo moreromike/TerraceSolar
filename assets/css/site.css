@@ -2083,7 +2083,7 @@ h1 em, h2 em, .chapter__title em { font-style: normal; color: var(--accent); }
   color: var(--ink);
 }
 .flowline__node--panels,
-.flowline__node--hedy,
+.flowline__node--inverter,
 .flowline__node--home {
   background: var(--accent-wash);
   border-color: rgba(251, 172, 50, 0.35);

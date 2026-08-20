@@ -188,27 +188,28 @@
             <li class="step" data-step-i="0">
               <span class="step__n">01</span>
               <img src="assets/img/panels-outdoor.jpg" width="1782" height="1189" loading="lazy" decoding="async"
-                   alt="Semi-flexible solar panels on low stands outdoors.">
+                   alt="Semi-flexible Terrace Solar panels on low stands outdoors.">
               <b>Panels</b>
               <span class="step__d">Make electricity from sunlight.</span>
             </li>
             <li class="step" data-step-i="1">
               <span class="step__n">02</span>
-              <img src="assets/img/inverter-hedy.jpg" width="380" height="320" loading="lazy" decoding="async"
-                   alt="The CraftStrom Hedy microinverter.">
-              <b>Hedy</b>
-              <span class="step__d">Turns it into power your home can use.</span>
+              <img src="assets/img/microinverter-angle.jpg" width="933" height="531" loading="lazy" decoding="async"
+                   alt="CraftStrom microinverter.">
+              <b>Microinverter</b>
+              <span class="step__d">Converts solar power into electricity your home can use.</span>
             </li>
             <li class="step" data-step-i="2">
               <span class="step__n">03</span>
-              <div class="step__glyph" aria-hidden="true"><b>Cable</b><i></i><b>Outlet</b></div>
+              <img src="assets/img/outlet-outdoor.jpg" width="934" height="596" loading="lazy" decoding="async"
+                   alt="Cable connected to a standard outdoor receptacle.">
               <b>Cable + outlet</b>
               <span class="step__d">Connects to your existing wiring.</span>
             </li>
             <li class="step" data-step-i="3">
               <span class="step__n">04</span>
               <img src="assets/img/power-meter.jpg" width="4096" height="2730" loading="lazy" decoding="async"
-                   alt="The power meter with two split-core current clamps.">
+                   alt="Power meter and current sensors.">
               <b>Power meter</b>
               <span class="step__d">Matches production to what your home is using.</span>
             </li>
@@ -223,7 +224,7 @@
     <div class="spot__inner">
       <div class="spot__media">
         <img src="assets/img/panels-outdoor.jpg" width="1782" height="1189" loading="lazy" decoding="async"
-             alt="Thin semi-flexible solar panels resting on low stands on a lawn.">
+             alt="Semi-flexible Terrace Solar panel resting on low stands on a lawn.">
       </div>
       <div class="spot__text">
         <p class="eyebrow">Panels</p>
@@ -236,17 +237,19 @@
     </div>
   </section>
 
-  <!-- ===================== SPOTLIGHT: HEDY ===================== -->
-  <section class="section spot spot--reverse" id="hedy" aria-labelledby="sp-hedy">
+  <!-- ===================== SPOTLIGHT: MICROINVERTER ===================== -->
+  <!-- Internal model name "Hedy" is kept in products.json / SOURCE-MAP.md for
+       traceability; customer-facing copy uses "microinverter" throughout. -->
+  <section class="section spot spot--reverse" id="microinverter" aria-labelledby="sp-hedy">
     <div class="spot__inner">
       <div class="spot__media spot__media--product">
-        <img src="assets/img/inverter-hedy.jpg" width="380" height="320" loading="lazy" decoding="async"
-             alt="The CraftStrom Hedy microinverter.">
+        <img src="assets/img/microinverter-angle.jpg" width="933" height="531" loading="lazy" decoding="async"
+             alt="CraftStrom microinverter.">
       </div>
       <div class="spot__text">
-        <p class="eyebrow">Hedy</p>
+        <p class="eyebrow">Microinverter</p>
         <h2 id="sp-hedy">Small box.<br><em>Important job.</em></h2>
-        <p class="spot__sub">Hedy turns the panel output into AC power your home can actually use.</p>
+        <p class="spot__sub">It converts solar power into electricity your home can use.</p>
         <div class="specrow">
           <div><b>400 W</b><i>per microinverter</i></div>
         </div>
@@ -259,7 +262,7 @@
     <div class="spot__inner">
       <div class="spot__media">
         <img src="assets/img/battery-home.jpg" width="1920" height="1080" loading="lazy" decoding="async"
-             alt="The battery unit standing on a wooden floor in a living room.">
+             alt="Terrace Solar battery storage unit standing on a wooden floor in a living room.">
       </div>
       <div class="spot__text">
         <p class="eyebrow">Storage &mdash; optional</p>
@@ -282,14 +285,14 @@
       <div class="section-head">
         <p class="eyebrow">Connection</p>
         <h2 id="sp-conn">A few connections.<br><em>That&rsquo;s it.</em></h2>
-        <p class="lede">Panels make the power. Hedy converts it. The system connects to your home&rsquo;s existing wiring.</p>
+        <p class="lede">Panels make the power. The microinverter converts it. The system connects to your home&rsquo;s existing wiring.</p>
       </div>
 
-      <div class="flowline" role="img" aria-label="Panels connect to Hedy, then a cable, then a standard outlet, then your home. Storage is an optional branch that charges from Hedy and can power the home later.">
+      <div class="flowline" role="img" aria-label="Panels connect to the microinverter, then a cable, then a standard outlet, then your home. Storage is an optional branch that charges from the microinverter and can power the home later.">
         <ol class="flowline__main">
           <li class="flowline__node flowline__node--panels"><span>Panels</span></li>
           <li class="flowline__conn" aria-hidden="true"></li>
-          <li class="flowline__node flowline__node--hedy"><span>Hedy</span></li>
+          <li class="flowline__node flowline__node--inverter"><span>Microinverter</span></li>
           <li class="flowline__conn" aria-hidden="true"></li>
           <li class="flowline__node"><span>Cable</span></li>
           <li class="flowline__conn" aria-hidden="true"></li>
@@ -309,17 +312,17 @@
         <ol class="modstep__list">
           <li class="modstep__item">
             <b>400 W</b>
-            <span>2 &times; 200 W panels<br>1 &times; Hedy</span>
+            <span>2 &times; 200 W panels<br>1 &times; microinverter</span>
           </li>
           <li class="modstep__arrow" aria-hidden="true"></li>
           <li class="modstep__item">
             <b>800 W</b>
-            <span>4 &times; 200 W panels<br>2 &times; Hedy</span>
+            <span>4 &times; 200 W panels<br>2 &times; microinverters</span>
           </li>
           <li class="modstep__arrow" aria-hidden="true"></li>
           <li class="modstep__item">
             <b>1,200 W</b>
-            <span>6 &times; 200 W panels<br>3 &times; Hedy</span>
+            <span>6 &times; 200 W panels<br>3 &times; microinverters</span>
           </li>
         </ol>
         <p class="modstep__note">Continues in the same 400 W steps, up to 2,000 W.</p>
@@ -332,7 +335,7 @@
     <div class="spot__inner">
       <div class="spot__media spot__media--product">
         <img src="assets/img/power-meter.jpg" width="4096" height="2730" loading="lazy" decoding="async"
-             alt="The power meter module with a small display and two split-core current clamps.">
+             alt="Power meter and current sensors.">
       </div>
       <div class="spot__text">
         <p class="eyebrow">Power meter</p>
@@ -605,7 +608,7 @@
       </div>
       <div class="faq">
         <details><summary>Can I start with a smaller system?</summary>
-          <div><p>Yes. The smallest system is 400 W: two panels and one Hedy microinverter.</p></div></details>
+          <div><p>Yes. The smallest system is 400 W: two panels and one microinverter.</p></div></details>
         <details><summary>Can I add more later?</summary>
           <div><p>Yes. Systems grow in 400 W steps. Storage grows by adding units, up to 4 kWh per set.</p></div></details>
         <details><summary>Do I need a battery?</summary>
@@ -613,7 +616,7 @@
         <details><summary>Where can the panels go?</summary>
           <div><p>Balconies, terraces, fences, patios and gardens. The panels are semi-flexible and sit on stands rather than being bolted to a roof.</p></div></details>
         <details><summary>How does it connect to my home?</summary>
-          <div><p>Panels connect to a Hedy microinverter, and one AC cable reaches a standard receptacle on your existing wiring. A power meter helps match production to what your home is using.</p></div></details>
+          <div><p>Panels connect to a microinverter, and one AC cable reaches a standard receptacle on your existing wiring. A power meter helps match production to what your home is using.</p></div></details>
         <details><summary>Can I move the system?</summary>
           <div><p>The panels sit on stands and the battery plugs into an outlet, so components are not permanently fixed to the building. Moving a system is a question for your installer and your local rules.</p></div></details>
         <details><summary>What rules or approvals may apply?</summary>
