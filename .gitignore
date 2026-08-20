@@ -6,6 +6,7 @@ node_modules/
 Thumbs.db
 assets/video/*.mp4
 !assets/video/hero.mp4
+!assets/video/hero-scrub-mobile.mp4
 assets/video/*.webm
 assets/video/*.mov
 assets/video/*.tmp
