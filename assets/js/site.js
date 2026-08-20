@@ -79,14 +79,47 @@ var TerraceFilm = (function () {
      data-film-src / data-film-src-mobile at different files in index.html -
      no JS change needed. If a mobile file doesn't exist yet, this falls
      back to the desktop master automatically - same asset, just recomposed
-     on screen. Both sources must share the same timeline/timestamps. */
+     on screen. Both sources must share the same timeline/timestamps.
+
+     PERFORMANCE NOTE: the shipped master (hero.mp4) has a sparse ~66-frame
+     GOP, which is fine for desktop but makes mobile seeking heavier than it
+     needs to be. Once a dense-keyframe mobile encode exists (see
+     tools/README or the project notes for the ffmpeg recipe - roughly
+     960x540, same 24fps/duration, -g 6 -keyint_min 6 -sc_threshold 0),
+     drop it at assets/video/hero-scrub-mobile.mp4 and add
+     data-film-src-mobile="assets/video/hero-scrub-mobile.mp4" to the
+     [data-film] element below. Nothing else has to change - this file
+     already prefers that attribute over the desktop master whenever it's
+     present, and falls back cleanly whenever it isn't. */
   var filmDataset = root.dataset || {};
   var DESKTOP_SRC = filmDataset.filmSrc || 'assets/video/hero.mp4';
   var MOBILE_SRC = filmDataset.filmSrcMobile || DESKTOP_SRC;
   function currentVideoSrc() { return mobileQuery.matches ? MOBILE_SRC : DESKTOP_SRC; }
 
+  /* How fast displayed time eases toward the scroll-derived target. Kept
+     separate per breakpoint (item 9): touch scrubbing benefits from a
+     snappier constant since the seek-delta gating below already prevents
+     it from spamming seeks, so a faster ease doesn't cost extra decodes. */
   var DAMPING = 0.16;
+  var DAMPING_MOBILE = 0.22;
+  function currentDamping() { return mobileQuery.matches ? DAMPING_MOBILE : DAMPING; }
+
+  /* SETTLE is the tight epsilon used only to decide whether the easing loop
+     itself has converged, and to guarantee an exact write once a hold has
+     snapped to its precise timestamp - it must stay sub-frame (a 24fps frame
+     is ~0.0417s) so holds land on the exact configured frame.
+
+     MIN_SEEK_DELTA is the separate, coarser threshold that gates actual
+     video.currentTime writes *while actively scrubbing* (not holding). Every
+     currentTime write forces a decode, and on mobile that decode is the
+     expensive part - so during a scrub we skip writes that would land on an
+     effectively identical frame. Sized to roughly one to one and a half
+     frames at 24fps, per item 8. Mobile gets a hair more slack since its
+     decode cost per seek is higher. */
   var SETTLE = 0.004;
+  var MIN_SEEK_DELTA = 0.05;
+  var MIN_SEEK_DELTA_MOBILE = 0.06;
+  function currentSeekDelta() { return mobileQuery.matches ? MIN_SEEK_DELTA_MOBILE : MIN_SEEK_DELTA; }
 
   /* Known duration of the shipped master, used only to reserve the track's
      height before video metadata has loaded, so the page never jumps once
@@ -171,6 +204,7 @@ var TerraceFilm = (function () {
   var progress = 0;
   var shownTime = 0;
   var targetTime = 0;
+  var lastSeekDelta = 0;
   var duration = 0;
   var lastIndex = -1;
   var loadError = null;
@@ -228,15 +262,20 @@ var TerraceFilm = (function () {
     track.style.height = Math.round(totalPx + window.innerHeight) + 'px';
   }
 
-  function trackScroll() {
+  /* Both scroll position (x, in px along the track) and overall progress
+     (0-1) are derived from the same single getBoundingClientRect() read.
+     Only measure() touches layout each frame - resolve()/progressFrom() are
+     pure math against numbers already in hand, so a frame never forces more
+     than one reflow (item 10). Static geometry (innerHeight) is re-read here
+     too since it's cheap and can change on rotation, but nothing is written
+     to the DOM before this read, so there's no read/write layout thrash. */
+  function measure() {
     var rect = track.getBoundingClientRect();
     var travel = rect.height - window.innerHeight;
-    if (travel <= 0) return 0;
-    return Math.max(0, Math.min(travel, -rect.top));
+    return { top: rect.top, travel: travel };
   }
 
-  function resolve() {
-    var x = trackScroll();
+  function resolve(x) {
     var acc = 0;
     for (var i = 0; i < timeline.length; i++) {
       var seg = timeline[i];
@@ -250,12 +289,6 @@ var TerraceFilm = (function () {
       acc += seg.px;
     }
     return { time: 0, chapter: null, cp: 0 };
-  }
-
-  function computeProgress() {
-    var rect = track.getBoundingClientRect();
-    var travel = rect.height - window.innerHeight;
-    return travel > 0 ? clamp01(-rect.top / travel) : 0;
   }
 
   function setCaption(p) {
@@ -308,13 +341,15 @@ var TerraceFilm = (function () {
        signal, but some embedded viewports never dispatch them. */
     if (!heightOkQuery.matches || reducedMotionWins()) { disable(); return; }
 
-    progress = computeProgress();
+    var m = measure();
+    progress = m.travel > 0 ? clamp01(-m.top / m.travel) : 0;
+    var x = m.travel > 0 ? Math.max(0, Math.min(m.travel, -m.top)) : 0;
     root.style.setProperty('--p', progress.toFixed(4));
     setCaption(progress);
 
     if (duration > 0) {
       if (!timeline.length) buildTimeline();
-      var r = resolve();
+      var r = resolve(x);
       targetTime = r.time;
       holding = !!r.chapter;
       setChapter(r.chapter, r.cp);
@@ -323,12 +358,18 @@ var TerraceFilm = (function () {
       var introOpacity = lead > 0 ? clamp01(1 - targetTime / lead) : 0;
       if (intro) root.style.setProperty('--intro', introOpacity.toFixed(3));
 
-      shownTime += (targetTime - shownTime) * DAMPING;
+      shownTime += (targetTime - shownTime) * currentDamping();
       if (holding && Math.abs(targetTime - shownTime) < 0.02) shownTime = targetTime;
       if (progress <= 0) { shownTime = 0; }
       if (progress >= 1) { shownTime = duration; }
 
-      if (!video.seeking && Math.abs(video.currentTime - shownTime) > SETTLE) {
+      /* Holds must land on their exact configured frame (SETTLE, sub-frame);
+         active scrubbing tolerates a roughly frame-sized slop (MIN_SEEK_DELTA)
+         so a fast swipe doesn't force a decode for every intermediate pixel
+         of scroll - see item 8/9 notes above DAMPING. */
+      lastSeekDelta = Math.abs(video.currentTime - shownTime);
+      var seekThreshold = holding ? SETTLE : currentSeekDelta();
+      if (!video.seeking && lastSeekDelta > seekThreshold) {
         try { video.currentTime = shownTime; } catch (e) { /* not seekable yet */ }
       }
       if (Math.abs(targetTime - shownTime) > SETTLE) { schedule(); }
@@ -382,12 +423,15 @@ var TerraceFilm = (function () {
   /* never plays on its own */
   video.addEventListener('play', function () { video.pause(); });
 
-  /* Chrome defers media loading in background tabs - retry on return */
+  /* Chrome defers media loading in background tabs - retry on return.
+     Also true on iOS Safari after an app-switch. Either way, once visible
+     again a fresh schedule() re-measures the real current scroll position
+     and reconciles toward it - there's no queue of stale seeks to replay,
+     since targetTime is always recomputed from live scroll, never queued. */
   document.addEventListener('visibilitychange', function () {
-    if (document.visibilityState === 'visible' && enabled && video.readyState === 0) {
-      video.load();
-      schedule();
-    }
+    if (document.visibilityState !== 'visible' || !enabled) return;
+    if (video.readyState === 0) { video.load(); }
+    schedule();
   });
 
   function enable() {
@@ -478,10 +522,14 @@ var TerraceFilm = (function () {
       'readyState     ' + v.readyState + '    networkState ' + v.networkState,
       'duration       ' + (duration ? duration.toFixed(3) + 's' : '-'),
       'buffered       ' + (v.buffered.length ? v.buffered.end(0).toFixed(1) + 's' : 'none'),
+      'scrub mode     ' + (mobileQuery.matches ? 'mobile' : 'desktop') +
+        '  (damping ' + currentDamping().toFixed(2) +
+        ', seek-delta ' + currentSeekDelta().toFixed(3) + 's)',
       'progress       ' + progress.toFixed(4),
       'target time    ' + targetTime.toFixed(3) + 's',
       'currentTime    ' + (v.currentTime || 0).toFixed(3) + 's' +
         (v.seeking ? '  (seeking)' : ''),
+      'seek delta     ' + lastSeekDelta.toFixed(4) + 's',
       'track height   ' + Math.round(track.getBoundingClientRect().height) + 'px',
       'mode           ' + (holding ? 'HOLD - ' + activeChapter : 'scrub'),
       'chapter        ' + (activeChapter || '-'),
@@ -552,7 +600,11 @@ var TerraceFilm = (function () {
     heightOkQuery: heightOkQuery, motionQuery: motionQuery, mobileQuery: mobileQuery,
     isEnabled: function () { return enabled; },
     isForced: function () { return forceMotion; },
-    getProgress: function () { return enabled ? progress : computeProgress(); },
+    getProgress: function () {
+      if (enabled) return progress;
+      var m = measure();
+      return m.travel > 0 ? clamp01(-m.top / m.travel) : 0;
+    },
     getTargetTime: function () { return targetTime; },
     getDuration: function () { return duration; },
     getIndex: function () { return lastIndex; },
