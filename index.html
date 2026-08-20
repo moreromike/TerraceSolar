@@ -187,31 +187,48 @@
           <ol class="steps__list">
             <li class="step" data-step-i="0">
               <span class="step__n">01</span>
-              <img src="assets/img/panels-outdoor.jpg" width="1782" height="1189" loading="lazy" decoding="async"
-                   alt="Semi-flexible Terrace Solar panels on low stands outdoors.">
+              <div class="step__figure">
+                <img src="assets/img/overview-panels.jpg" width="1782" height="750" loading="lazy" decoding="async"
+                     alt="Semi-flexible Terrace Solar panels on low stands outdoors.">
+              </div>
               <b>Panels</b>
               <span class="step__d">Make electricity from sunlight.</span>
             </li>
             <li class="step" data-step-i="1">
               <span class="step__n">02</span>
-              <img src="assets/img/microinverter-angle.jpg" width="933" height="531" loading="lazy" decoding="async"
-                   alt="CraftStrom microinverter.">
+              <div class="step__figure">
+                <img src="assets/img/microinverter-angle.jpg" width="933" height="531" loading="lazy" decoding="async"
+                     alt="CraftStrom microinverter.">
+              </div>
               <b>Microinverter</b>
               <span class="step__d">Converts solar power into electricity your home can use.</span>
             </li>
             <li class="step" data-step-i="2">
               <span class="step__n">03</span>
-              <img src="assets/img/outlet-outdoor.jpg" width="934" height="596" loading="lazy" decoding="async"
-                   alt="Cable connected to a standard outdoor receptacle.">
+              <div class="step__figure">
+                <img src="assets/img/overview-outlet.jpg" width="784" height="596" loading="lazy" decoding="async"
+                     alt="Cable connected to a standard outdoor receptacle.">
+              </div>
               <b>Cable + outlet</b>
               <span class="step__d">Connects to your existing wiring.</span>
             </li>
             <li class="step" data-step-i="3">
               <span class="step__n">04</span>
-              <img src="assets/img/power-meter.jpg" width="4096" height="2730" loading="lazy" decoding="async"
-                   alt="Power meter and current sensors.">
+              <div class="step__figure">
+                <img src="assets/img/power-meter.jpg" width="4096" height="2730" loading="lazy" decoding="async"
+                     alt="Power meter and current sensors.">
+              </div>
               <b>Power meter</b>
               <span class="step__d">Matches production to what your home is using.</span>
+            </li>
+            <li class="step" data-step-i="4">
+              <span class="step__n">05</span>
+              <div class="step__figure">
+                <img src="assets/img/overview-battery.jpg" width="460" height="990" loading="lazy" decoding="async"
+                     alt="Terrace Solar battery storage unit.">
+              </div>
+              <b>Battery<span class="step__badge">Optional</span></b>
+              <span class="step__d">Stores solar energy for later.</span>
             </li>
           </ol>
         </div>
@@ -326,22 +343,6 @@
           </li>
         </ol>
         <p class="modstep__note">Continues in the same 400 W steps, up to 2,000 W.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===================== SPOTLIGHT: POWER METER ===================== -->
-  <section class="section spot" id="meter" aria-labelledby="sp-meter">
-    <div class="spot__inner">
-      <div class="spot__media spot__media--product">
-        <img src="assets/img/power-meter.jpg" width="4096" height="2730" loading="lazy" decoding="async"
-             alt="Power meter and current sensors.">
-      </div>
-      <div class="spot__text">
-        <p class="eyebrow">Power meter</p>
-        <h2 id="sp-meter">Only make what<br><em>the home needs.</em></h2>
-        <p class="spot__sub">It matches solar production to what your home is using.</p>
-        <p class="spot__close">A few components. One simple connection.</p>
       </div>
     </div>
   </section>
@@ -625,42 +626,115 @@
     </div>
   </section>
 
-  <!-- ===================== SHOP ===================== -->
+  <!-- ===================== SHOP / CONFIGURATOR ===================== -->
+  <!-- Panel/microinverter counts per size are the documented 400 W kit ratio
+       (2 panels + 1 microinverter per 400 W - brochure p.8) applied across
+       the documented size ladder (400-2000 W, p.2/p.6), not invented.
+       Battery unit count = kWh selected 1:1, per products.json
+       (capacity_per_unit_kwh: 1) - not a fabricated relationship. -->
   <section class="section shop" id="shop" aria-labelledby="shop-title">
     <div class="wrap">
       <div class="section-head">
         <p class="eyebrow">Shop</p>
         <h2 id="shop-title">Build your system.</h2>
-        <p class="lede">Choose a size and whether you want storage.</p>
+        <p class="lede">Choose your solar. Add storage if you want it.</p>
       </div>
 
+      <ol class="shop__progress" data-shop-progress aria-label="Configuration steps">
+        <li class="shop__progress-step is-active" data-progress-step="1"><span class="shop__progress-n">1</span>Solar</li>
+        <li class="shop__progress-arrow" aria-hidden="true"></li>
+        <li class="shop__progress-step" data-progress-step="2"><span class="shop__progress-n">2</span>Storage</li>
+        <li class="shop__progress-arrow" aria-hidden="true"></li>
+        <li class="shop__progress-step" data-progress-step="3"><span class="shop__progress-n">3</span>Review</li>
+      </ol>
+
       <form class="shop__form" data-shop novalidate>
-        <fieldset>
-          <legend>System size</legend>
-          <div class="steps-chips">
-            <label class="step-chip"><input type="radio" name="shop-size" value="400"><span>400 W</span></label>
-            <label class="step-chip"><input type="radio" name="shop-size" value="800" checked><span>800 W</span></label>
-            <label class="step-chip"><input type="radio" name="shop-size" value="1200"><span>1200 W</span></label>
-            <label class="step-chip"><input type="radio" name="shop-size" value="1600"><span>1600 W</span></label>
-            <label class="step-chip"><input type="radio" name="shop-size" value="2000"><span>2000 W</span></label>
-          </div>
-        </fieldset>
+        <div class="shop__layout">
+          <div class="shop__steps">
 
-        <fieldset>
-          <legend>Storage &mdash; optional</legend>
-          <div class="steps-chips">
-            <label class="step-chip"><input type="radio" name="shop-batt" value="0" checked><span>None</span></label>
-            <label class="step-chip"><input type="radio" name="shop-batt" value="1"><span>1 kWh</span></label>
-            <label class="step-chip"><input type="radio" name="shop-batt" value="2"><span>2 kWh</span></label>
-            <label class="step-chip"><input type="radio" name="shop-batt" value="3"><span>3 kWh</span></label>
-            <label class="step-chip"><input type="radio" name="shop-batt" value="4"><span>4 kWh</span></label>
-          </div>
-        </fieldset>
+            <fieldset class="shop__step" data-shop-fieldset="1">
+              <legend>Step 1 &middot; Choose your solar size</legend>
+              <div class="shop__options shop__options--solar">
+                <label class="shop__option">
+                  <input type="radio" name="shop-size" value="400" data-panels="2" data-inverters="1">
+                  <span class="shop__option-card"><b class="shop__option-size">400 W</b><span class="shop__option-spec">2 panels &middot; 1 microinverter</span></span>
+                </label>
+                <label class="shop__option">
+                  <input type="radio" name="shop-size" value="800" data-panels="4" data-inverters="2" checked>
+                  <span class="shop__option-card"><b class="shop__option-size">800 W</b><span class="shop__option-spec">4 panels &middot; 2 microinverters</span></span>
+                </label>
+                <label class="shop__option">
+                  <input type="radio" name="shop-size" value="1200" data-panels="6" data-inverters="3">
+                  <span class="shop__option-card"><b class="shop__option-size">1,200 W</b><span class="shop__option-spec">6 panels &middot; 3 microinverters</span></span>
+                </label>
+                <label class="shop__option">
+                  <input type="radio" name="shop-size" value="1600" data-panels="8" data-inverters="4">
+                  <span class="shop__option-card"><b class="shop__option-size">1,600 W</b><span class="shop__option-spec">8 panels &middot; 4 microinverters</span></span>
+                </label>
+                <label class="shop__option">
+                  <input type="radio" name="shop-size" value="2000" data-panels="10" data-inverters="5">
+                  <span class="shop__option-card"><b class="shop__option-size">2,000 W</b><span class="shop__option-spec">10 panels &middot; 5 microinverters</span></span>
+                </label>
+              </div>
+            </fieldset>
 
-        <div class="shop__summary" aria-live="polite">
-          <p class="shop__line" data-shop-out>800 W system &middot; no storage</p>
-          <a class="btn btn--primary" href="mailto:hello@terracesolar.com?subject=Terrace%20Solar%20availability">Request availability</a>
-          <p class="shop__note">Pricing and availability are not published yet. This is not an offer of sale.</p>
+            <fieldset class="shop__step" data-shop-fieldset="2">
+              <legend>Step 2 &middot; Add storage <span class="step__badge">Optional</span></legend>
+              <div class="shop__storage-row">
+                <div class="shop__battery-visual">
+                  <div class="step__figure step__figure--sm">
+                    <img src="assets/img/overview-battery.jpg" width="460" height="990" loading="lazy" decoding="async" alt="Terrace Solar battery storage unit.">
+                  </div>
+                  <div class="shop__battery-units" data-battery-units aria-hidden="true"></div>
+                </div>
+                <div class="shop__options shop__options--storage">
+                  <label class="shop__option">
+                    <input type="radio" name="shop-batt" value="0" checked>
+                    <span class="shop__option-card"><b>None</b></span>
+                  </label>
+                  <label class="shop__option">
+                    <input type="radio" name="shop-batt" value="1">
+                    <span class="shop__option-card"><b>1 kWh</b><span class="shop__option-spec">1 battery unit</span></span>
+                  </label>
+                  <label class="shop__option">
+                    <input type="radio" name="shop-batt" value="2">
+                    <span class="shop__option-card"><b>2 kWh</b><span class="shop__option-spec">2 battery units</span></span>
+                  </label>
+                  <label class="shop__option">
+                    <input type="radio" name="shop-batt" value="3">
+                    <span class="shop__option-card"><b>3 kWh</b><span class="shop__option-spec">3 battery units</span></span>
+                  </label>
+                  <label class="shop__option">
+                    <input type="radio" name="shop-batt" value="4">
+                    <span class="shop__option-card"><b>4 kWh</b><span class="shop__option-spec">4 battery units</span></span>
+                  </label>
+                </div>
+              </div>
+            </fieldset>
+
+          </div>
+
+          <div class="shop__summary" aria-live="polite">
+            <p class="shop__summary-eyebrow">Your Terrace Solar system</p>
+
+            <div class="shop__summary-row"><span>Solar</span><b data-shop-out="size">800 W</b></div>
+            <div class="shop__summary-row"><span>Storage</span><b data-shop-out="storage">None</b></div>
+
+            <div class="shop__includes">
+              <p class="shop__includes-label">Includes</p>
+              <ul class="shop__thumbs">
+                <li><img src="assets/img/overview-panels.jpg" width="1782" height="750" loading="lazy" alt="Solar panels"><span data-shop-out="panelsLabel">4 panels</span></li>
+                <li><img src="assets/img/microinverter-angle.jpg" width="933" height="531" loading="lazy" alt="Microinverter"><span data-shop-out="invertersLabel">2 microinverters</span></li>
+                <li><img src="assets/img/overview-outlet.jpg" width="784" height="596" loading="lazy" alt="Cable and outlet"><span>Cable + outlet</span></li>
+                <li data-battery-thumb hidden><img src="assets/img/overview-battery.jpg" width="460" height="990" loading="lazy" alt="Battery storage"><span data-shop-out="batteryLabel">1 battery unit</span></li>
+              </ul>
+            </div>
+
+            <div class="shop__pricing"><span>Pricing</span><b>Coming soon</b></div>
+
+            <a class="btn btn--primary shop__cta" href="mailto:hello@terracesolar.com?subject=Terrace%20Solar%20availability">Check availability</a>
+            <a class="shop__help" href="#faq">Need help choosing?</a>
+          </div>
         </div>
       </form>
     </div>

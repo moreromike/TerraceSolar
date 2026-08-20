@@ -1081,21 +1081,68 @@ var SOLAR_CALCULATOR_CONFIG = {
 })();
 
 
-/* ---- shop summary line ---- */
+/* ---------------------------------------------------------------------------
+   Shop configurator - live order summary, battery-unit visual, and a
+   progress indicator that tracks which step the customer is engaging with.
+   Panel/microinverter counts per size come straight off each option's
+   data-panels/data-inverters attributes in the HTML (the documented 400 W
+   kit ratio), not computed or invented here. Battery unit count is the
+   selected kWh value directly - 1 unit = 1 kWh, per products.json.
+--------------------------------------------------------------------------- */
 (function () {
   'use strict';
   var form = document.querySelector('[data-shop]');
   if (!form) return;
-  var out = form.querySelector('[data-shop-out]');
-  if (!out) return;
+
+  var out = {};
+  [].slice.call(form.querySelectorAll('[data-shop-out]')).forEach(function (el) {
+    out[el.getAttribute('data-shop-out')] = el;
+  });
+
+  var batteryThumb = form.querySelector('[data-battery-thumb]');
+  var batteryUnits = form.querySelector('[data-battery-units]');
+  var progressSteps = [].slice.call(document.querySelectorAll('[data-shop-progress] [data-progress-step]'));
+
+  function setProgress(step) {
+    progressSteps.forEach(function (el) {
+      el.classList.toggle('is-active', el.getAttribute('data-progress-step') === String(step));
+    });
+  }
 
   function render() {
-    var size = form.querySelector('input[name="shop-size"]:checked');
-    var batt = form.querySelector('input[name="shop-batt"]:checked');
-    var kwh = batt ? parseInt(batt.value, 10) : 0;
-    out.textContent = (size ? parseInt(size.value, 10).toLocaleString() + ' W system' : '') +
-      ' · ' + (kwh ? kwh + ' kWh storage' : 'no storage');
+    var sizeInput = form.querySelector('input[name="shop-size"]:checked');
+    var battInput = form.querySelector('input[name="shop-batt"]:checked');
+    var kwh = battInput ? parseInt(battInput.value, 10) : 0;
+
+    if (sizeInput) {
+      var w = parseInt(sizeInput.value, 10);
+      var panels = parseInt(sizeInput.getAttribute('data-panels'), 10);
+      var inverters = parseInt(sizeInput.getAttribute('data-inverters'), 10);
+
+      if (out.size) out.size.textContent = w.toLocaleString() + ' W';
+      if (out.panelsLabel) out.panelsLabel.textContent = panels + (panels === 1 ? ' panel' : ' panels');
+      if (out.invertersLabel) out.invertersLabel.textContent = inverters + (inverters === 1 ? ' microinverter' : ' microinverters');
+    }
+
+    if (out.storage) out.storage.textContent = kwh ? kwh + ' kWh' : 'None';
+    if (out.batteryLabel) out.batteryLabel.textContent = kwh + (kwh === 1 ? ' battery unit' : ' battery units');
+    if (batteryThumb) batteryThumb.hidden = kwh === 0;
+
+    if (batteryUnits) {
+      batteryUnits.innerHTML = '';
+      for (var i = 0; i < kwh; i++) {
+        var dot = document.createElement('span');
+        batteryUnits.appendChild(dot);
+      }
+    }
   }
-  form.addEventListener('change', render);
+
+  form.addEventListener('change', function (e) {
+    render();
+    if (e.target.name === 'shop-size') setProgress(2);
+    else if (e.target.name === 'shop-batt') setProgress(3);
+  });
+
   render();
+  setProgress(1);
 })();

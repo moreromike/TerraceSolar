@@ -1282,36 +1282,79 @@ h1 em, h2 em, .chapter__title em { font-style: normal; color: var(--accent); }
   line-height: 1.03; letter-spacing: -0.04em; margin: 0;
   color: var(--ink);
 }
+/* five items, balanced 3-over-2, centred as one composition - flex-wrap
+   does this naturally where a rigid grid can't */
 .steps__list {
   list-style: none; margin: 0; padding: 0;
-  display: grid; gap: clamp(0.9rem, 2vw, 1.5rem);
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
+  display: flex; flex-wrap: wrap; justify-content: center;
+  gap: clamp(1.5rem, 3vw, 2.75rem) clamp(1.25rem, 2.5vw, 2rem);
 }
 .step {
   opacity: 0; transform: translateY(16px);
   transition: opacity 0.5s ease, transform 0.5s ease;
-  text-align: left;
+  text-align: center;
+  flex: 0 1 250px;
+  max-width: 260px;
+  position: relative;
 }
 .step.is-shown { opacity: 1; transform: none; }
 .step__n {
   display: block; font-family: var(--display); font-size: 0.78rem;
   font-weight: 600; letter-spacing: 0.16em; color: var(--accent); margin-bottom: 0.7rem;
 }
-/* one family: all four "how it works" items share the same stage, the same
-   object-fit, the same padding and the same negative space, whether the
-   source is a scene photo or an isolated product shot. */
-.step img, .step__glyph {
-  width: 100%; aspect-ratio: 4 / 3; object-fit: contain;
-  padding: 0.9rem;
-  border-radius: 12px; border: 1px solid var(--line); display: block;
-  background: radial-gradient(120% 100% at 50% 15%, var(--stage-2) 0%, var(--stage) 72%);
+
+/* one coordinated product family: every item sits on the same soft warm
+   glow, with the same drop shadow and the same soft-edged mask fading the
+   photo's own edges away - no bordered box, no hard photo rectangle. */
+.step__figure {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  display: grid;
+  place-items: center;
+  margin-bottom: 0.9rem;
 }
-.step__glyph { display: grid; place-content: center; gap: 6px; }
+.step__figure::before {
+  content: "";
+  position: absolute;
+  inset: -14%;
+  z-index: 0;
+  border-radius: 50%;
+  background: radial-gradient(ellipse 58% 55% at 50% 52%,
+    rgba(251, 172, 50, 0.16) 0%,
+    rgba(251, 172, 50, 0.06) 46%,
+    transparent 75%);
+  pointer-events: none;
+}
+.step__figure img {
+  position: relative;
+  z-index: 1;
+  max-width: 90%;
+  max-height: 88%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  -webkit-mask-image: radial-gradient(ellipse 60% 58% at 50% 50%, black 52%, transparent 94%);
+          mask-image: radial-gradient(ellipse 60% 58% at 50% 50%, black 52%, transparent 94%);
+  filter: drop-shadow(0 16px 18px rgba(23, 20, 15, 0.22));
+}
 .step b {
-  display: block; margin-top: 0.85rem; font-family: var(--display);
+  display: block; font-family: var(--display);
   font-size: 1.05rem; font-weight: 600; letter-spacing: -0.02em; color: var(--ink);
 }
 .step__d { display: block; margin-top: 0.2rem; color: var(--muted); font-size: 0.9rem; line-height: 1.5; }
+.step__badge {
+  display: inline-block;
+  margin-left: 0.4em;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  background: var(--accent-wash);
+  color: var(--accent);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  vertical-align: middle;
+}
 
 /* ---------- kit ---------- */
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
@@ -1343,14 +1386,143 @@ h1 em, h2 em, .chapter__title em { font-style: normal; color: var(--accent); }
 .kit__parts img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 12px; background: var(--surface); }
 .kit__parts b { display: block; margin-top: 0.55rem; font-size: 0.86rem; color: var(--muted); font-weight: 520; text-align: center; }
 
-/* ---------- shop ---------- */
+/* ---------- shop / configurator ---------- */
 .shop { background: var(--surface); }
-.shop__form { display: grid; gap: clamp(1.5rem, 3vw, 2.25rem); max-width: 46rem; margin-inline: auto; }
-.shop__form fieldset { border: 0; margin: 0; padding: 0; }
-.shop__form legend { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.9rem; padding: 0; }
-.shop__summary { text-align: center; padding-top: clamp(1rem, 2vw, 1.5rem); border-top: 1px solid var(--line); }
-.shop__line { font-family: var(--display); font-size: clamp(1.3rem, 1rem + 1.2vw, 1.9rem); font-weight: 600; letter-spacing: -0.03em; color: var(--ink); margin: 0 0 1.25rem; }
-.shop__note { margin: 1rem 0 0; font-size: 0.78rem; color: var(--muted); }
+
+/* progress: 1 Solar -> 2 Storage -> 3 Review */
+.shop__progress {
+  list-style: none; margin: 0 0 clamp(2rem, 4vw, 3rem); padding: 0;
+  display: flex; align-items: center; justify-content: center;
+  gap: 0.6rem;
+}
+.shop__progress-step {
+  display: flex; align-items: center; gap: 0.5rem;
+  font-family: var(--display); font-size: 0.88rem; font-weight: 600;
+  color: var(--muted); transition: color 0.2s ease;
+}
+.shop__progress-n {
+  display: grid; place-items: center;
+  width: 24px; height: 24px; border-radius: 50%;
+  border: 1.5px solid var(--line); background: var(--paper);
+  font-size: 0.76rem; font-weight: 700; color: var(--muted);
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+.shop__progress-step.is-active { color: var(--ink); }
+.shop__progress-step.is-active .shop__progress-n {
+  background: var(--accent); border-color: var(--accent); color: var(--accent-ink);
+}
+.shop__progress-arrow {
+  width: 20px; height: 1px; background: var(--line);
+}
+
+.shop__layout {
+  display: grid; gap: clamp(2rem, 4vw, 3rem);
+  align-items: start;
+}
+@media (min-width: 960px) {
+  .shop__layout { grid-template-columns: 1.15fr 0.85fr; }
+}
+
+.shop__steps { display: grid; gap: clamp(2rem, 4vw, 2.75rem); }
+.shop__step { border: 0; margin: 0; padding: 0; }
+.shop__step legend {
+  font-family: var(--display); font-size: 1.05rem; font-weight: 640;
+  letter-spacing: -0.015em; color: var(--ink); margin-bottom: 1rem; padding: 0;
+}
+
+/* product-option cards, not generic pills */
+.shop__options { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+.shop__options--storage { align-items: stretch; }
+.shop__option { position: relative; flex: 1 1 130px; }
+.shop__option input {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  margin: 0; opacity: 0; cursor: pointer; z-index: 1;
+}
+.shop__option-card {
+  display: flex; flex-direction: column; gap: 0.3rem;
+  height: 100%; padding: 0.85rem 1rem;
+  border: 1px solid var(--line); border-radius: 14px;
+  background: var(--paper);
+  transition: background-color .15s, border-color .15s, box-shadow .15s;
+}
+.shop__option input:checked + .shop__option-card {
+  background: var(--accent-wash);
+  border-color: var(--accent);
+  box-shadow: inset 0 0 0 1px var(--accent);
+}
+.shop__option input:focus-visible + .shop__option-card {
+  outline: 3px solid var(--accent); outline-offset: 2px;
+}
+.shop__option-size {
+  font-family: var(--display); font-size: 1.15rem; font-weight: 650;
+  letter-spacing: -0.02em; color: var(--ink);
+}
+.shop__option input:checked + .shop__option-card .shop__option-size,
+.shop__option input:checked + .shop__option-card b {
+  color: var(--accent);
+}
+.shop__option-spec { font-size: 0.76rem; color: var(--muted); line-height: 1.4; }
+.shop__option-card b:not(.shop__option-size) { font-family: var(--display); font-size: 1.05rem; font-weight: 640; color: var(--ink); }
+
+/* storage step: real battery visual beside the option cards */
+.shop__storage-row { display: grid; gap: 1.5rem; align-items: center; }
+@media (min-width: 640px) { .shop__storage-row { grid-template-columns: 110px 1fr; } }
+.shop__battery-visual { text-align: center; }
+.step__figure--sm { aspect-ratio: 3 / 4; max-width: 110px; margin-inline: auto; }
+.shop__battery-units {
+  display: flex; justify-content: center; gap: 4px; margin-top: 0.5rem; min-height: 10px;
+}
+.shop__battery-units span {
+  width: 8px; height: 8px; border-radius: 50%; background: var(--accent);
+}
+
+/* order summary - ecommerce-feeling panel */
+.shop__summary {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: clamp(1.5rem, 3vw, 2rem);
+}
+@media (min-width: 960px) {
+  .shop__summary { position: sticky; top: 24px; }
+}
+.shop__summary-eyebrow {
+  font-size: 0.7rem; font-weight: 650; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--muted); margin: 0 0 1.1rem;
+}
+.shop__summary-row {
+  display: flex; justify-content: space-between; align-items: baseline;
+  padding: 0.6rem 0; border-bottom: 1px solid var(--line);
+  font-size: 0.95rem; color: var(--muted);
+}
+.shop__summary-row b { font-family: var(--display); font-weight: 640; color: var(--ink); font-size: 1.05rem; }
+
+.shop__includes { margin-top: 1.1rem; }
+.shop__includes-label { font-size: 0.76rem; color: var(--muted); margin: 0 0 0.6rem; }
+.shop__thumbs { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.shop__thumbs li { flex: 1 1 68px; text-align: center; }
+.shop__thumbs img {
+  width: 100%; aspect-ratio: 1; object-fit: contain;
+  padding: 0.4rem;
+  -webkit-mask-image: radial-gradient(ellipse 62% 62% at 50% 50%, black 50%, transparent 92%);
+          mask-image: radial-gradient(ellipse 62% 62% at 50% 50%, black 50%, transparent 92%);
+  filter: drop-shadow(0 6px 8px rgba(23, 20, 15, 0.18));
+}
+.shop__thumbs span { display: block; margin-top: 0.3rem; font-size: 0.66rem; color: var(--muted); line-height: 1.3; }
+
+.shop__pricing {
+  display: flex; justify-content: space-between; align-items: baseline;
+  margin-top: 1.1rem; padding-top: 1.1rem; border-top: 1px solid var(--line);
+  font-size: 0.95rem; color: var(--muted);
+}
+.shop__pricing b { font-family: var(--display); font-weight: 650; color: var(--accent); font-size: 1.05rem; }
+
+.shop__cta { display: flex; width: 100%; justify-content: center; margin-top: 1.25rem; }
+.shop__help {
+  display: block; text-align: center; margin-top: 0.75rem;
+  font-size: 0.82rem; color: var(--muted); text-decoration: underline;
+}
+.shop__help:hover { color: var(--ink); }
 
 /* ---------- tighter static sections ---------- */
 .section { padding-block: clamp(3.75rem, 5.5vw, 5.75rem); }
@@ -1422,15 +1594,13 @@ h1 em, h2 em, .chapter__title em { font-style: normal; color: var(--accent); }
   white-space: nowrap;
 }
 
-/* ---- 4. how it works: centred, equal, connected ---- */
+/* ---- 4. how it works: centred, equal, connected - 3 over 2, balanced ---- */
 .steps__list {
-  max-width: 60rem;
+  max-width: 62rem;
   margin-inline: auto;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: clamp(0.75rem, 1.6vw, 1.25rem);
 }
 @media (max-width: 899px) {
-  .steps__list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .step { flex-basis: 42%; }
 }
 .steps__branch {
   margin: clamp(1.75rem, 3.5vw, 2.75rem) auto 0;
@@ -1531,10 +1701,9 @@ h1 em, h2 em, .chapter__title em { font-style: normal; color: var(--accent); }
   .spot__text .specrow { justify-content: center; }
 }
 
-/* faq + shop centred */
+/* faq centred; shop is its own wider configurator layout */
 .faq { max-width: 46rem; margin-inline: auto; text-align: left; }
-.shop__form { max-width: 46rem; margin-inline: auto; text-align: center; }
-.shop__form fieldset { text-align: center; }
+.shop__form { max-width: 68rem; margin-inline: auto; text-align: left; }
 .steps-chips { justify-content: center; }
 
 /* how-it-works group */
