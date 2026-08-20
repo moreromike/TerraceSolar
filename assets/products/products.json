@@ -1,0 +1,301 @@
+{
+  "schema_version": 1,
+  "source": {
+    "file": "../reference/Craftstrom-Presentation-2026.pdf",
+    "document_label": "Craftstrom Presentation 2026",
+    "note": "Facts below are transcribed or conservatively summarized from the supplied brochure. They are not independently verified."
+  },
+  "positioning": {
+    "storefront_brand": "Terrace Solar",
+    "source_brand": "Craftstrom",
+    "primary_visual_priority": "semi-flexible panel",
+    "lightweight": {
+      "value": "unknown",
+      "status": "owner-supplied positioning; no panel weight is stated in the brochure"
+    }
+  },
+  "solar_kit": {
+    "panel_descriptors": [
+      "semi-flexible",
+      "ultra-thin",
+      "flexible"
+    ],
+    "construction_claims": [
+      "aluminum frame",
+      "stands for easy install",
+      "ultra-thick ETFE layer",
+      "proprietary material mix"
+    ],
+    "module_step_w": 400,
+    "listed_system_sizes_w": [
+      400,
+      800,
+      1200,
+      1600,
+      2000
+    ],
+    "example_400w_kit": {
+      "panels": 2,
+      "panel_w_each": 200,
+      "microinverters": 1,
+      "wiring": "necessary wiring shown"
+    },
+    "testing_claim": "Brochure says panels are power-output tested and X-rayed before shipment. (p.7)",
+    "dimensions": "unknown",
+    "weight": "unknown",
+    "efficiency": "unknown",
+    "warranty": "unknown",
+    "panel_ratings_w": [
+      200,
+      400
+    ],
+    "panel_ratings_note": "p.8 kit uses 2x200 W. p.13 shows a 400 W panel and a 200 W panel. p.2 refers to '400 Watt Panels'."
+  },
+  "mounting": {
+    "flat_balcony_mount": "Brochure shows hardware holding glass panels flat on balconies or fences.",
+    "adjustable_balcony_fence_mount": {
+      "angle_degrees": [
+        20,
+        40
+      ],
+      "scope": "Shown on p.5 with framed GLASS panels, not the semi-flexible panels.",
+      "source_quote": "Balcony/Fence mount that holds the panels at an angle - Adjustable angle 20-40 deg. (p.5)"
+    },
+    "semi_flexible_stands": "Brochure shows semi-flexible panels with stands; exact hardware specifications are unknown."
+  },
+  "smart_inverter_and_power_meter": {
+    "inverter_output_w": 400,
+    "communications_claim": [
+      "WiFi for app-based monitoring",
+      "MHz communication for coordination between devices",
+      "Energy balancing continues even if WiFi is temporarily unavailable"
+    ],
+    "power_meter_claim": "Measures utility draw and throttles solar output to avoid export.",
+    "balancing_reaction_time_seconds_claim": 0.1,
+    "certifications": {
+      "status": "Stated in the brochure and visible on the product label. NOT independently verified; obtain current certificates before publication.",
+      "claimed": [
+        "UL 1741",
+        "ETL",
+        "VDE 0126",
+        "VDE 4105",
+        "CE"
+      ],
+      "test_standards_claimed": [
+        "EN 300328 v2.2.2 (radio)",
+        "EN IEC 55014-2:2021 (immunity)",
+        "EN IEC 61000-6-3:2021 (emissions)",
+        "EN 61000-4-5:2014 +A1:2017 +COR1 (surge immunity)",
+        "EN 55016-2-1:2014 +A1:2017 (conducted disturbance 150 kHz - 30 MHz)",
+        "EN 55016-2-3:2017 +A1:2019 (radiated disturbance 30 MHz - 1 GHz, 1 - 6 GHz)",
+        "IEC 62109-1 / IEC 62109-2 (electrical safety)"
+      ],
+      "safety_behaviour_claim": "UL 1741 certified: automatically disconnects from power in emergencies; rapid shutdown within milliseconds. (p.3)"
+    },
+    "model_name": "Hedy",
+    "model_name_source": "Product label photographed on brochure p.3: 'Model: Hedy', CRAFTSTROM SOLAR.",
+    "zero_export_claim": "Ensures zero-export functionality by dynamically adjusting power output to meet the home's needs. (p.3)"
+  },
+  "battery": {
+    "chemistry_claim": "LiFePO4",
+    "capacity_per_unit_kwh": 1,
+    "continuous_output_per_unit_w": 400,
+    "dc_output_w": 600,
+    "dc_peak_output_w": 1200,
+    "listed_set_capacity_kwh": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "features_claimed": [
+      "MPPT charge controller in each battery",
+      "BMS",
+      "on-grid and off-grid use",
+      "no cobalt used",
+      "aluminum housing"
+    ],
+    "cycle_life": "Brochure claims 'up to 10,000 charge cycles' (p.2). Not independently verified.",
+    "service_life": "unknown; brochure has a claim but current substantiation is required",
+    "warranty": "unknown",
+    "per_unit": {
+      "capacity_kwh": 1,
+      "continuous_output_w": 400,
+      "source": "p.11, p.12 diagrams: '1kWh (400W)' per unit"
+    },
+    "set_range_kwh": [
+      1,
+      4
+    ],
+    "set_range_source": "p.2 '1kWh to 4kWh per battery set'; p.6 '1-4 kWh Smart Battery per circuit'",
+    "documented_configurations": [
+      {
+        "units": 1,
+        "capacity_kwh": 1,
+        "continuous_w": 400,
+        "source": "p.13"
+      },
+      {
+        "units": 2,
+        "capacity_kwh": 2,
+        "continuous_w": 800,
+        "source": "p.11, p.12 '2kWh Battery Kit ... supplements up to 800W'"
+      }
+    ],
+    "night_operation_claim": "On grid at night the home is powered through the batteries from energy stored during the day. (p.12)",
+    "connection_claim": "Each battery unit plugs into a standard wall outlet. (p.11, p.12 diagrams)",
+    "model_name": "unknown - no model name appears anywhere in the brochure"
+  },
+  "commercial": {
+    "prices": "unknown",
+    "availability": "unknown",
+    "shipping": "unknown",
+    "returns": "unknown",
+    "financing": "unknown",
+    "installation_requirements": "unknown; verify jurisdiction, electrical, utility, landlord/HOA, and building rules",
+    "checkout": "placeholder only"
+  },
+  "source_pages": {
+    "system_overview": 2,
+    "inverter": 3,
+    "mounting": [
+      4,
+      5
+    ],
+    "how_it_works": 6,
+    "panels": 7,
+    "wiring": 8,
+    "battery": 9,
+    "benefits_claims": 10,
+    "usage_examples": [
+      11,
+      12,
+      13
+    ]
+  },
+  "open_discrepancies": [
+    {
+      "id": "mount-angle-range",
+      "field": "mounting.adjustable_balcony_fence_mount.angle_degrees",
+      "ledger_value": "20-30 degrees",
+      "brochure_value": "20-40 degrees",
+      "brochure_page": 5,
+      "note": "The brochure mounting page reads 'Adjustable angle 20-40 deg.' while this ledger records 20-30. Neither number is published on the site until the manufacturer confirms which is current.",
+      "status": "RESOLVED 2026-08-19 by direct read of brochure p.5: 20-40 deg. Ledger corrected."
+    },
+    {
+      "id": "panel-wattage-per-module",
+      "field": "solar_kit.example_400w_kit.panel_w_each",
+      "ledger_value": "200 W per panel, 2 panels per 400 W kit",
+      "brochure_value": "p.2 refers to '400 Watt Panels & 400 Watt Inverter'; p.8 defines a 400 W kit as 2 x 200 W panels",
+      "brochure_page": [
+        2,
+        8
+      ],
+      "note": "The site uses the explicit p.8 kit definition. The manufacturer should confirm whether a 400 W single panel also exists.",
+      "status": "RESOLVED 2026-08-19. Both ratings are real products: p.13 shows a 400 W panel and a 200 W panel together making 600 W. p.8 defines the 400 W KIT as 2 x 200 W panels. Individual panel rating and kit rating are different numbers."
+    }
+  ],
+  "asset_rights": {
+    "note": "Rights status of supplied imagery, checked 2026-08-18. Written permission from the rights holder is required before any brochure photography is used on a public site.",
+    "blocked": [
+      {
+        "file": "assets/reference/mounting-reference.png",
+        "reason": "Carries a third-party vendor watermark ('emperysolar'). Not usable on a public page. Same image appears in the brochure on the mounting pages."
+      }
+    ],
+    "in_use_pending_permission": [
+      "assets/img/panels-outdoor.jpg",
+      "assets/img/panel-handling.jpg",
+      "assets/img/battery-home.jpg",
+      "assets/img/power-meter.jpg (video reference only, not shown on the page)",
+      "assets/img/wiring-reference.jpg (brochure p.8 wiring diagram; generation reference only, not shown on the page)"
+    ],
+    "not_published": [
+      {
+        "file": "assets/reference/system-reference.png",
+        "reason": "The 'How it works' diagram has unapproved commercial and installation claims baked into the artwork (price range, courier and delivery time, setup time). Rebuilt as source-attributed HTML in the How it works section instead."
+      }
+    ]
+  },
+  "withheld_claims": {
+    "note": "Present in the brochure, deliberately not published on the site. Each requires current substantiation and owner/legal approval.",
+    "items": [
+      "UL 1741 certification and all standards/test lists (p.3)",
+      "Battery cycle life and service life figures (p.2, p.9)",
+      "Comparative safety claims against competing microinverters (p.3)",
+      "Price per watt and price range (p.6, p.10)",
+      "Delivery timeframe and courier (p.6, p.10)",
+      "Installation and setup time claims (p.6, p.10)",
+      "'No permits needed' and 'no net-metering' (p.10)",
+      "Offset percentages and appliance runtime figures (p.11, p.12, p.13)",
+      "Inverter balancing reaction time (p.3)"
+    ]
+  },
+  "brand": {
+    "source_file": "Supplied by owner 2026-08-18 as 'Terrace Solar Logo' (PNG, 1254x1254, RGB, no alpha).",
+    "colors": {
+      "ink": "#111c29",
+      "amber": "#fba728",
+      "amber_deep": "#a06203",
+      "amber_deep_note": "Same hue as the brand amber, darkened until it clears WCAG AA. Used for text, buttons and focus rings; the brand amber itself is only 1.84:1 on the page background and is reserved for graphics."
+    },
+    "assets_generated": [
+      "assets/brand/terrace-solar-lockup.png (primary lockup, light)",
+      "assets/brand/terrace-solar-lockup-dark.png (cream wordmark, dark mode)",
+      "assets/brand/terrace-solar-mark.png / -dark.png (sun mark alone)",
+      "assets/brand/terrace-solar-full.png / -dark.png (full lockup incl. tagline — NOT used on the site)",
+      "assets/brand/favicon-128.png"
+    ],
+    "tagline_withheld": {
+      "text": "RESIDENT FRIENDLY • HOA COMPLIANT • ENERGY SMART",
+      "status": "withheld_pending_owner_decision",
+      "reason": "'HOA COMPLIANT' is an unqualified compliance claim. HOA, landlord and building rules vary by association and by property, and nothing in the source material substantiates blanket compliance. Publishing it would also directly contradict the disclaimers this site carries, which tell the shopper to check their own HOA. 'RESIDENT FRIENDLY' and 'ENERGY SMART' are soft marketing and are lower risk.",
+      "action": "The site uses the tagline-free primary lockup. Owner and legal to decide whether to reword (e.g. 'DESIGNED FOR HOA REVIEW'), qualify, or drop the middle claim before the full lockup is used anywhere public."
+    }
+  },
+  "brand_facts": {
+    "manufacturer": "CraftStrom Solar",
+    "positioning_line": "Solar + Storage Plug & Play Technology (p.1)",
+    "award_claim": "American Made Solar Prize badge, U.S. Department of Energy, shown on p.1. Not independently verified.",
+    "app": {
+      "name": "CraftStrom app",
+      "screens_shown": [
+        "Home Energy Balance Overview",
+        "Dashboard",
+        "Usage",
+        "Production",
+        "Storage",
+        "Settings"
+      ],
+      "metrics_shown": [
+        "consumed kWh",
+        "solar produced",
+        "solar throttled",
+        "battery charged",
+        "battery discharged"
+      ],
+      "source": "p.1 app screenshot; p.6 'The CraftStrom app allows you to see what your solar panels are producing'"
+    },
+    "experience_claim": "Over five years of experience in plug-and-play solar solutions and a global footprint. (p.3)"
+  },
+  "not_documented_anywhere": [
+    "Panel model name",
+    "Panel dimensions",
+    "Panel weight",
+    "Panel thickness",
+    "Panel efficiency",
+    "Panel cell technology",
+    "Panel IP / weather / wind / snow ratings",
+    "Panel warranty",
+    "Battery model name",
+    "Battery dimensions",
+    "Battery weight",
+    "Battery port count and types",
+    "Battery-specific certifications",
+    "Usable vs nominal battery capacity",
+    "Inverter MPPT range (label unreadable at brochure resolution)",
+    "Any warranty term for any component",
+    "Maximum number of battery units beyond the 1-4 kWh set range"
+  ]
+}

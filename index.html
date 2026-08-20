@@ -1,0 +1,480 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Terrace Solar — solar that fits your life</title>
+<meta name="description" content="Ultra-thin, semi-flexible solar panels for balconies, terraces, fences and patios. Start at 400 W and build from there.">
+<meta name="robots" content="noindex, nofollow">
+<link rel="canonical" href="https://www.terracesolar.com/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Terrace Solar">
+<meta property="og:url" content="https://www.terracesolar.com/">
+<meta property="og:title" content="Terrace Solar — solar that fits your life">
+<meta property="og:description" content="Ultra-thin, semi-flexible solar panels for balconies, terraces, fences and patios. Start at 400 W and build from there.">
+<meta property="og:image" content="https://www.terracesolar.com/assets/video/hero-poster.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="color-scheme" content="dark">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Inter:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="assets/css/site.css">
+<link rel="icon" type="image/png" sizes="128x128" href="assets/brand/favicon-128.png">
+<meta name="theme-color" content="#0a0a0b">
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to main content</a>
+
+<main id="main">
+
+  <!-- ============================ HERO — scroll-scrubbed film ============================ -->
+  <!-- One stitched master (assets/video/hero.mp4, 42.875 s, 1280x720, 24 fps).
+       Scroll position maps to video currentTime: down advances, up reverses, stopping
+       holds the frame. Nothing autoplays and nothing loops. The stage is pinned for the
+       whole journey; the retail page below is never visible until the film ends on its
+       dark frame, which the black background beneath continues.
+
+       Falls back to the poster still — no video fetched at all — for reduced-motion
+       visitors, narrow viewports and short viewports. -->
+  <section class="film" id="top" aria-labelledby="hero-title"
+           data-film data-film-src="assets/video/hero.mp4">
+    <div class="film__track" data-film-track>
+      <div class="film__stage" data-film-stage>
+
+        <div class="film__media">
+          <img class="film__poster" src="assets/video/hero-poster.jpg"
+               width="1920" height="1080" fetchpriority="high" decoding="async"
+               alt="Sunrise over an American townhouse neighbourhood, seen from high above through golden haze.">
+          <!-- src is attached by JS only when the scrub is actually enabled, so phones
+               and reduced-motion visitors never download 40 MB -->
+          <video class="film__video" data-film-video
+                 muted playsinline preload="none"
+                 disablepictureinpicture disableremoteplayback
+                 tabindex="-1" aria-hidden="true"></video>
+          <div class="film__scrim" aria-hidden="true"></div>
+          <div class="film__fadeout" aria-hidden="true"></div>
+        </div>
+
+        <!-- Opening title. Fades out before the first equipment chapter so the
+             product, not the headline, carries the rest of the film. -->
+        <div class="film__content" data-film-intro>
+          <div class="wrap film__copy">
+            <h1 id="hero-title">Solar that fits<br>your life.</h1>
+            <p class="film__kicker">No rooftop required.</p>
+            <p class="lede">
+              No complicated solar lesson. Just a simpler way to make some of the
+              electricity you already use.
+            </p>
+            <p class="film__scrollcue" aria-hidden="true">Scroll</p>
+          </div>
+        </div>
+
+        <!-- Equipment chapters. Each one is pinned over its own held video frame;
+             the film is frozen at that timestamp while the chapter scrolls. -->
+        <!-- Equipment chapters. Each is pinned over its own held frame and reveals in
+             steps as the hold scrolls. Every factual line traces to the Craftstrom
+             brochure - see assets/products/SOURCE-MAP.md. Page refs are kept as HTML
+             comments only; no citation badges are shown to the customer. -->
+        <!-- Equipment chapters. One idea per step. Facts trace to the Craftstrom
+             brochure; audit trail in assets/products/SOURCE-MAP.md. -->
+        <div class="film__chapters" data-film-chapters>
+
+          <article class="chapter chapter--right" data-chapter="panel" aria-labelledby="ch-panel">
+            <div class="chapter__inner">
+              <div class="chapter__step">
+                <p class="chapter__eyebrow">The panel</p>
+                <h2 class="chapter__title" id="ch-panel">Solar that fits<br>where you live.</h2>
+              </div>
+              <div class="chapter__step">
+                <p class="chapter__lede">Thin. Semi-flexible. Made for spaces traditional rooftop solar may not reach.</p>
+              </div>
+              <div class="chapter__step">
+                <p class="chapter__big"><em>200 W</em> or <em>400 W</em> panels</p>
+                <p class="chapter__sub">Build around the space you have.</p>
+              </div>
+              <div class="chapter__step">
+                <p class="chapter__sub chapter__sub--rule">Systems from 400 to 2000 W.</p>
+              </div>
+            </div>
+          </article>
+
+          <article class="chapter chapter--right" data-chapter="battery" aria-labelledby="ch-battery">
+            <div class="chapter__inner">
+              <div class="chapter__step">
+                <p class="chapter__eyebrow">Storage</p>
+                <h2 class="chapter__title" id="ch-battery">Save the power<br>you make.</h2>
+              </div>
+              <div class="chapter__step">
+                <p class="chapter__lede">Solar charges it during the day. Use that energy later.</p>
+              </div>
+              <div class="chapter__step">
+                <div class="specrow specrow--hold">
+                  <div><b>1 kWh</b><i>storage per unit</i></div>
+                  <div><b>400 W</b><i>output per unit</i></div>
+                  <div><b>Outlet</b><i>standard connection</i></div>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article class="chapter chapter--left" data-chapter="stack" aria-labelledby="ch-stack">
+            <div class="chapter__inner">
+              <div class="chapter__step">
+                <p class="chapter__eyebrow">Expandable</p>
+                <h2 class="chapter__title" id="ch-stack">Grows<br>with you.</h2>
+              </div>
+              <div class="chapter__step">
+                <p class="chapter__lede">Start small. Add more when you need it.</p>
+              </div>
+              <div class="chapter__step">
+                <div class="specrow">
+                  <div><b>1 kWh</b><i>400 W</i></div>
+                  <div><b>2 kWh</b><i>800 W</i></div>
+                  <div><b>4 kWh</b><i>per set</i></div>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article class="chapter chapter--bottom" data-chapter="connect" aria-labelledby="ch-connect">
+            <div class="chapter__inner">
+              <div class="chapter__step">
+                <p class="chapter__eyebrow">The complete system</p>
+                <h2 class="chapter__title" id="ch-connect">Everything<br>working together.</h2>
+              </div>
+              <div class="chapter__step">
+                <ul class="recap">
+                  <li>Fits your space.</li>
+                  <li>Stores your power.</li>
+                  <li>Grows with you.</li>
+                </ul>
+              </div>
+              <div class="chapter__step">
+                <p class="chapter__sub">Designed around the home you already have.</p>
+              </div>
+            </div>
+          </article>
+
+        </div>
+
+        <p class="film__hint" aria-hidden="true">Scroll</p>
+        <div class="film__progress" data-film-progress aria-hidden="true"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- The film ends on a dark frame; this carries that black down and hands off to the
+       retail page rather than cutting to it. -->
+  <div class="film__handoff" aria-hidden="true"></div>
+
+  <!-- ===================== HOW IT WORKS ===================== -->
+  <section class="steps" id="how" aria-labelledby="how-title" data-steps>
+    <div class="steps__track" data-steps-track>
+      <div class="steps__stage">
+        <div class="wrap">
+          <div class="steps__head">
+            <p class="eyebrow">How it works</p>
+            <h2 id="how-title">A few parts.<br><em>One simple idea.</em></h2>
+          </div>
+
+          <ol class="steps__list">
+            <li class="step" data-step-i="0">
+              <span class="step__n">01</span>
+              <img src="assets/img/panels-outdoor.jpg" width="1782" height="1189" loading="lazy" decoding="async"
+                   alt="Semi-flexible solar panels on low stands outdoors.">
+              <b>Panels</b>
+              <span class="step__d">Make electricity from sunlight.</span>
+            </li>
+            <li class="step" data-step-i="1">
+              <span class="step__n">02</span>
+              <img src="assets/img/inverter-hedy.jpg" width="380" height="320" loading="lazy" decoding="async"
+                   alt="The CraftStrom Hedy microinverter.">
+              <b>Hedy</b>
+              <span class="step__d">Turns it into power your home can use.</span>
+            </li>
+            <li class="step" data-step-i="2">
+              <span class="step__n">03</span>
+              <div class="step__glyph" aria-hidden="true"><b>Cable</b><i></i><b>Outlet</b></div>
+              <b>Cable + outlet</b>
+              <span class="step__d">Connects to your existing wiring.</span>
+            </li>
+            <li class="step" data-step-i="3">
+              <span class="step__n">04</span>
+              <img src="assets/img/power-meter.jpg" width="4096" height="2730" loading="lazy" decoding="async"
+                   alt="The power meter with two split-core current clamps.">
+              <b>Power meter</b>
+              <span class="step__d">Matches production to what your home is using.</span>
+            </li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SPOTLIGHT: PANELS ===================== -->
+  <section class="section spot" id="panels" aria-labelledby="sp-panels">
+    <div class="spot__inner">
+      <div class="spot__media">
+        <img src="assets/img/panels-outdoor.jpg" width="1782" height="1189" loading="lazy" decoding="async"
+             alt="Thin semi-flexible solar panels resting on low stands on a lawn.">
+      </div>
+      <div class="spot__text">
+        <p class="eyebrow">Panels</p>
+        <h2 id="sp-panels">Solar that fits<br><em>your space.</em></h2>
+        <p class="spot__sub">Thin, semi-flexible panels make solar possible in places traditional rooftop systems may not reach.</p>
+        <div class="specrow">
+          <div><b>200 W / 400 W</b><i>panel options</i></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SPOTLIGHT: HEDY ===================== -->
+  <section class="section spot spot--reverse" id="hedy" aria-labelledby="sp-hedy">
+    <div class="spot__inner">
+      <div class="spot__media spot__media--product">
+        <img src="assets/img/inverter-hedy.jpg" width="380" height="320" loading="lazy" decoding="async"
+             alt="The CraftStrom Hedy microinverter.">
+      </div>
+      <div class="spot__text">
+        <p class="eyebrow">Hedy</p>
+        <h2 id="sp-hedy">Small box.<br><em>Important job.</em></h2>
+        <p class="spot__sub">Hedy turns the panel output into AC power your home can actually use.</p>
+        <div class="specrow">
+          <div><b>400 W</b><i>per microinverter</i></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SPOTLIGHT: BATTERY ===================== -->
+  <section class="section spot" id="storage" aria-labelledby="sp-batt">
+    <div class="spot__inner">
+      <div class="spot__media">
+        <img src="assets/img/battery-home.jpg" width="1920" height="1080" loading="lazy" decoding="async"
+             alt="The battery unit standing on a wooden floor in a living room.">
+      </div>
+      <div class="spot__text">
+        <p class="eyebrow">Storage &mdash; optional</p>
+        <h2 id="sp-batt">Save it<br><em>for later.</em></h2>
+        <p class="spot__sub">Solar can charge the battery during the day. Use that stored energy later.</p>
+        <div class="specrow">
+          <div><b>1 kWh</b><i>storage per unit</i></div>
+          <div><b>400 W</b><i>per unit</i></div>
+        </div>
+        <p class="spot__sub">Add more storage as your needs grow.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SPOTLIGHT: CONNECTION ===================== -->
+  <section class="section spot spot--reverse" id="connection" aria-labelledby="sp-conn">
+    <div class="spot__inner">
+      <div class="spot__media spot__media--diagram">
+        <!-- No clean US-receptacle photograph exists in the supplied assets, and the
+             brochure wiring page shows a Schuko outlet, which contradicts the US
+             market decision. Shown as a typographic chain until real US imagery exists. -->
+        <ol class="plugflow" aria-label="How power reaches the home">
+          <li><span>Hedy</span></li>
+          <li><span>Cable</span></li>
+          <li><span>Outlet</span></li>
+          <li><span>Home</span></li>
+        </ol>
+      </div>
+      <div class="spot__text">
+        <p class="eyebrow">Connection</p>
+        <h2 id="sp-conn">Plug into the home<br><em>you already have.</em></h2>
+        <p class="spot__sub">One cable reaches a standard household receptacle. The system runs on the wiring already in your walls.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SPOTLIGHT: POWER METER ===================== -->
+  <section class="section spot" id="meter" aria-labelledby="sp-meter">
+    <div class="spot__inner">
+      <div class="spot__media spot__media--product">
+        <img src="assets/img/power-meter.jpg" width="4096" height="2730" loading="lazy" decoding="async"
+             alt="The power meter module with a small display and two split-core current clamps.">
+      </div>
+      <div class="spot__text">
+        <p class="eyebrow">Power meter</p>
+        <h2 id="sp-meter">Only make what<br><em>the home needs.</em></h2>
+        <p class="spot__sub">It matches solar production to what your home is using.</p>
+        <p class="spot__close">A few components. One simple connection.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== WHAT SIZE FITS YOU ===================== -->
+  <section class="section sizer" id="sizer" aria-labelledby="sizer-title" data-sizer>
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">Estimated starting point</p>
+        <h2 id="sizer-title">What size fits you?</h2>
+        <p class="lede">Start with your monthly electric bill.</p>
+      </div>
+
+      <div class="sizer__panel">
+        <label class="sizer__label" for="bill">Monthly electric bill</label>
+        <output class="sizer__bill" data-out="bill">$175</output>
+        <input class="sizer__range" id="bill" type="range"
+               min="75" max="350" step="5" value="175"
+               data-sizer-input aria-describedby="sizer-note">
+
+        <div class="sizer__results" aria-live="polite">
+          <div class="sizer__result sizer__result--lead">
+            <span data-out="sizeLabel">Recommended starting size</span>
+            <b data-out="size">&mdash;</b>
+            <em class="sizer__largest" hidden>largest current system size</em>
+          </div>
+          <div class="sizer__result sizer__result--storage">
+            <span>Suggested starting storage</span>
+            <b data-out="storage">&mdash;</b>
+          </div>
+          <div class="sizer__result">
+            <span>Estimated monthly production</span>
+            <b data-out="kwh">&mdash;</b>
+          </div>
+          <div class="sizer__result">
+            <span>Estimated monthly savings</span>
+            <b data-out="savings">&mdash;</b>
+          </div>
+        </div>
+
+        <p class="sizer__cap" data-out="capnote" hidden></p>
+        <p class="sizer__note" id="sizer-note">
+          Storage needs vary based on when you use electricity. Actual production and savings
+          vary by location, sunlight, electricity rates and energy use.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== QUESTIONS ===================== -->
+  <section class="section" id="faq" aria-labelledby="faq-title">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">Questions</p>
+        <h2 id="faq-title">Good to know.</h2>
+      </div>
+      <div class="faq">
+        <details><summary>Can I start with a smaller system?</summary>
+          <div><p>Yes. The smallest system is 400 W: two panels and one Hedy microinverter.</p></div></details>
+        <details><summary>Can I add more later?</summary>
+          <div><p>Yes. Systems grow in 400 W steps. Storage grows by adding units, up to 4 kWh per set.</p></div></details>
+        <details><summary>Do I need a battery?</summary>
+          <div><p>No. Solar works on its own. A battery lets you use more of what you make, after the sun goes down.</p></div></details>
+        <details><summary>Where can the panels go?</summary>
+          <div><p>Balconies, terraces, fences, patios and gardens. The panels are semi-flexible and sit on stands rather than being bolted to a roof.</p></div></details>
+        <details><summary>How does it connect to my home?</summary>
+          <div><p>Panels connect to a Hedy microinverter, and one AC cable reaches a standard receptacle on your existing wiring. A power meter helps match production to what your home is using.</p></div></details>
+        <details><summary>Can I move the system?</summary>
+          <div><p>The panels sit on stands and the battery plugs into an outlet, so components are not permanently fixed to the building. Moving a system is a question for your installer and your local rules.</p></div></details>
+        <details><summary>What rules or approvals may apply?</summary>
+          <div><p>Requirements depend on your address: your local electrical and building rules, your utility, and your building, landlord or HOA policy. Confirm these locally, and use a licensed electrician where required, before ordering.</p></div></details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SHOP ===================== -->
+  <section class="section shop" id="shop" aria-labelledby="shop-title">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">Shop</p>
+        <h2 id="shop-title">Build your system.</h2>
+        <p class="lede">Choose a size and whether you want storage.</p>
+      </div>
+
+      <form class="shop__form" data-shop novalidate>
+        <fieldset>
+          <legend>System size</legend>
+          <div class="steps-chips">
+            <label class="step-chip"><input type="radio" name="shop-size" value="400"><span>400 W</span></label>
+            <label class="step-chip"><input type="radio" name="shop-size" value="800" checked><span>800 W</span></label>
+            <label class="step-chip"><input type="radio" name="shop-size" value="1200"><span>1200 W</span></label>
+            <label class="step-chip"><input type="radio" name="shop-size" value="1600"><span>1600 W</span></label>
+            <label class="step-chip"><input type="radio" name="shop-size" value="2000"><span>2000 W</span></label>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Storage &mdash; optional</legend>
+          <div class="steps-chips">
+            <label class="step-chip"><input type="radio" name="shop-batt" value="0" checked><span>None</span></label>
+            <label class="step-chip"><input type="radio" name="shop-batt" value="1"><span>1 kWh</span></label>
+            <label class="step-chip"><input type="radio" name="shop-batt" value="2"><span>2 kWh</span></label>
+            <label class="step-chip"><input type="radio" name="shop-batt" value="3"><span>3 kWh</span></label>
+            <label class="step-chip"><input type="radio" name="shop-batt" value="4"><span>4 kWh</span></label>
+          </div>
+        </fieldset>
+
+        <div class="shop__summary" aria-live="polite">
+          <p class="shop__line" data-shop-out>800 W system &middot; no storage</p>
+          <a class="btn btn--primary" href="mailto:hello@terracesolar.com?subject=Terrace%20Solar%20availability">Request availability</a>
+          <p class="shop__note">Pricing and availability are not published yet. This is not an offer of sale.</p>
+        </div>
+      </form>
+    </div>
+  </section>
+
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="grid">
+      <div>
+        <a class="brand" href="#top" style="margin-bottom:1rem">
+          <!-- always the cream lockup: the page is dark in every scheme now -->
+          <img src="assets/brand/terrace-solar-lockup-dark.png" width="640" height="270" alt="Terrace Solar">
+        </a>
+        <p style="max-width:34ch">
+          A residential solar concept built around ultra-thin, semi-flexible panels.
+        </p>
+      </div>
+      <div>
+        <h3>Product</h3>
+        <ul>
+          <li><a href="#panel">The panel</a></li>
+          <li><a href="#configure">Configure a system</a></li>
+          <li><a href="#system">System architecture</a></li>
+          <li><a href="#mounting">Mounting</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Understand</h3>
+        <ul>
+          <li><a href="#how">How it works</a></li>
+          <li><a href="#faq">FAQ</a></li>
+          <li><a href="#sources">Sources and attribution</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Contact</h3>
+        <ul>
+          <li><a href="#availability">Request availability</a></li>
+          <li><a href="mailto:hello@terracesolar.com">hello@terracesolar.com</a> <span class="src src--pending">Placeholder</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="colophon">
+      <p>
+        <strong>Pre-launch draft.</strong> Product information from CraftStrom Solar. Nothing here is an offer of sale. Whether this equipment
+        may be installed and connected at a given address depends on local electrical and
+        building codes, utility interconnection rules, and landlord, HOA or building
+        policy — confirm those locally and use a licensed electrician where required.
+        Commercial terms, warranty, returns and legal copy are unfinished placeholders,
+        and image rights, certification documentation and legal review are still
+        outstanding.
+      </p>
+      <p style="margin-top:0.75rem">Terrace Solar — storefront concept. Craftstrom — product source.</p>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/js/site.js" defer></script>
+</body>
+</html>

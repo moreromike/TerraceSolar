@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "provider": "runway",
+  "status": "not_started",
+  "notes": "Confirm current Runway API model, endpoint, payload, pricing, and terms before generating. Keep text/logos out of footage.",
+  "scenes": [
+    {"id":"01-arrival","status":"missing","reference":"assets/reference/panels-reference.png","output":null,"task_id":null,"error":null},
+    {"id":"02-panel-handling","status":"missing","reference":"assets/reference/panels-reference.png","output":null,"task_id":null,"error":null},
+    {"id":"03-mounting-detail","status":"missing","reference":"assets/reference/mounting-reference.png","output":null,"task_id":null,"error":null},
+    {"id":"04-connected-system","status":"missing","reference":"assets/reference/system-reference.png","output":null,"task_id":null,"error":null},
+    {"id":"05-lifestyle","status":"missing","reference":"assets/reference/battery-reference.png","output":null,"task_id":null,"error":null},
+    {"id":"06-loop-return","status":"missing","reference":"assets/reference/panels-reference.png","output":null,"task_id":null,"error":null}
+  ]
+}
+
