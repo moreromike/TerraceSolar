@@ -33,11 +33,11 @@
     var kits = watts / KIT_W;
     var panels = watts / PANEL_W;
 
-    if (out.system) out.system.textContent = watts.toLocaleString() + ' W';
+    if (out.system) out.system.textContent = watts.toLocaleString() + ' W';
     if (out.kits) out.kits.textContent = plural(kits, 'kit', 'kits');
-    if (out.panels) out.panels.textContent = plural(panels, 'panel', 'panels') + ' x ' + PANEL_W + ' W';
+    if (out.panels) out.panels.textContent = plural(panels, 'panel', 'panels') + ' x ' + PANEL_W + ' W';
     if (out.inverters) {
-      out.inverters.textContent = plural(kits, 'microinverter', 'microinverters') + ' x ' + KIT_W + ' W';
+      out.inverters.textContent = plural(kits, 'microinverter', 'microinverters') + ' x ' + KIT_W + ' W';
     }
   }
 
@@ -874,7 +874,7 @@ var SOLAR_CALCULATOR_CONFIG = {
 
   function money(n) { return '$' + Math.round(Math.max(0, n)).toLocaleString(); }
   function moneyRange(range) { return money(range.min) + '–' + money(range.max); }
-  function wattsLabel(w) { return Math.round(w).toLocaleString() + ' W'; }
+  function wattsLabel(w) { return Math.round(w).toLocaleString() + ' W'; }
 
   /* Brief highlight so a changed number reads as "live" without a full
      numeric tween - short count/number transition only, per spec. */
@@ -1015,7 +1015,7 @@ var SOLAR_CALCULATOR_CONFIG = {
   if (usageInput) {
     usageInput.addEventListener('input', function () {
       state.usage = parseFloat(usageInput.value) || 0;
-      setText('usageDisplay', Math.round(state.usage).toLocaleString() + ' kWh');
+      setText('usageDisplay', Math.round(state.usage).toLocaleString() + ' kWh');
       var pct = ((state.usage - usageInput.min) / (usageInput.max - usageInput.min)) * 100;
       usageInput.style.setProperty('--slider-percent', pct + '%');
       render();
@@ -1176,14 +1176,14 @@ var SOLAR_CALCULATOR_CONFIG = {
       var panels = parseInt(sizeInput.getAttribute('data-panels'), 10);
       var inverters = parseInt(sizeInput.getAttribute('data-inverters'), 10);
 
-      if (out.size) out.size.textContent = w.toLocaleString() + ' W';
-      if (out.panelsLabel) out.panelsLabel.textContent = panels + ' × 200 W panels';
+      if (out.size) out.size.textContent = w.toLocaleString() + ' W';
+      if (out.panelsLabel) out.panelsLabel.textContent = panels + ' × 200 W panels';
       if (out.invertersLabel) out.invertersLabel.textContent = inverters + ' × ' +
         (inverters === 1 ? 'microinverter' : 'microinverters');
     }
 
-    if (out.storage) out.storage.textContent = kwh ? kwh + ' kWh' : 'None';
-    if (out.batteryLabel) out.batteryLabel.textContent = kwh + (kwh === 1 ? ' battery unit' : ' battery units');
+    if (out.storage) out.storage.textContent = kwh ? kwh + ' kWh' : 'None';
+    if (out.batteryLabel) out.batteryLabel.textContent = kwh + (kwh === 1 ? ' battery unit' : ' battery units');
     if (batteryLine) batteryLine.hidden = kwh === 0;
   }
 
@@ -1195,4 +1195,89 @@ var SOLAR_CALCULATOR_CONFIG = {
 
   render();
   setProgress(1);
+})();
+
+
+/* ---------------------------------------------------------------------------
+   "What can storage help power?" - live runtime estimator.
+
+   Every assumption lives in STORAGE_EXAMPLES below - load wattages and the
+   usable-energy factor are not scattered through the render logic.
+   usableEnergyFactor (0.80) is a conservative provisional placeholder until
+   actual usable battery capacity and full system-loss data are finalized -
+   see the in-UI caption, which labels every number an estimate.
+
+   Deliberately excludes central air, ovens/ranges, EV charging and other
+   high continuous/surge 240 V loads: no verified inverter/battery output
+   documentation in this project supports promising those, so they are not
+   offered as examples here regardless of what the runtime math would say.
+--------------------------------------------------------------------------- */
+var STORAGE_EXAMPLES = {
+  usableEnergyFactor: 0.80,
+
+  loads: [
+    { id: 'router',   label: 'Wi-Fi + router',        watts: 20 },
+    { id: 'lighting', label: 'LED lighting',           watts: 50 },
+    { id: 'laptop',   label: 'Laptop',                 watts: 65 },
+    { id: 'security', label: 'Security system',        watts: 25 },
+    { id: 'tv',       label: 'TV',                     watts: 100 },
+    { id: 'desktop',  label: 'Desktop / electronics',  watts: 200 }
+  ],
+
+  /* Curated per storage size, not just the same five cards with a bigger
+     number - which loads are worth showing changes as storage grows. */
+  tiers: {
+    1: { label: 'Everyday essentials',       visible: ['router', 'lighting', 'laptop', 'security'] },
+    2: { label: 'More evening flexibility',  visible: ['router', 'lighting', 'laptop', 'security', 'tv', 'desktop'] },
+    4: { label: 'More energy, for longer',   visible: ['router', 'lighting', 'laptop', 'security', 'tv', 'desktop'] }
+  }
+};
+
+(function () {
+  'use strict';
+  var root = document.querySelector('[data-useit-loads]');
+  if (!root) return;
+
+  var sizeInputs = [].slice.call(document.querySelectorAll('input[name="useit-size"]'));
+  var tierLabel = document.querySelector('[data-useit-tier-label]');
+  var items = {};
+  [].slice.call(root.querySelectorAll('li[data-load]')).forEach(function (li) {
+    items[li.getAttribute('data-load')] = li;
+  });
+
+  /* estimated runtime hours = storage kWh x 1000 x usableEnergyFactor / watts */
+  function runtimeHours(kwh, watts) {
+    return (kwh * 1000 * STORAGE_EXAMPLES.usableEnergyFactor) / watts;
+  }
+
+  /* customer-friendly rounding - never "39.83 hr", always "~40 hr". Plain
+     integer rounding matches the supplied reference examples exactly
+     (e.g. a 25 W security system at 1 kWh rounds to ~32 hr, not ~30). */
+  function friendlyHours(hours) {
+    return '~' + Math.round(hours) + ' hr';
+  }
+
+  function render() {
+    var checked = document.querySelector('input[name="useit-size"]:checked');
+    var kwh = checked ? parseInt(checked.value, 10) : 1;
+    var tier = STORAGE_EXAMPLES.tiers[kwh] || STORAGE_EXAMPLES.tiers[1];
+
+    if (tierLabel) tierLabel.textContent = tier.label;
+
+    STORAGE_EXAMPLES.loads.forEach(function (load) {
+      var li = items[load.id];
+      if (!li) return;
+      var visible = tier.visible.indexOf(load.id) !== -1;
+      li.hidden = !visible;
+      if (visible) {
+        var out = li.querySelector('[data-runtime]');
+        if (out) out.textContent = friendlyHours(runtimeHours(kwh, load.watts));
+      }
+    });
+  }
+
+  sizeInputs.forEach(function (input) {
+    input.addEventListener('change', render);
+  });
+  render();
 })();
