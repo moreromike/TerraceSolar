@@ -1467,6 +1467,7 @@ h1 em, h2 em, .chapter__title em { font-style: normal; color: var(--accent); }
   width: min(38vw, 34rem);
   margin-left: 7vw;
   margin-right: 0;
+  margin-top: clamp(120px, 22vh, 200px);
 }
 
 /* ---- 4. how it works: centred, equal, connected ---- */
@@ -1734,4 +1735,39 @@ h1 em, h2 em, .chapter__title em { font-style: normal; color: var(--accent); }
   margin-inline: auto;
   background: var(--accent);
   opacity: 0.9;
+}
+
+/* ===== persistent brand logo with safe zone ===== */
+.logo {
+  position: fixed;
+  top: 30px;
+  left: 40px;
+  z-index: 9999;
+  display: block;
+  width: 165px;
+  height: auto;
+  text-decoration: none;
+  /* Light separation for readability on dark backgrounds:
+     soft white glow + wide soft blur makes dark navy lettering
+     readable against black while staying premium and subtle */
+  filter: drop-shadow(0 0 16px rgba(255, 255, 255, 0.35))
+          drop-shadow(0 0 8px rgba(255, 255, 255, 0.25))
+          drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+.logo__img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Logo safe zone: content must not enter this rectangle
+   top: 30px, left: 40px, width: 230px (logo ~165px + margins), height: 140px */
+
+/* on narrow viewports, use smaller spacing and width */
+@media (max-width: 899px) {
+  .logo {
+    top: 20px;
+    left: 20px;
+    width: 120px;
+  }
 }
