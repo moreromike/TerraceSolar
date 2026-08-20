@@ -1385,12 +1385,41 @@ h1 em, h2 em, .chapter__title em { font-style: normal; color: var(--accent); }
   margin-right: 2vw;
 }
 
-/* ---- 3. expandable hold: one centred column in the space left of the battery ---- */
+/* ---- 3. expandable hold: one wide column in the space left of the battery ----
+   Widened so the three storage specs can sit on one horizontal row instead
+   of wrapping - the extra width is still well clear of the battery. */
 .film--on .chapter--left .chapter__inner {
-  width: min(38vw, 34rem);
+  width: min(46vw, 42rem);
   margin-left: 7vw;
   margin-right: 0;
   margin-top: clamp(150px, 24vh, 230px);
+}
+
+/* the storage specs on the "Grows with you" hold: force one row, and undo
+   the base .specrow's redundant double spacing (flex gap + padding-left
+   both applied) that was eating the width needed to keep three columns
+   on one line at this viewport. Title, spacing above/below tightened to
+   match; headline size and copy are untouched. */
+[data-chapter="stack"] .chapter__lede {
+  margin-top: clamp(0.6rem, 1.4vh, 1rem);
+}
+[data-chapter="stack"] .specrow {
+  flex-wrap: nowrap;
+  gap: 0;
+  margin-top: clamp(0.9rem, 1.9vh, 1.4rem);
+}
+[data-chapter="stack"] .specrow > div {
+  flex: none;
+}
+[data-chapter="stack"] .specrow > div + div {
+  padding-left: clamp(1.25rem, 3vw, 2.25rem);
+}
+[data-chapter="stack"] .specrow b {
+  font-size: clamp(1.5rem, 1rem + 1.6vw, 2.4rem);
+  white-space: nowrap;
+}
+[data-chapter="stack"] .specrow i {
+  white-space: nowrap;
 }
 
 /* ---- 4. how it works: centred, equal, connected ---- */
