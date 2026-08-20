@@ -535,38 +535,34 @@ var CALC = {
   /* DOCUMENTED - brochure p.2 and p.6: 400 W increments, 400 to 2000 W */
   systemSizesW: [400, 800, 1200, 1600, 2000],
 
-  /* Recommended starting size by monthly bill. Owner-specified. The single
-     place to change how bills map to sizes. minBill is inclusive. */
-  billToSize: [
-    { minBill: 0,   sizeW: 400 },
-    { minBill: 125, sizeW: 800 },
-    { minBill: 175, sizeW: 1200 },
-    { minBill: 225, sizeW: 1600 },
-    { minBill: 275, sizeW: 2000 }
+  /* Bill-to-size anchor points, owner-specified. The slider INTERPOLATES
+     between these rather than stepping at them, so every dollar of movement
+     changes the estimate - the estimate does not visibly freeze mid-range.
+     The displayed size still snaps to a real 400 W increment (see
+     snapToSize); only the underlying production/savings math stays fully
+     continuous. bill is inclusive at each anchor. */
+  billSizeAnchors: [
+    { bill: 75,  w: 400 },
+    { bill: 125, w: 800 },
+    { bill: 175, w: 1200 },
+    { bill: 225, w: 1600 },
+    { bill: 275, w: 2000 },
+    { bill: 350, w: 2000 }
   ],
-
-  /* Suggested starting storage by system size. Editable, non-binding guidance -
-     never presented as a requirement. */
-  storageBySize: {
-    400:  { label: '1 kWh', note: 'optional' },
-    800:  { label: '1 kWh', note: '' },
-    1200: { label: '1-2 kWh', note: '' },
-    1600: { label: '2 kWh', note: '' },
-    2000: { label: '2-4 kWh', note: '' }
-  },
 
   /* ------------------------------------------------------------------
      CALIFORNIA PLUG-IN CAP - editable.
      SB 868 is a BILL, not enacted law. Nothing about it is published on the
-     public page. This only caps the recommended starting size so the site
-     never implies that 1600 W or 2000 W qualifies for simplified plug-in
-     treatment. Set enabled:false to show the unrestricted recommendation.
+     public page. This never caps the main "estimated system size" figure -
+     it only adds a secondary note when the estimate exceeds the plug-in
+     ceiling, so a $300 bill still shows its real ~2000 W estimate instead
+     of a number frozen at 1200 W. Set enabled:false to hide the note.
      ------------------------------------------------------------------ */
   caPlugIn: {
     enabled: true,
     capW: 1200,
-    label: 'Recommended plug-in starting point',
-    note: 'Larger configurations may be subject to different requirements.'
+    label: 'Plug-in starting configuration',
+    note: 'Larger configurations may have different requirements.'
   },
 
   /* DRAFT copy for a future California launch. NOT rendered anywhere. Only use
@@ -597,10 +593,48 @@ var CALC = {
     kwh: root.querySelector('[data-out="kwh"]'),
     savings: root.querySelector('[data-out="savings"]'),
     storage: root.querySelector('[data-out="storage"]'),
-    sizeLabel: root.querySelector('[data-out="sizeLabel"]'),
-    capnote: root.querySelector('[data-out="capnote"]')
+    pluginNote: root.querySelector('[data-out="pluginNote"]')
   };
-  var largest = root.querySelector('.sizer__largest');
+
+  /* Linear interpolation between the anchor points. This is what makes the
+     slider feel responsive across its whole range instead of only at five
+     fixed jumps - moving from $201 to $230 moves this number too. */
+  function interpolateW(bill) {
+    var a = CALC.billSizeAnchors;
+    if (bill <= a[0].bill) return a[0].w;
+    for (var i = 0; i < a.length - 1; i++) {
+      if (bill >= a[i].bill && bill <= a[i + 1].bill) {
+        var t = (bill - a[i].bill) / (a[i + 1].bill - a[i].bill);
+        return a[i].w + t * (a[i + 1].w - a[i].w);
+      }
+    }
+    return a[a.length - 1].w;
+  }
+
+  /* Snaps a continuous wattage to the nearest documented system size. A real
+     system ships in 400 W increments even though the underlying estimate
+     used for production/savings is continuous. */
+  function snapToSize(w) {
+    var sizes = CALC.systemSizesW;
+    var nearest = sizes[0];
+    var best = Math.abs(w - nearest);
+    for (var i = 1; i < sizes.length; i++) {
+      var d = Math.abs(w - sizes[i]);
+      if (d < best) { best = d; nearest = sizes[i]; }
+    }
+    return nearest;
+  }
+
+  /* Suggested storage responds to the bill directly, in its own bands, so it
+     does not feel locked one-to-one to the system-size ladder. Editable,
+     non-binding guidance - never presented as a requirement. */
+  function suggestStorage(bill) {
+    if (bill < 125) return { label: '1 kWh', note: 'optional' };
+    if (bill < 200) return { label: '1 kWh', note: '' };
+    if (bill < 250) return { label: '1-2 kWh', note: '' };
+    if (bill < 300) return { label: '2 kWh', note: '' };
+    return { label: '2-4 kWh', note: '' };
+  }
 
   function monthlyKwh(sizeW) {
     return (sizeW / 1000) *
@@ -609,44 +643,42 @@ var CALC = {
            CALC.daysPerMonth;
   }
 
-  function suggestSize(bill) {
-    var size = CALC.billToSize[0].sizeW;
-    for (var i = 0; i < CALC.billToSize.length; i++) {
-      if (bill >= CALC.billToSize[i].minBill) size = CALC.billToSize[i].sizeW;
-    }
-    return size;
-  }
-
   function sizerRender() {
     var bill = parseFloat(input.value) || 0;
     var atCap = bill >= CALC.billCapUsd;
 
-    var sizeW = suggestSize(bill);
+    /* estimatedW is continuous and uncapped - it drives production and
+       savings so they move on every dollar. recommendedW is the same
+       estimate snapped to a real increment for the headline number, and it
+       is never capped by the plug-in limit, so it keeps climbing to 2000 W
+       at the top of the range instead of freezing at 1200 W. */
+    var estimatedW = interpolateW(bill);
+    var recommendedW = snapToSize(estimatedW);
 
-    /* cap the recommendation without changing the documented size ladder */
     var ca = CALC.caPlugIn;
-    var capped = ca && ca.enabled && sizeW > ca.capW;
-    if (capped) sizeW = ca.capW;
+    var capped = ca && ca.enabled && recommendedW > ca.capW;
 
-    if (out.sizeLabel) {
-      out.sizeLabel.textContent = capped ? ca.label : 'Recommended starting size';
-    }
-    if (out.capnote) {
-      out.capnote.textContent = capped ? ca.note : '';
-      out.capnote.hidden = !capped;
+    if (out.pluginNote) {
+      if (capped) {
+        out.pluginNote.innerHTML = ca.label + ': <b>' + ca.capW.toLocaleString() +
+          ' W</b><br>' + ca.note;
+        out.pluginNote.hidden = false;
+      } else {
+        out.pluginNote.hidden = true;
+        out.pluginNote.innerHTML = '';
+      }
     }
 
-    var producedKwh = monthlyKwh(sizeW);
+    var producedKwh = monthlyKwh(estimatedW);
     var usedKwh = producedKwh * CALC.selfConsumptionShare;
     var savings = usedKwh * CALC.electricityRateUsdPerKwh;
 
     if (out.bill) out.bill.textContent = '$' + Math.round(bill) + (atCap ? '+' : '');
-    if (out.size) out.size.textContent = sizeW.toLocaleString() + ' W';
-    if (largest) largest.hidden = true;
-    var st = CALC.storageBySize[sizeW];
-    if (out.storage && st) {
-      out.storage.textContent = st.label + (st.note ? ' ' + st.note : '');
-    }
+    if (out.size) out.size.textContent = recommendedW.toLocaleString() + ' W';
+
+    var st = suggestStorage(bill);
+    if (out.storage) out.storage.textContent = st.label + (st.note ? ' ' + st.note : '');
+
     if (out.kwh) out.kwh.textContent = Math.round(producedKwh) + ' kWh';
     if (out.savings) out.savings.textContent = '$' + Math.round(savings);
 
