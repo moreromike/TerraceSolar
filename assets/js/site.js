@@ -652,6 +652,11 @@ var CALC = {
 
     input.setAttribute('aria-valuetext',
       '$' + Math.round(bill) + (atCap ? ' or more' : '') + ' per month');
+
+    /* Update slider gradient background */
+    var percent = ((bill - 75) / (350 - 75)) * 100;
+    percent = Math.max(0, Math.min(100, percent));
+    input.style.setProperty('--slider-percent', percent + '%');
   }
 
   input.addEventListener('input', sizerRender);

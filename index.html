@@ -312,48 +312,53 @@
     </div>
   </section>
 
-  <!-- ===================== WHAT SIZE FITS YOU ===================== -->
+  <!-- ===================== FIND YOUR FIT — CALCULATOR ===================== -->
   <section class="section sizer" id="sizer" aria-labelledby="sizer-title" data-sizer>
-    <div class="wrap">
-      <div class="section-head">
-        <p class="eyebrow">Estimated starting point</p>
-        <h2 id="sizer-title">What size fits you?</h2>
-        <p class="lede">Start with your monthly electric bill.</p>
+    <div class="sizer__card">
+      <div class="sizer__head">
+        <h2 id="sizer-title">Find your fit.</h2>
+        <p class="sizer__subhead">Start with what you already know: your monthly electric bill.</p>
       </div>
 
-      <div class="sizer__panel">
+      <div class="sizer__input-group">
         <label class="sizer__label" for="bill">Monthly electric bill</label>
         <output class="sizer__bill" data-out="bill">$175</output>
         <input class="sizer__range" id="bill" type="range"
                min="75" max="350" step="5" value="175"
-               data-sizer-input aria-describedby="sizer-note">
-
-        <div class="sizer__results" aria-live="polite">
-          <div class="sizer__result sizer__result--lead">
-            <span data-out="sizeLabel">Recommended starting size</span>
-            <b data-out="size">&mdash;</b>
-            <em class="sizer__largest" hidden>largest current system size</em>
-          </div>
-          <div class="sizer__result sizer__result--storage">
-            <span>Suggested starting storage</span>
-            <b data-out="storage">&mdash;</b>
-          </div>
-          <div class="sizer__result">
-            <span>Estimated monthly production</span>
-            <b data-out="kwh">&mdash;</b>
-          </div>
-          <div class="sizer__result">
-            <span>Estimated monthly savings</span>
-            <b data-out="savings">&mdash;</b>
-          </div>
-        </div>
-
-        <p class="sizer__cap" data-out="capnote" hidden></p>
-        <p class="sizer__note" id="sizer-note">
-          Storage needs vary based on when you use electricity. Actual production and savings
-          vary by location, sunlight, electricity rates and energy use.
-        </p>
+               data-sizer-input>
       </div>
+
+      <div class="sizer__progression">
+        YOUR BILL <span class="sizer__arrow">→</span> YOUR STARTING SYSTEM
+      </div>
+
+      <div class="sizer__results-top" aria-live="polite">
+        <div class="sizer__result-card">
+          <b class="sizer__big-number" data-out="size">&mdash;</b>
+          <span class="sizer__big-label">Solar starting size</span>
+        </div>
+        <div class="sizer__result-card">
+          <b class="sizer__big-number" data-out="storage">&mdash;</b>
+          <span class="sizer__big-label">Suggested storage</span>
+        </div>
+      </div>
+
+      <div class="sizer__results-secondary">
+        <div class="sizer__result">
+          <span data-out="sizeLabel">Estimated monthly production</span>
+          <b data-out="kwh">&mdash;</b>
+        </div>
+        <div class="sizer__result">
+          <span>Estimated monthly savings</span>
+          <b data-out="savings">&mdash;</b>
+        </div>
+      </div>
+
+      <p class="sizer__cap" data-out="capnote" hidden></p>
+      <p class="sizer__note">
+        Storage needs vary based on when you use electricity. Actual production and savings
+        vary by location, sunlight, electricity rates and energy use.
+      </p>
     </div>
   </section>
 
