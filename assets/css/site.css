@@ -513,8 +513,12 @@ a { color: inherit; }
 .film--on .film__stage {
   position: sticky;
   top: 0;
-  height: 100svh;
+  /* vh first as the fallback, svh last so supporting browsers apply it -
+     svh (small viewport height) stays stable while mobile browser chrome
+     collapses/expands, which is what prevents the pinned stage from
+     jumping as the address bar shows and hides while scrolling */
   height: 100vh;
+  height: 100svh;
   width: 100%;
 }
 
@@ -586,11 +590,13 @@ a { color: inherit; }
   .film--on:not(.film--force) .film__progress { display: none; }
   .film--on:not(.film--force) .film__video { display: none; }
 }
-@media (max-width: 899px), (max-height: 599px) {
+/* Mobile width is NOT a fallback condition - the film runs on phones,
+   recomposed by the mobile rules further down. This net only catches
+   genuinely too-short viewports (matches the JS heightOkQuery floor),
+   e.g. a collapsed embedded panel - never a real phone in portrait. */
+@media (max-height: 360px) {
   .film--on .film__track { height: auto; }
-  /* note: this net is size-based only and intentionally still applies with
-     ?motion=full, because a pinned 100vh stage genuinely does not fit here */
-  .film--on .film__stage { position: static; height: auto; min-height: clamp(26rem, 62vh, 40rem); }
+  .film--on .film__stage { position: static; height: auto; min-height: 20rem; }
   .film--on .film__media { position: absolute; inset: 0; }
   .film--on .film__content { position: relative; inset: auto; padding-top: 0; }
   .film--on .film__copy { opacity: 1; transform: none; }
@@ -1282,12 +1288,12 @@ h1 em, h2 em, .chapter__title em { font-style: normal; color: var(--accent); }
   line-height: 1.03; letter-spacing: -0.04em; margin: 0;
   color: var(--ink);
 }
-/* five items, balanced 3-over-2, centred as one composition - flex-wrap
-   does this naturally where a rigid grid can't */
+/* mobile-first: wraps into a comfortable multi-row grid; the desktop
+   breakpoint below forces one single five-across row instead */
 .steps__list {
   list-style: none; margin: 0; padding: 0;
   display: flex; flex-wrap: wrap; justify-content: center;
-  gap: clamp(1.5rem, 3vw, 2.75rem) clamp(1.25rem, 2.5vw, 2rem);
+  gap: clamp(1.5rem, 3vw, 2.25rem) clamp(1rem, 2vw, 1.5rem);
 }
 .step {
   opacity: 0; transform: translateY(16px);
@@ -1297,45 +1303,38 @@ h1 em, h2 em, .chapter__title em { font-style: normal; color: var(--accent); }
   max-width: 260px;
   position: relative;
 }
+@media (min-width: 900px) {
+  .steps__list { flex-wrap: nowrap; gap: clamp(0.85rem, 1.4vw, 1.5rem); }
+  .step { flex: 1 1 0; max-width: none; min-width: 0; }
+}
 .step.is-shown { opacity: 1; transform: none; }
 .step__n {
   display: block; font-family: var(--display); font-size: 0.78rem;
   font-weight: 600; letter-spacing: 0.16em; color: var(--accent); margin-bottom: 0.7rem;
 }
 
-/* one coordinated product family: every item sits on the same soft warm
-   glow, with the same drop shadow and the same soft-edged mask fading the
-   photo's own edges away - no bordered box, no hard photo rectangle. */
+/* clean premium product photography: one coordinated family via a
+   consistent frame, aspect ratio and neutral background - no feathering,
+   no mask, no glow. Crisp edges throughout. object-fit: contain so no
+   product (notably the battery's full body and base) is ever cropped. */
 .step__figure {
   position: relative;
   aspect-ratio: 4 / 3;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  box-shadow: 0 10px 24px rgba(23, 20, 15, 0.10);
+  overflow: hidden;
   display: grid;
   place-items: center;
   margin-bottom: 0.9rem;
 }
-.step__figure::before {
-  content: "";
-  position: absolute;
-  inset: -14%;
-  z-index: 0;
-  border-radius: 50%;
-  background: radial-gradient(ellipse 58% 55% at 50% 52%,
-    rgba(251, 172, 50, 0.16) 0%,
-    rgba(251, 172, 50, 0.06) 46%,
-    transparent 75%);
-  pointer-events: none;
-}
 .step__figure img {
-  position: relative;
-  z-index: 1;
-  max-width: 90%;
-  max-height: 88%;
-  width: auto;
-  height: auto;
+  width: 100%;
+  height: 100%;
   object-fit: contain;
-  -webkit-mask-image: radial-gradient(ellipse 60% 58% at 50% 50%, black 52%, transparent 94%);
-          mask-image: radial-gradient(ellipse 60% 58% at 50% 50%, black 52%, transparent 94%);
-  filter: drop-shadow(0 16px 18px rgba(23, 20, 15, 0.22));
+  padding: 0.6rem;
+  display: block;
 }
 .step b {
   display: block; font-family: var(--display);
@@ -1464,18 +1463,6 @@ h1 em, h2 em, .chapter__title em { font-style: normal; color: var(--accent); }
 .shop__option-spec { font-size: 0.76rem; color: var(--muted); line-height: 1.4; }
 .shop__option-card b:not(.shop__option-size) { font-family: var(--display); font-size: 1.05rem; font-weight: 640; color: var(--ink); }
 
-/* storage step: real battery visual beside the option cards */
-.shop__storage-row { display: grid; gap: 1.5rem; align-items: center; }
-@media (min-width: 640px) { .shop__storage-row { grid-template-columns: 110px 1fr; } }
-.shop__battery-visual { text-align: center; }
-.step__figure--sm { aspect-ratio: 3 / 4; max-width: 110px; margin-inline: auto; }
-.shop__battery-units {
-  display: flex; justify-content: center; gap: 4px; margin-top: 0.5rem; min-height: 10px;
-}
-.shop__battery-units span {
-  width: 8px; height: 8px; border-radius: 50%; background: var(--accent);
-}
-
 /* order summary - ecommerce-feeling panel */
 .shop__summary {
   background: var(--paper);
@@ -1499,16 +1486,20 @@ h1 em, h2 em, .chapter__title em { font-style: normal; color: var(--accent); }
 
 .shop__includes { margin-top: 1.1rem; }
 .shop__includes-label { font-size: 0.76rem; color: var(--muted); margin: 0 0 0.6rem; }
-.shop__thumbs { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.5rem; }
-.shop__thumbs li { flex: 1 1 68px; text-align: center; }
-.shop__thumbs img {
-  width: 100%; aspect-ratio: 1; object-fit: contain;
-  padding: 0.4rem;
-  -webkit-mask-image: radial-gradient(ellipse 62% 62% at 50% 50%, black 50%, transparent 92%);
-          mask-image: radial-gradient(ellipse 62% 62% at 50% 50%, black 50%, transparent 92%);
-  filter: drop-shadow(0 6px 8px rgba(23, 20, 15, 0.18));
+.shop__includes-list {
+  list-style: none; margin: 0; padding: 0;
+  display: grid; gap: 0.45rem;
+  font-size: 0.9rem; color: var(--ink);
 }
-.shop__thumbs span { display: block; margin-top: 0.3rem; font-size: 0.66rem; color: var(--muted); line-height: 1.3; }
+.shop__includes-list li {
+  position: relative; padding-left: 1.1rem;
+}
+.shop__includes-list li::before {
+  content: "";
+  position: absolute; left: 0; top: 0.55em;
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--accent);
+}
 
 .shop__pricing {
   display: flex; justify-content: space-between; align-items: baseline;
@@ -1594,9 +1585,9 @@ h1 em, h2 em, .chapter__title em { font-style: normal; color: var(--accent); }
   white-space: nowrap;
 }
 
-/* ---- 4. how it works: centred, equal, connected - 3 over 2, balanced ---- */
+/* ---- 4. how it works: one five-across row on desktop, centred ---- */
 .steps__list {
-  max-width: 62rem;
+  max-width: 1450px;
   margin-inline: auto;
 }
 @media (max-width: 899px) {
@@ -1707,7 +1698,6 @@ h1 em, h2 em, .chapter__title em { font-style: normal; color: var(--accent); }
 .steps-chips { justify-content: center; }
 
 /* how-it-works group */
-.steps__list { max-width: 58rem; margin-inline: auto; }
 .step { text-align: center; }
 .step__n { text-align: center; }
 
@@ -1715,7 +1705,7 @@ h1 em, h2 em, .chapter__title em { font-style: normal; color: var(--accent); }
 .steps__stage > .wrap { width: 100%; margin-inline: auto; }
 
 .steps, .steps__track, .steps__stage { width: 100%; }
-.steps__stage > .wrap { max-width: 1240px; margin-inline: auto; }
+.steps__stage > .wrap { max-width: 1500px; margin-inline: auto; }
 
 /* ===== one visual family for product imagery ===== */
 /* Scene photographs fill the frame; isolated product shots sit inside it on the
@@ -2518,4 +2508,118 @@ h1 em, h2 em, .chapter__title em { font-style: normal; color: var(--accent); }
   color: var(--muted);
   max-width: 52ch;
   margin-inline: auto;
+}
+
+/* ==========================================================================
+   MOBILE CINEMATIC SCRUB — a real recomposition, not a shrunk desktop
+   layout. Placed last so it wins cascade order against every earlier
+   unscoped chapter rule. The film now runs on phones; it no longer falls
+   back to the poster just because the viewport is narrow.
+
+   Design decision: every hold (left/right/bottom) reads as a bottom-
+   anchored band on mobile, reusing the same proven pattern the desktop
+   "connection" hold already uses. A phone doesn't have the width for the
+   desktop left/right split without either overlapping the product or
+   clipping text, and anchoring everything to the lower third - which is
+   open in every hold - solves both the "never cover the product" and
+   "never overlap the logo" requirements at once, since nothing is
+   positioned near the top-left logo safe zone any more.
+   ========================================================================== */
+@media (max-width: 767px) {
+
+  /* ---- opening title ---- */
+  .film__copy {
+    max-width: calc(100% - 2.5rem);
+    padding-inline: 1.25rem;
+  }
+  .film__copy h1 {
+    font-size: clamp(2.5rem, 12vw, 4.5rem);
+    line-height: 1.02;
+  }
+  .film__kicker { font-size: clamp(1.05rem, 1rem + 1vw, 1.3rem); }
+  .film__copy .lede { max-width: 30ch; font-size: 1rem; }
+
+  /* ---- every hold: one bottom-anchored band, full width, centred ---- */
+  .film--on .chapter--left,
+  .film--on .chapter--right {
+    align-items: end;
+  }
+  .film--on .chapter--left .chapter__inner,
+  .film--on .chapter--right .chapter__inner,
+  .film--on .chapter--bottom .chapter__inner {
+    width: calc(100% - 2.5rem);
+    max-width: none;
+    margin-left: 1.25rem;
+    margin-right: 1.25rem;
+    margin-top: 0;
+    max-height: 64vh;
+    text-align: center;
+    padding-bottom: clamp(2rem, 7vh, 3.25rem);
+  }
+  .film--on .chapter--right .chapter__inner { text-align: center; }
+
+  .film--on .chapter--left::before,
+  .film--on .chapter--right::before,
+  .film--on .chapter--bottom::before {
+    background: linear-gradient(to top, rgb(0 0 0 / 62%) 0%, rgb(0 0 0 / 24%) 40%, rgb(0 0 0 / 0%) 68%);
+  }
+
+  /* ---- mobile type scale - recomposed, not desktop px scaled down ---- */
+  .chapter__eyebrow { font-size: 0.64rem; margin-bottom: 0.55rem; }
+  .chapter__title {
+    font-size: clamp(2.5rem, 12vw, 4.5rem);
+    line-height: 1;
+  }
+  .chapter__lede {
+    max-width: 30ch;
+    margin-inline: auto;
+    font-size: clamp(1rem, 0.92rem + 1vw, 1.15rem);
+  }
+  .chapter__big { font-size: clamp(1.9rem, 1.2rem + 4.5vw, 2.6rem); }
+  .chapter__sub { max-width: 30ch; margin-inline: auto; }
+  .chapter__sub--rule { border-left: 0; padding-left: 0; margin-inline: auto; }
+
+  /* ---- battery hold: 1 kWh / 400 W / Outlet, one compact row ---- */
+  .specrow--hold {
+    justify-content: center;
+    gap: clamp(0.75rem, 4vw, 1.25rem);
+  }
+  .specrow--hold b { font-size: clamp(1.15rem, 0.95rem + 2.5vw, 1.5rem); }
+  .specrow--hold i { font-size: 0.7rem; }
+
+  /* ---- expandable storage hold: three equal columns, never falls off
+     the viewport ---- */
+  [data-chapter="stack"] .chapter__inner {
+    width: calc(100% - 2.5rem);
+    margin-left: 1.25rem;
+    margin-right: 1.25rem;
+    margin-top: 0;
+  }
+  [data-chapter="stack"] .specrow {
+    justify-content: center;
+    gap: 0;
+  }
+  [data-chapter="stack"] .specrow > div {
+    flex: 1 1 0;
+    text-align: center;
+  }
+  [data-chapter="stack"] .specrow > div + div {
+    padding-left: clamp(0.5rem, 3vw, 1rem);
+  }
+  [data-chapter="stack"] .specrow b {
+    font-size: clamp(1.05rem, 0.85rem + 3.5vw, 1.5rem);
+  }
+
+  /* ---- complete system / connection hold: bullets recompose into a
+     compact centred row instead of covering the equipment ---- */
+  .chapter--bottom .recap {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.4rem 0.9rem;
+  }
+  .chapter--bottom .recap li {
+    font-size: clamp(0.88rem, 0.8rem + 1vw, 1rem);
+  }
+  .chapter--bottom .recap li + li::before { display: none; }
 }

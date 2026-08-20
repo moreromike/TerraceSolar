@@ -67,20 +67,39 @@
 var TerraceFilm = (function () {
   'use strict';
 
-  /* Master film source. Swap the file at this path, or point data-film-src at a
-     different file in index.html - no JS change needed. If the replacement has
-     the same duration the HOLDS timestamps below keep working unchanged. */
-  var VIDEO_SRC = (document.querySelector('[data-film]') || {}).dataset
-    ? (document.querySelector('[data-film]').dataset.filmSrc || 'assets/video/hero.mp4')
-    : 'assets/video/hero.mp4';
+  var root = document.querySelector('[data-film]');
+  if (!root) return null;
+
+  /* Mobile gets less physical scroll for the same story, and can use a
+     lighter-weight source file if one is supplied. This is a real recompose,
+     not a shrunk desktop layout - see the mobile film CSS. */
+  var mobileQuery = window.matchMedia('(max-width: 767px)');
+
+  /* Master film source. Swap the file at these paths, or point
+     data-film-src / data-film-src-mobile at different files in index.html -
+     no JS change needed. If a mobile file doesn't exist yet, this falls
+     back to the desktop master automatically - same asset, just recomposed
+     on screen. Both sources must share the same timeline/timestamps. */
+  var filmDataset = root.dataset || {};
+  var DESKTOP_SRC = filmDataset.filmSrc || 'assets/video/hero.mp4';
+  var MOBILE_SRC = filmDataset.filmSrcMobile || DESKTOP_SRC;
+  function currentVideoSrc() { return mobileQuery.matches ? MOBILE_SRC : DESKTOP_SRC; }
 
   var DAMPING = 0.16;
   var SETTLE = 0.004;
 
+  /* Known duration of the shipped master, used only to reserve the track's
+     height before video metadata has loaded, so the page never jumps once
+     it arrives. Corrected immediately by the real duration either way. */
+  var FALLBACK_DURATION = 42.875;
+
   /* ===================================================================
      HOLD FRAMES - the equipment shots the film stops on.
-     `t` is the timestamp in hero.mp4 to freeze on.
-     `vh` is how much scroll that chapter gets, in viewport heights.
+     `t` is the timestamp in hero.mp4 to freeze on - identical on mobile
+     and desktop, since both sources share one timeline.
+     `vh` is how much scroll that chapter gets on desktop, in viewport
+     heights; mobile applies HOLD_VH_MOBILE_FACTOR on top of this so holds
+     stay long enough to read without feeling endless on a phone.
      Only `stack` (28.96) is confirmed against the master; the others are
      estimates. Load ?motion=full&debug=1 and press H on each shot to capture.
      =================================================================== */
@@ -92,12 +111,12 @@ var TerraceFilm = (function () {
   ];
 
   var SCRUB_VH_PER_SECOND = 17;
+  var SCRUB_VH_PER_SECOND_MOBILE = 10;
   /* the closing fall-to-black needs only enough scroll to hide the seam */
   var TAIL_SCRUB_VH_PER_SECOND = 6;
+  var TAIL_SCRUB_VH_PER_SECOND_MOBILE = 4;
+  var HOLD_VH_MOBILE_FACTOR = 0.62;
   var INTRO_FADE_LEAD = 2.0;
-
-  var root = document.querySelector('[data-film]');
-  if (!root) return null;
 
   var track = root.querySelector('[data-film-track]');
   var video = root.querySelector('[data-film-video]');
@@ -138,7 +157,11 @@ var TerraceFilm = (function () {
     debug = window.location.search.indexOf('debug=1') !== -1;
   }
 
-  var wideQuery = window.matchMedia('(min-width: 900px) and (min-height: 600px)');
+  /* No width gate: mobile phones run the same scrubbed film, recomposed by
+     the mobile film CSS. This is only a genuine sanity floor for viewports
+     too short to pin a stage in at all (a stray embedded iframe, a
+     collapsed panel) - real phones in portrait are always well above it. */
+  var heightOkQuery = window.matchMedia('(min-height: 360px)');
   var motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
 
   var enabled = false;
@@ -161,11 +184,8 @@ var TerraceFilm = (function () {
 
   function fallbackReason() {
     if (enabled) return null;
-    if (!wideQuery.matches) {
-      if (window.innerWidth < 900) {
-        return 'viewport width ' + window.innerWidth + 'px is under 900px';
-      }
-      return 'viewport height ' + window.innerHeight + 'px is under 600px';
+    if (!heightOkQuery.matches) {
+      return 'viewport height ' + window.innerHeight + 'px is under 360px';
     }
     if (reducedMotionWins()) {
       return 'prefers-reduced-motion is on - add ?motion=full to override';
@@ -173,23 +193,35 @@ var TerraceFilm = (function () {
     return 'gate passes but hero not enabled - sync() has not run since the last change';
   }
 
-  function buildTimeline() {
+  /* Builds the timeline against either the real duration or, before video
+     metadata has arrived, FALLBACK_DURATION - so the track's height (and
+     therefore the page layout) is reserved up front and never jumps once
+     the real duration is known. useFallback lets frame()/enable() ask for
+     that provisional sizing explicitly. */
+  function buildTimeline(useFallback) {
     timeline = [];
-    if (!duration) return;
+    var d = duration || (useFallback ? FALLBACK_DURATION : 0);
+    if (!d) return;
+
+    var mobile = mobileQuery.matches;
+    var scrubRate = mobile ? SCRUB_VH_PER_SECOND_MOBILE : SCRUB_VH_PER_SECOND;
+    var tailRate = mobile ? TAIL_SCRUB_VH_PER_SECOND_MOBILE : TAIL_SCRUB_VH_PER_SECOND;
+    var holdFactor = mobile ? HOLD_VH_MOBILE_FACTOR : 1;
+
     var vh = window.innerHeight / 100;
     var prev = 0;
 
     HOLDS.forEach(function (h) {
       if (h.t > prev) {
         timeline.push({ type: 'scrub', from: prev, to: h.t,
-                        px: Math.max(1, (h.t - prev) * SCRUB_VH_PER_SECOND * vh) });
+                        px: Math.max(1, (h.t - prev) * scrubRate * vh) });
       }
-      timeline.push({ type: 'hold', at: h.t, id: h.id, px: Math.max(1, h.vh * vh) });
+      timeline.push({ type: 'hold', at: h.t, id: h.id, px: Math.max(1, h.vh * holdFactor * vh) });
       prev = h.t;
     });
-    if (duration > prev) {
-      timeline.push({ type: 'scrub', from: prev, to: duration,
-                      px: Math.max(1, (duration - prev) * TAIL_SCRUB_VH_PER_SECOND * vh) });
+    if (d > prev) {
+      timeline.push({ type: 'scrub', from: prev, to: d,
+                      px: Math.max(1, (d - prev) * tailRate * vh) });
     }
 
     totalPx = timeline.reduce(function (sum, seg) { return sum + seg.px; }, 0);
@@ -274,7 +306,7 @@ var TerraceFilm = (function () {
 
     /* Self-correcting gate. resize and matchMedia change events are the primary
        signal, but some embedded viewports never dispatch them. */
-    if (!wideQuery.matches || reducedMotionWins()) { disable(); return; }
+    if (!heightOkQuery.matches || reducedMotionWins()) { disable(); return; }
 
     progress = computeProgress();
     root.style.setProperty('--p', progress.toFixed(4));
@@ -312,7 +344,9 @@ var TerraceFilm = (function () {
   function load() {
     if (loaded) return;
     loaded = true;
-    video.setAttribute('src', VIDEO_SRC);
+    /* attached only now, once the scrub experience is actually selected -
+       reduced-motion visitors never trigger this at all */
+    video.setAttribute('src', currentVideoSrc());
     video.preload = 'auto';
     video.load();
   }
@@ -341,7 +375,7 @@ var TerraceFilm = (function () {
     loadError = video.error
       ? ('code ' + video.error.code + ' ' + (video.error.message || ''))
       : 'unknown';
-    if (window.console) console.error('[film] video failed:', loadError, VIDEO_SRC);
+    if (window.console) console.error('[film] video failed:', loadError, currentVideoSrc());
     if (debug) paintDebug();
   });
 
@@ -361,6 +395,9 @@ var TerraceFilm = (function () {
     enabled = true;
     root.classList.add('film--on');
     if (forceMotion) root.classList.add('film--force');
+    /* reserve the track's height immediately, against the known fallback
+       duration, so the page never jumps once real metadata arrives */
+    if (!duration) buildTimeline(true);
     load();
     window.addEventListener('scroll', schedule, { passive: true });
     schedule();
@@ -391,7 +428,7 @@ var TerraceFilm = (function () {
   }
 
   function sync() {
-    if (wideQuery.matches && !reducedMotionWins()) { enable(); } else { disable(); }
+    if (heightOkQuery.matches && !reducedMotionWins()) { enable(); } else { disable(); }
     if (debug) paintDebug();
   }
 
@@ -454,8 +491,27 @@ var TerraceFilm = (function () {
     ].join('\n');
   }
 
-  listen(wideQuery);
+  listen(heightOkQuery);
   listen(motionQuery);
+  /* crossing the mobile/desktop breakpoint (rotation, resize) needs the
+     timeline rebuilt with the matching scrub/hold rates - sync() alone is a
+     no-op here since enable() only acts on first entry. Only reload the
+     video element if the breakpoint actually points at a different file
+     (a real mobile source configured via data-film-src-mobile); when both
+     resolve to the same master, swapping is unnecessary. */
+  function onMobileBreakpointChange() {
+    if (!enabled) return;
+    var wanted = currentVideoSrc();
+    if (loaded && video.getAttribute('src') !== wanted) {
+      loaded = false;
+      video.removeAttribute('src');
+      load();
+    }
+    buildTimeline();
+    schedule();
+  }
+  if (mobileQuery.addEventListener) { mobileQuery.addEventListener('change', onMobileBreakpointChange); }
+  else if (mobileQuery.addListener) { mobileQuery.addListener(onMobileBreakpointChange); }
   sync();
 
   if (debug) {
@@ -481,10 +537,11 @@ var TerraceFilm = (function () {
   if (window.console) {
     console.log('[film] init', {
       videoElement: !!video,
-      src: VIDEO_SRC,
+      src: currentVideoSrc(),
+      mobile: mobileQuery.matches,
       forceMotion: forceMotion,
       reducedMotion: motionQuery.matches,
-      gatePasses: wideQuery.matches,
+      gatePasses: heightOkQuery.matches,
       enabled: enabled,
       fallbackReason: fallbackReason()
     });
@@ -492,7 +549,7 @@ var TerraceFilm = (function () {
 
   return {
     root: root, video: video, track: track, captions: captions,
-    wideQuery: wideQuery, motionQuery: motionQuery,
+    heightOkQuery: heightOkQuery, motionQuery: motionQuery, mobileQuery: mobileQuery,
     isEnabled: function () { return enabled; },
     isForced: function () { return forceMotion; },
     getProgress: function () { return enabled ? progress : computeProgress(); },
@@ -1082,8 +1139,9 @@ var SOLAR_CALCULATOR_CONFIG = {
 
 
 /* ---------------------------------------------------------------------------
-   Shop configurator - live order summary, battery-unit visual, and a
-   progress indicator that tracks which step the customer is engaging with.
+   Shop configurator - live, text-only order summary and a progress
+   indicator that tracks which step the customer is engaging with. No
+   product imagery here by design.
    Panel/microinverter counts per size come straight off each option's
    data-panels/data-inverters attributes in the HTML (the documented 400 W
    kit ratio), not computed or invented here. Battery unit count is the
@@ -1099,8 +1157,7 @@ var SOLAR_CALCULATOR_CONFIG = {
     out[el.getAttribute('data-shop-out')] = el;
   });
 
-  var batteryThumb = form.querySelector('[data-battery-thumb]');
-  var batteryUnits = form.querySelector('[data-battery-units]');
+  var batteryLine = form.querySelector('[data-battery-line]');
   var progressSteps = [].slice.call(document.querySelectorAll('[data-shop-progress] [data-progress-step]'));
 
   function setProgress(step) {
@@ -1120,21 +1177,14 @@ var SOLAR_CALCULATOR_CONFIG = {
       var inverters = parseInt(sizeInput.getAttribute('data-inverters'), 10);
 
       if (out.size) out.size.textContent = w.toLocaleString() + ' W';
-      if (out.panelsLabel) out.panelsLabel.textContent = panels + (panels === 1 ? ' panel' : ' panels');
-      if (out.invertersLabel) out.invertersLabel.textContent = inverters + (inverters === 1 ? ' microinverter' : ' microinverters');
+      if (out.panelsLabel) out.panelsLabel.textContent = panels + ' × 200 W panels';
+      if (out.invertersLabel) out.invertersLabel.textContent = inverters + ' × ' +
+        (inverters === 1 ? 'microinverter' : 'microinverters');
     }
 
     if (out.storage) out.storage.textContent = kwh ? kwh + ' kWh' : 'None';
     if (out.batteryLabel) out.batteryLabel.textContent = kwh + (kwh === 1 ? ' battery unit' : ' battery units');
-    if (batteryThumb) batteryThumb.hidden = kwh === 0;
-
-    if (batteryUnits) {
-      batteryUnits.innerHTML = '';
-      for (var i = 0; i < kwh; i++) {
-        var dot = document.createElement('span');
-        batteryUnits.appendChild(dot);
-      }
-    }
+    if (batteryLine) batteryLine.hidden = kwh === 0;
   }
 
   form.addEventListener('change', function (e) {

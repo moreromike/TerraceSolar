@@ -680,35 +680,27 @@
 
             <fieldset class="shop__step" data-shop-fieldset="2">
               <legend>Step 2 &middot; Add storage <span class="step__badge">Optional</span></legend>
-              <div class="shop__storage-row">
-                <div class="shop__battery-visual">
-                  <div class="step__figure step__figure--sm">
-                    <img src="assets/img/overview-battery.jpg" width="460" height="990" loading="lazy" decoding="async" alt="Terrace Solar battery storage unit.">
-                  </div>
-                  <div class="shop__battery-units" data-battery-units aria-hidden="true"></div>
-                </div>
-                <div class="shop__options shop__options--storage">
-                  <label class="shop__option">
-                    <input type="radio" name="shop-batt" value="0" checked>
-                    <span class="shop__option-card"><b>None</b></span>
-                  </label>
-                  <label class="shop__option">
-                    <input type="radio" name="shop-batt" value="1">
-                    <span class="shop__option-card"><b>1 kWh</b><span class="shop__option-spec">1 battery unit</span></span>
-                  </label>
-                  <label class="shop__option">
-                    <input type="radio" name="shop-batt" value="2">
-                    <span class="shop__option-card"><b>2 kWh</b><span class="shop__option-spec">2 battery units</span></span>
-                  </label>
-                  <label class="shop__option">
-                    <input type="radio" name="shop-batt" value="3">
-                    <span class="shop__option-card"><b>3 kWh</b><span class="shop__option-spec">3 battery units</span></span>
-                  </label>
-                  <label class="shop__option">
-                    <input type="radio" name="shop-batt" value="4">
-                    <span class="shop__option-card"><b>4 kWh</b><span class="shop__option-spec">4 battery units</span></span>
-                  </label>
-                </div>
+              <div class="shop__options shop__options--storage">
+                <label class="shop__option">
+                  <input type="radio" name="shop-batt" value="0" checked>
+                  <span class="shop__option-card"><b>None</b></span>
+                </label>
+                <label class="shop__option">
+                  <input type="radio" name="shop-batt" value="1">
+                  <span class="shop__option-card"><b>1 kWh</b><span class="shop__option-spec">1 battery unit</span></span>
+                </label>
+                <label class="shop__option">
+                  <input type="radio" name="shop-batt" value="2">
+                  <span class="shop__option-card"><b>2 kWh</b><span class="shop__option-spec">2 battery units</span></span>
+                </label>
+                <label class="shop__option">
+                  <input type="radio" name="shop-batt" value="3">
+                  <span class="shop__option-card"><b>3 kWh</b><span class="shop__option-spec">3 battery units</span></span>
+                </label>
+                <label class="shop__option">
+                  <input type="radio" name="shop-batt" value="4">
+                  <span class="shop__option-card"><b>4 kWh</b><span class="shop__option-spec">4 battery units</span></span>
+                </label>
               </div>
             </fieldset>
 
@@ -722,11 +714,12 @@
 
             <div class="shop__includes">
               <p class="shop__includes-label">Includes</p>
-              <ul class="shop__thumbs">
-                <li><img src="assets/img/overview-panels.jpg" width="1782" height="750" loading="lazy" alt="Solar panels"><span data-shop-out="panelsLabel">4 panels</span></li>
-                <li><img src="assets/img/microinverter-angle.jpg" width="933" height="531" loading="lazy" alt="Microinverter"><span data-shop-out="invertersLabel">2 microinverters</span></li>
-                <li><img src="assets/img/overview-outlet.jpg" width="784" height="596" loading="lazy" alt="Cable and outlet"><span>Cable + outlet</span></li>
-                <li data-battery-thumb hidden><img src="assets/img/overview-battery.jpg" width="460" height="990" loading="lazy" alt="Battery storage"><span data-shop-out="batteryLabel">1 battery unit</span></li>
+              <ul class="shop__includes-list">
+                <li data-shop-out="panelsLabel">4 &times; 200 W panels</li>
+                <li data-shop-out="invertersLabel">2 &times; microinverters</li>
+                <li>Connection hardware</li>
+                <li>Power meter</li>
+                <li data-battery-line hidden data-shop-out="batteryLabel">1 battery unit</li>
               </ul>
             </div>
 
