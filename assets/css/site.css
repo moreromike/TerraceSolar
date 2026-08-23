@@ -209,30 +209,41 @@ a { color: inherit; }
   display: block;
 }
 .site-footer .brand img { height: 64px; }
-/* keep the header on one line on small screens *//* ---------- scroll-scrubbed film hero ---------- */
-/* Baseline = the static poster hero: no pinning, no video, no tall track.
-   That is what no-JS, reduced-motion, narrow and short viewports get.
-   .film--on is added by JS only after both media queries pass. */
+/* keep the header on one line on small screens */
+/* ---------- hero: autoplay cinematic loop ---------- */
+/* Not scroll-scrubbed. A poster image is always painted first and is what
+   no-JS, reduced-motion and any autoplay-blocked visitor keeps for the
+   whole visit - the video is a decorative crossfade on top (.film--ready,
+   added by site.js once a frame has actually decoded), never a
+   requirement for reading the hero or reaching the CTAs.
+
+   Reusable "CinematicSection" pattern: this markup/class set
+   (.film__stage / __media / __poster / __video / __scrim / __content) is
+   the template for any future short clip section - duplicate the block in
+   index.html with new data-hero-src/poster/copy and it works with zero
+   CSS changes. */
 
 .film {
-  --film-vh: 1000;          /* track height, in vh */
-  --header-h: 0px;   /* header removed - film starts flush at the top */
-  --p: 0;
-  background: var(--charcoal-deep);
-  color: #f3f1ec;
   position: relative;
+  color: #f3f1ec;
+  background: var(--charcoal-deep);
+  overflow: hidden;
 }
-
-.film__track { position: relative; }
 
 .film__stage {
   position: relative;
   display: grid;
-  overflow: hidden;
+  align-items: end;
+  /* true full-viewport hero, not a capped clamp - svh last so it wins on
+     browsers that support it, keeping the stage stable as mobile chrome
+     (address bar) shows/hides instead of the clamp shrinking the crop */
+  height: 100vh;
+  height: 100svh;
+  min-height: 26rem;
 }
 
 /* --- media --- */
-.film__media { position: relative; grid-area: 1 / 1; background: var(--charcoal-deep); }
+.film__media { position: absolute; inset: 0; }
 .film__poster,
 .film__video {
   display: block;
@@ -245,50 +256,29 @@ a { color: inherit; }
   position: absolute;
   inset: 0;
   opacity: 0;
-  transition: opacity 0.5s ease;
-  pointer-events: none;   /* no controls, never interactive */
+  transition: opacity 0.6s ease;
+  pointer-events: none;   /* decorative only, never interactive, no controls */
 }
 .film--ready .film__video { opacity: 1; }
-.film--ready .film__poster { opacity: 0; transition: opacity 0.5s ease; }
+.film--ready .film__poster { opacity: 0; transition: opacity 0.6s ease; }
 .film__video::-webkit-media-controls { display: none !important; }
 
-/* legibility scrim — reduced to let warmth show through */
+/* legibility scrim so the headline and CTAs stay readable over any frame */
 .film__scrim {
   position: absolute;
   inset: 0;
   pointer-events: none;
   background:
-    linear-gradient(to right, rgb(0 0 0 / 32%) 0%, rgb(0 0 0 / 14%) 38%, rgb(0 0 0 / 0%) 68%),
-    linear-gradient(to top, rgb(0 0 0 / 28%) 0%, rgb(0 0 0 / 0%) 45%);
+    linear-gradient(to right, rgb(0 0 0 / 40%) 0%, rgb(0 0 0 / 16%) 42%, rgb(0 0 0 / 0%) 70%),
+    linear-gradient(to top, rgb(0 0 0 / 48%) 0%, rgb(0 0 0 / 4%) 55%);
 }
 
 /* --- copy --- */
-.film__content { grid-area: 1 / 1; position: relative; display: grid; align-items: center; }
-.film__copy { max-width: 44rem; padding-block: clamp(2.5rem, 6vw, 4rem); }
+.film__content { position: relative; z-index: 1; width: 100%; }
+.film__copy { max-width: 44rem; padding-block: clamp(2.5rem, 7vw, 5rem); }
 .film__copy .eyebrow { color: var(--accent-graphic); }
 .film__copy h1 { font-family: var(--display); color: #fff; margin-bottom: 1rem; text-shadow: 0 4px 24px rgb(0 0 0 / 32%); }
 .film__copy .lede { color: #faf8f3; max-width: 44ch; }
-
-.film__captions { list-style: none; margin: 1.6rem 0 0; padding: 0; display: grid; gap: 0.6rem; }
-.film__caption {
-  position: relative;
-  padding-left: 1.6rem;
-  color: #faf8f3;
-  font-size: 1.02rem;
-}
-.film__caption::before {
-  content: "";
-  position: absolute;
-  left: 0; top: 0.62em;
-  width: 7px; height: 7px;
-  border-radius: 50%;
-  background: var(--accent-graphic);
-}
-.film__caption .src {
-  background: rgb(255 255 255 / 12%);
-  border-color: rgb(255 255 255 / 28%);
-  color: #faf8f3;
-}
 
 .film .actions { margin-top: 1.9rem; }
 .btn--ghost {
@@ -299,309 +289,13 @@ a { color: inherit; }
 }
 .btn--ghost:hover { background: rgb(255 255 255 / 16%); border-color: #fff; }
 
-.film__hint, .film__progress { display: none; }
-
 /* ---- opening title ---- */
-.film__scrollcue {
-  margin-top: 2rem;
-  font-size: 0.72rem;
-  font-weight: 650;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: rgb(255 255 255 / 62%);
-}
-
-/* ---- equipment chapters ---- */
-/* Each chapter is pinned over its own held video frame. Hidden by default and in
-   every fallback; only the scrub engine reveals them. Content arrives in steps as
-   the hold scrolls, so the frame is never buried under a wall of text. */
-.film__chapters { display: none; }
-
-.film--on .film__chapters {
-  display: block;
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-}
-
-.film--on .chapter {
-  position: absolute;
-  inset: 0;
-  display: grid;
-  align-items: center;
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-  transition: opacity 0.5s ease, visibility 0s linear 0.5s;
-}
-.film--on .chapter.is-live { transition: opacity 0.45s ease, visibility 0s; }
-.film--on .chapter.is-live { opacity: 1; visibility: visible; pointer-events: auto; }
-
-/* Copy sits in the empty part of each frame, never over the product, and never
-   taller than the viewport. Alignment is per chapter. */
-.chapter__inner {
-  --c: 0;
-  width: clamp(22rem, 46vw, 44rem);
-  max-height: 78vh;
-  margin-inline: 8vw;
-}
-.film--on .chapter { align-items: center; }
-
-.film--on .chapter--left  { justify-items: start; }
-.film--on .chapter--right { justify-items: end; }
-.film--on .chapter--right .chapter__inner { text-align: right; }
-
-/* the connection chapter reads as a strip along the base of the frame */
-.film--on .chapter--bottom { align-items: end; }
-.film--on .chapter--bottom .chapter__inner {
-  width: min(60rem, calc(100% - 2 * var(--gutter)));
-  margin-inline: auto;
-  padding-bottom: clamp(2.5rem, 7vh, 5rem);
-  text-align: center;
-}
-
-/* soft directional falloff instead of an opaque panel — reduced opacity lets warmth show through */
-.film--on .chapter::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background: linear-gradient(to right, rgb(0 0 0 / 56%) 0%, rgb(0 0 0 / 28%) 38%, rgb(0 0 0 / 0%) 68%);
-}
-.film--on .chapter--right::before {
-  background: linear-gradient(to left, rgb(0 0 0 / 56%) 0%, rgb(0 0 0 / 28%) 38%, rgb(0 0 0 / 0%) 68%);
-}
-.film--on .chapter--bottom::before {
-  background: linear-gradient(to top, rgb(0 0 0 / 52%) 0%, rgb(0 0 0 / 18%) 34%, rgb(0 0 0 / 0%) 62%);
-}
-.chapter__inner > * { position: relative; }
-
-/* ---- stepped reveal ---- */
-.chapter__step {
-  opacity: 0;
-  transform: translateY(14px);
-  transition: opacity 0.55s ease, transform 0.55s ease;
-}
-.chapter__step.is-shown { opacity: 1; transform: none; }
-/* once revealed a step stays fully visible; the chapter leaves as one group */
-
-.chapter__eyebrow {
-  font-size: 0.68rem;
-  font-weight: 600;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--accent-graphic);
-  margin: 0 0 1rem;
-}
-.chapter__title {
+.film__kicker {
   font-family: var(--display);
-  font-weight: 620;
-  font-size: clamp(2.5rem, 1.2rem + 4.4vw, 5.2rem);
-  line-height: 0.98;
-  letter-spacing: -0.045em;
-  color: #fff;
-  margin: 0;
-  text-shadow: 0 2px 50px rgb(0 0 0 / 65%);
-}
-.chapter__lede {
-  font-size: clamp(1.12rem, 1rem + 0.6vw, 1.55rem);
-  line-height: 1.42;
-  color: #f0ece5;
-  max-width: 26ch;
-  margin: clamp(1rem, 2.2vh, 1.7rem) 0 0;
-}
-.chapter--bottom .chapter__lede { margin-inline: auto; }
-
-.chapter__big {
-  font-family: var(--display);
-  font-size: clamp(2.2rem, 1.4rem + 2.8vw, 3.6rem);
-  font-weight: 620;
-  letter-spacing: -0.04em;
-  color: #fff;
-  margin: clamp(2rem, 4.5vh, 3.4rem) 0 0.35rem;
-  font-variant-numeric: tabular-nums;
-}
-.chapter__sub {
-  font-size: clamp(1rem, 0.95rem + 0.3vw, 1.15rem);
-  line-height: 1.5;
-  color: #cfcac1;
-  max-width: 30ch;
-  margin: 0.5rem 0 0;
-}
-.chapter--bottom .chapter__sub { margin-inline: auto; max-width: 46ch; }
-.chapter__sub--rule {
-  margin-top: 1.4rem;
-  padding-left: 0.9rem;
-  border-left: 2px solid var(--accent-graphic);
-  color: #cfc9bf;
-}
-.chapter--bottom .chapter__sub--rule { border: 0; padding: 0; }
-.chapter__fine {
-  font-size: 0.74rem;
-  line-height: 1.5;
-  color: #6f6b64;
-  max-width: 52ch;
-  margin: 1rem auto 0;
-}
-
-/* ---- storage configurations ---- */
-.configs { list-style: none; margin: 1.5rem 0 0; padding: 0; display: flex; gap: 0.5rem; }
-.configs li {
-  flex: 1 1 0;
-  display: grid;
-  gap: 0.1rem;
-  padding: 0.8rem 0.85rem;
-  border-radius: 10px;
-  background: rgb(255 255 255 / 5%);
-  border: 1px solid rgb(255 255 255 / 10%);
-}
-.configs b { font-family: var(--display); color: #fff; font-size: 1.15rem; font-weight: 620; letter-spacing: -0.02em; }
-.configs span { color: var(--accent-graphic); font-size: 0.8rem; font-weight: 560; }
-
-/* ---- the power path ---- */
-.flowmap {
-  list-style: none;
-  margin: 1.6rem 0 0;
-  padding: 0;
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 0.45rem;
-}
-.flowmap__node {
-  position: relative;
-  padding: 0.55rem 1.05rem;
-  border-radius: 999px;
-  background: rgb(255 255 255 / 6%);
-  border: 1px solid rgb(255 255 255 / 12%);
-}
-.flowmap__node b { color: #e8e4dc; font-size: 0.86rem; font-weight: 560; letter-spacing: 0.01em; }
-.flowmap__node--key { border-color: rgb(251 167 40 / 55%); background: rgb(251 167 40 / 12%); }
-.flowmap__node--key b { color: var(--accent-graphic); }
-.flowmap__node:not(:last-child)::after {
-  content: "";
-  position: absolute;
-  right: -0.36rem;
-  top: 50%;
-  width: 0.34rem; height: 0.34rem;
-  border-top: 1.5px solid rgb(255 255 255 / 30%);
-  border-right: 1.5px solid rgb(255 255 255 / 30%);
-  transform: translateY(-50%) rotate(45deg);
-}
-
-/* the scrim deepens during a hold so chapter text stays readable */
-.film--on .film__scrim { transition: opacity 0.6s ease; }
-.film--on.is-holding .film__scrim { opacity: 1; }
-
-/* handoff: the film ends dark, so the page continues dark and fades to paper */
-.film__handoff { height: 0; background: var(--charcoal-deep); }
-.film__credit {
-  margin: 0 auto;
-  padding-block: 0 clamp(2rem, 4vw, 3rem);
-  font-size: 0.76rem;
-  letter-spacing: 0.01em;
-  color: #4d4c49;
-  text-align: center;
-}
-
-/* ==========================================================================
-   SCRUB MODE — JS adds .film--on once viewport and motion checks pass
-   ========================================================================== */
-
-.film--on .film__track { height: calc(var(--film-vh) * 1vh); }
-
-.film--on .film__stage {
-  position: sticky;
-  top: 0;
-  /* vh first as the fallback, svh last so supporting browsers apply it -
-     svh (small viewport height) stays stable while mobile browser chrome
-     collapses/expands, which is what prevents the pinned stage from
-     jumping as the address bar shows and hides while scrolling */
-  height: 100vh;
-  height: 100svh;
-  width: 100%;
-}
-
-/* edge-to-edge, full-bleed, cinematic crop */
-.film--on .film__media { position: absolute; inset: 0; }
-.film--on .film__content { position: absolute; inset: 0; }
-
-/* the copy fades away once the journey is properly underway, so the film breathes */
-/* --intro is 1 while the opening title should be up, 0 once the first
-   equipment chapter arrives. Driven by the engine, not by raw scroll. */
-.film--on .film__content[data-film-intro] {
-  opacity: var(--intro, 1);
-  transition: opacity 0.45s ease;
-  pointer-events: none;
-}
-.film--on .film__copy {
-  transform: translateY(calc(-14px * var(--p)));
-  will-change: transform;
-}
-
-.film--on .film__hint {
-  display: block;
-  position: absolute;
-  left: 50%;
-  bottom: 1.6rem;
-  transform: translateX(-50%);
-  margin: 0;
-  font-size: 0.68rem;
-  font-weight: 650;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: rgb(255 255 255 / 62%);
-  opacity: calc(1 - 6 * var(--p));
-}
-
-/* extremely subtle progress hairline */
-.film--on .film__progress {
-  display: block;
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  height: 1px;
-  width: calc(var(--p) * 100%);
-  background: rgb(255 255 255 / 26%);
-}
-
-/* the handoff band is only needed once the film is actually pinned */
-.film--on + .film__handoff { height: 0; }
-
-/* --- fallbacks: static poster hero --- */
-.film:not(.film--on) .film__stage {
-  min-height: clamp(30rem, 68vh, 44rem);
-  align-items: end;
-}
-.film:not(.film--on) .film__media { position: absolute; inset: 0; }
-.film:not(.film--on) .film__video { display: none; }
-.film:not(.film--on) .film__content { padding-block: clamp(2rem, 6vw, 3rem); }
-
-/* Safety net: even if .film--on is somehow present, never pin on a short or
-   narrow viewport, and never pin for reduced-motion visitors. */
-/* .film--force is set only by the ?motion=full dev override, so the reduced-motion
-   net can be lifted for testing. Production behaviour is unchanged: without the
-   override, reduced motion still un-pins and falls back to the poster. */
-@media (prefers-reduced-motion: reduce) {
-  .film--on:not(.film--force) .film__track { height: auto; }
-  .film--on:not(.film--force) .film__stage { position: static; height: auto; min-height: clamp(30rem, 68vh, 44rem); }
-  .film--on:not(.film--force) .film__copy { opacity: 1; transform: none; }
-  .film--on:not(.film--force) .film__hint,
-  .film--on:not(.film--force) .film__progress { display: none; }
-  .film--on:not(.film--force) .film__video { display: none; }
-}
-/* Mobile width is NOT a fallback condition - the film runs on phones,
-   recomposed by the mobile rules further down. This net only catches
-   genuinely too-short viewports (matches the JS heightOkQuery floor),
-   e.g. a collapsed embedded panel - never a real phone in portrait. */
-@media (max-height: 360px) {
-  .film--on .film__track { height: auto; }
-  .film--on .film__stage { position: static; height: auto; min-height: 20rem; }
-  .film--on .film__media { position: absolute; inset: 0; }
-  .film--on .film__content { position: relative; inset: auto; padding-top: 0; }
-  .film--on .film__copy { opacity: 1; transform: none; }
-  .film--on .film__hint, .film--on .film__progress { display: none; }
-  .film--on .film__video { display: none; }
+  font-weight: 560;
+  letter-spacing: -0.03em;
+  color: var(--accent);
+  margin: 0 0 0.7rem;
 }
 
 /* ---------- proof strip ---------- */
@@ -996,24 +690,6 @@ caption { color: #5f5c57; }
 .site-footer h3 { font-size: 0.7rem; letter-spacing: 0.2em; color: #C9C0AE; }
 .colophon { color: #8B8168; font-size: 0.82rem; line-height: 1.65; }
 
-/* Registering --p as a number keeps the fade calc valid and interpolatable. */
-@property --p {
-  syntax: "<number>";
-  inherits: true;
-  initial-value: 0;
-}
-
-/* Dissolves the final frames into the same warm charcoal the page continues
-   in, so the film and the page below share one ground and ground the seam. */
-.film__fadeout {
-  position: absolute;
-  inset: 0;
-  background: var(--charcoal-deep);
-  opacity: 0;
-  pointer-events: none;
-}
-.film--on .film__fadeout { opacity: calc((var(--p) - 0.978) * 46); }
-
 /* ---------- product moments ---------- */
 /* Real product photography carries these. One headline, one line, one spec.
    Alternating warm/cream/light backgrounds create visual rhythm. */
@@ -1153,35 +829,6 @@ caption { color: #5f5c57; }
   }
 }
 
-/* complete-system recap on the final hold */
-.recap { list-style: none; margin: 1.6rem 0 0; padding: 0; display: grid; gap: 0.55rem; }
-.chapter--bottom .recap {
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
-  gap: 0.5rem 1.5rem;
-  max-width: 56rem;
-  margin-inline: auto;
-}
-.recap li {
-  position: relative;
-  padding-left: 1.4rem;
-  color: #ece8e1;
-  font-size: clamp(0.98rem, 0.94rem + 0.25vw, 1.1rem);
-  text-align: left;
-}
-.recap li::before {
-  content: "";
-  position: absolute;
-  left: 0; top: 0.62em;
-  width: 6px; height: 6px;
-  border-radius: 50%;
-  background: var(--accent-graphic);
-}
-
-/* bigger storage configurations on the expandable hold */
-.configs li { padding: 1rem 1.1rem; }
-.configs b { font-size: clamp(1.5rem, 1.1rem + 1.2vw, 2.2rem); }
-.configs span { font-size: 0.9rem; }
-
 /* ---- static corrections ---- */
 /* storage section: let the battery dominate */
 @media (min-width: 900px) {
@@ -1217,8 +864,7 @@ caption { color: #5f5c57; }
 #configure .readout .row { padding: 0.5rem 0; }
 
 /* ---------- brand accents ---------- */
-h1 em, h2 em, .chapter__title em { font-style: normal; color: var(--accent); }
-.chapter__big em { color: var(--accent); font-style: normal; }
+h1 em, h2 em { font-style: normal; color: var(--accent); }
 
 /* horizontal spec row - the numbers carry the design, no card boxes */
 .specrow {
@@ -1244,69 +890,29 @@ h1 em, h2 em, .chapter__title em { font-style: normal; color: var(--accent); }
   font-variant-numeric: tabular-nums;
 }
 .specrow i { font-style: normal; color: #cfcac1; font-size: 0.86rem; }
-.specrow--hold { margin-top: clamp(1.2rem, 2.6vh, 1.9rem); }
 
-/* final hold: three centred ideas, divided by a hairline in brand orange */
-.recap { list-style: none; margin: clamp(1.4rem, 3vh, 2rem) 0 0; padding: 0; }
-.chapter--bottom .recap {
-  display: flex; justify-content: center; flex-wrap: wrap;
-  gap: clamp(1.25rem, 4vw, 3rem);
-  max-width: 54rem; margin-inline: auto;
-}
-.recap li {
-  position: relative; padding: 0; text-align: center;
-  color: #fff; font-family: var(--display); font-weight: 560;
-  font-size: clamp(1.05rem, 0.95rem + 0.5vw, 1.35rem); letter-spacing: -0.02em;
-}
-.recap li::before { display: none; }
-.chapter--bottom .recap li + li::before {
-  display: block; content: ""; position: absolute;
-  left: calc(-0.5 * clamp(1.25rem, 4vw, 3rem)); top: 0.35em; bottom: 0.35em;
-  width: 1px; background: var(--accent); opacity: 0.85;
-}
-
-/* ---------- sticky how-it-works ---------- */
-/* bridges the film's dark ending into the page rather than cutting to it -
-   vh-based stops so the fade resolves early in the scroll regardless of how
-   tall the sticky track is */
-.steps {
-  background: linear-gradient(180deg,
-    var(--charcoal-deep) 0,
-    var(--charcoal) 12vh,
-    var(--paper) 36vh,
-    var(--paper) 100%);
-}
-.steps__stage { padding-block: clamp(3.5rem, 7vw, 6rem); }
-.steps--on .steps__track { height: 300vh; }
-.steps--on .steps__stage {
-  position: sticky; top: 0; min-height: 100vh;
-  display: grid; align-items: center; padding-block: 0;
-}
-.steps__head { text-align: center; margin-bottom: clamp(2rem, 4vw, 3rem); }
+/* ---------- how it works ---------- */
+/* Normal document flow - no pinning, no scroll-height track. The short
+   gradient just carries the hero's dark ground into the page instead of
+   cutting to it. Each .step fades/translates in on its own via
+   IntersectionObserver in site.js (see initReveal), not scroll position. */
+/* Plain paper background - this section no longer sits directly under the
+   dark hero (the "Why Terrace Solar" section is between them now), so no
+   dark-to-light fade belongs here. */
+.steps { background: var(--paper); }
+.steps__stage { padding-block: clamp(2.25rem, 4vw, 3.5rem); }
+.steps__head { text-align: center; margin-bottom: clamp(1.25rem, 2.5vw, 2rem); }
 .steps__head h2 {
-  font-size: clamp(2rem, 1.2rem + 2.8vw, 3.4rem);
+  font-size: clamp(1.8rem, 1.2rem + 2.2vw, 2.9rem);
   line-height: 1.03; letter-spacing: -0.04em; margin: 0;
   color: var(--ink);
-}
-/* The dark-ink headline is pinned (sticky) the instant this section enters
-   view, but the background behind it is a 300vh-tall gradient that only
-   finishes resolving to light by ~12% of that track's scroll - without
-   this, the dark heading briefly sits on the still-dark portion of its own
-   background. Fades the heading in slightly after the background clears,
-   using the same --sp progress variable the reveal engine already writes;
-   no layout change, no added spacer - .steps--on only, so the mobile/
-   reduced-motion fallback (where the whole section scrolls normally and
-   --sp is never set) keeps the heading fully visible immediately. */
-.steps--on .steps__head {
-  opacity: clamp(0, calc((var(--sp, 1) - 0.13) * 20), 1);
-  transition: opacity 0.25s ease;
 }
 /* mobile-first: wraps into a comfortable multi-row grid; the desktop
    breakpoint below forces one single five-across row instead */
 .steps__list {
   list-style: none; margin: 0; padding: 0;
   display: flex; flex-wrap: wrap; justify-content: center;
-  gap: clamp(1.5rem, 3vw, 2.25rem) clamp(1rem, 2vw, 1.5rem);
+  gap: clamp(1.1rem, 2.2vw, 1.75rem) clamp(1rem, 2vw, 1.5rem);
 }
 .step {
   opacity: 0; transform: translateY(16px);
@@ -1340,7 +946,7 @@ h1 em, h2 em, .chapter__title em { font-style: normal; color: var(--accent); }
   overflow: hidden;
   display: grid;
   place-items: center;
-  margin-bottom: 0.9rem;
+  margin-bottom: 0.55rem;
 }
 .step__figure img {
   width: 100%;
@@ -1409,7 +1015,7 @@ h1 em, h2 em, .chapter__title em { font-style: normal; color: var(--accent); }
 
 /* progress: 1 Solar -> 2 Storage -> 3 Review */
 .shop__progress {
-  list-style: none; margin: 0 0 clamp(2rem, 4vw, 3rem); padding: 0;
+  list-style: none; margin: 0 0 clamp(1.25rem, 2.5vw, 1.75rem); padding: 0;
   display: flex; align-items: center; justify-content: center;
   gap: 0.6rem;
 }
@@ -1437,7 +1043,7 @@ h1 em, h2 em, .chapter__title em { font-style: normal; color: var(--accent); }
    pricing/CTA. No visible browser-default fieldset/legend chrome anywhere. */
 .shop__form {
   display: grid;
-  gap: clamp(2.5rem, 5vw, 3.5rem);
+  gap: clamp(1.5rem, 3vw, 2.25rem);
   max-width: 46rem;
   margin-inline: auto;
   text-align: center;
@@ -1448,7 +1054,7 @@ h1 em, h2 em, .chapter__title em { font-style: normal; color: var(--accent); }
   display: block;
   width: 100%;
   padding: 0;
-  margin-bottom: clamp(1.1rem, 2.2vw, 1.5rem);
+  margin-bottom: clamp(0.75rem, 1.5vw, 1.1rem);
   font-family: var(--display);
   font-size: clamp(1.2rem, 1rem + 0.8vw, 1.5rem);
   font-weight: 650;
@@ -1498,15 +1104,15 @@ h1 em, h2 em, .chapter__title em { font-style: normal; color: var(--accent); }
   background: var(--paper);
   border: 1px solid var(--line);
   border-radius: 20px;
-  padding: clamp(1.75rem, 3.5vw, 2.25rem);
+  padding: clamp(1.25rem, 2.5vw, 1.75rem);
   text-align: center;
 }
 .shop__summary-eyebrow {
   font-size: 0.7rem; font-weight: 650; letter-spacing: 0.14em; text-transform: uppercase;
-  color: var(--muted); margin: 0 0 0.7rem;
+  color: var(--muted); margin: 0 0 0.5rem;
 }
 .shop__summary-headline {
-  margin: 0 0 1.4rem;
+  margin: 0 0 1rem;
   font-family: var(--display);
   font-size: clamp(1.3rem, 1.05rem + 1vw, 1.65rem);
   font-weight: 620;
@@ -1517,7 +1123,7 @@ h1 em, h2 em, .chapter__title em { font-style: normal; color: var(--accent); }
 .shop__summary-sep { margin: 0 0.5em; color: var(--line); }
 
 .shop__includes {
-  padding-top: 1.3rem;
+  padding-top: 1rem;
   border-top: 1px solid var(--line);
 }
 .shop__includes-label { font-size: 0.76rem; color: var(--muted); margin: 0 0 0.7rem; }
@@ -1547,8 +1153,8 @@ h1 em, h2 em, .chapter__title em { font-style: normal; color: var(--accent); }
 .shop__help:hover { color: var(--ink); }
 
 /* ---------- tighter static sections ---------- */
-.section { padding-block: clamp(3.75rem, 5.5vw, 5.75rem); }
-.section-head { margin-bottom: clamp(1.75rem, 3vw, 2.5rem); }
+.section { padding-block: clamp(2.75rem, 4vw, 4rem); }
+.section-head { margin-bottom: clamp(1.25rem, 2.25vw, 1.85rem); }
 .shot--split { padding-block: clamp(3.5rem, 5.5vw, 5.5rem); }
 .faq summary { padding-block: 1.15rem; }
 .faq details > div { padding-bottom: 1.35rem; }
@@ -1571,50 +1177,6 @@ h1 em, h2 em, .chapter__title em { font-style: normal; color: var(--accent); }
   margin: 0 0 0.7rem;
 }
 .film__copy .lede { max-width: 40ch; }
-
-/* ---- 2. panel hold: push the supporting copy into the clear right area ---- */
-[data-chapter="panel"] .chapter__step + .chapter__step {
-  width: min(22rem, 100%);
-  margin-left: auto;
-  margin-right: 2vw;
-}
-
-/* ---- 3. expandable hold: one wide column in the space left of the battery ----
-   Widened so the three storage specs can sit on one horizontal row instead
-   of wrapping - the extra width is still well clear of the battery. */
-.film--on .chapter--left .chapter__inner {
-  width: min(46vw, 42rem);
-  margin-left: 7vw;
-  margin-right: 0;
-  margin-top: clamp(150px, 24vh, 230px);
-}
-
-/* the storage specs on the "Grows with you" hold: force one row, and undo
-   the base .specrow's redundant double spacing (flex gap + padding-left
-   both applied) that was eating the width needed to keep three columns
-   on one line at this viewport. Title, spacing above/below tightened to
-   match; headline size and copy are untouched. */
-[data-chapter="stack"] .chapter__lede {
-  margin-top: clamp(0.6rem, 1.4vh, 1rem);
-}
-[data-chapter="stack"] .specrow {
-  flex-wrap: nowrap;
-  gap: 0;
-  margin-top: clamp(0.9rem, 1.9vh, 1.4rem);
-}
-[data-chapter="stack"] .specrow > div {
-  flex: none;
-}
-[data-chapter="stack"] .specrow > div + div {
-  padding-left: clamp(1.25rem, 3vw, 2.25rem);
-}
-[data-chapter="stack"] .specrow b {
-  font-size: clamp(1.5rem, 1rem + 1.6vw, 2.4rem);
-  white-space: nowrap;
-}
-[data-chapter="stack"] .specrow i {
-  white-space: nowrap;
-}
 
 /* ---- 4. how it works: one five-across row on desktop, centred ---- */
 .steps__list {
@@ -1666,14 +1228,14 @@ h1 em, h2 em, .chapter__title em { font-style: normal; color: var(--accent); }
 .kit__storage .btn { margin-left: auto; }
 
 /* ---- 10. keep everything tight ---- */
-.section { padding-block: clamp(3.25rem, 4.5vw, 5rem); }
-.steps__stage { padding-block: clamp(3rem, 5vw, 4.5rem); }
+.section { padding-block: clamp(2.75rem, 4vw, 4rem); }
+.steps__stage { padding-block: clamp(2.25rem, 4vw, 3.5rem); }
 
 /* ================= centred static site ================= */
 
 .wrap { max-width: 1240px; }
 
-.section { padding-block: clamp(3.25rem, 4.5vw, 5rem); }
+.section { padding-block: clamp(2.75rem, 4vw, 4rem); }
 .section > .wrap { text-align: center; }
 .section-head { max-width: 46rem; margin-inline: auto; text-align: center; }
 .section-head h2 { max-width: 18ch; margin-inline: auto; }
@@ -2238,26 +1800,17 @@ h1 em, h2 em, .chapter__title em { font-style: normal; color: var(--accent); }
 .flow-diagram { background: var(--paper); }
 .flow-diagram .lede { max-width: 46ch; margin-inline: auto; }
 
-/* short sticky scrollytelling track for the four-step connection path.
-   Deliberately shorter than the 300vh product-overview track above - this
-   is meant to read as one quick beat, not another long scroll. No width
-   gate: unlike .steps, this stays scroll-linked on mobile too (see the JS),
-   just recomposed into a vertical stack there instead of a row.
-
-   The composition never fades or dims on its own - once each item's
-   is-shown class lands it stays exactly as revealed (see the JS below).
-   There is deliberately no opacity/transform on .conn__stage itself tied
-   to scroll distance: once the track scrolls past and the sticky stage
-   releases, it's just normal page content from here on, not something
-   this CSS animates away. */
-.conn--on .conn__track { height: 220vh; }
-.conn--on .conn__stage {
-  position: sticky; top: 0;
-  min-height: 100vh;
-  min-height: 100svh;
-  display: grid; align-items: center; padding-block: clamp(2rem, 5vw, 4rem);
+/* The one contained interactive How It Works moment: normal document
+   flow, sized to roughly one viewport, no pinning and no scroll-height
+   track. An IntersectionObserver in site.js (initConnReveal) triggers one
+   short automatic staggered reveal - sun/panel/meter/home in sequence -
+   the first time this section scrolls into view. Once shown, is-shown
+   stays and the section behaves like ordinary page content from then on. */
+.conn__stage {
+  display: grid; align-items: center;
+  padding-block: clamp(1.75rem, 3.5vw, 3rem);
 }
-.conn__head { margin-bottom: clamp(1.75rem, 4vw, 2.75rem); }
+.conn__head { margin-bottom: clamp(1rem, 2vw, 1.5rem); }
 
 /* the simplified four-step connection path reuses the modular-expansion
    progression's visual language (bold value + caption + arrow connector)
@@ -2265,7 +1818,7 @@ h1 em, h2 em, .chapter__title em { font-style: normal; color: var(--accent); }
    second bespoke diagram style. flex:1 1 0 here is a DESKTOP-ONLY choice
    (equal-width row columns) - the mobile block below replaces it with a
    plain single-column stack instead of just letting it wrap. */
-.flowline__steps { margin-top: clamp(2.5rem, 5vw, 3.5rem); }
+.flowline__steps { margin-top: clamp(1.5rem, 3vw, 2.25rem); }
 @media (min-width: 768px) {
   .flowline__steps .modstep__item { flex: 1 1 0; min-width: 0; }
 }
@@ -2281,27 +1834,33 @@ h1 em, h2 em, .chapter__title em { font-style: normal; color: var(--accent); }
    transform toward the shown state - nothing here ever reduces opacity
    again once .is-shown is set except a genuine reverse-scroll removing
    the class, which is the intended deterministic behavior. */
-.conn--on .flowline__steps .modstep__item,
-.conn--on .flowline__steps .modstep__arrow {
+.flowline__steps .modstep__item,
+.flowline__steps .modstep__arrow {
   opacity: 0;
   transition: opacity 0.5s ease, transform 0.5s ease;
 }
-.conn--on .flowline__steps .modstep__item { transform: translateY(14px); }
-.conn--on .flowline__steps .modstep__item.is-shown { opacity: 1; transform: none; }
-.conn--on .flowline__steps .modstep__arrow {
+.flowline__steps .modstep__item { transform: translateY(14px); }
+.flowline__steps .modstep__item.is-shown { opacity: 1; transform: none; }
+.flowline__steps .modstep__arrow {
   transform: scaleX(0);
   transform-origin: left center;
 }
-.conn--on .flowline__steps .modstep__arrow.is-shown {
+.flowline__steps .modstep__arrow.is-shown {
   opacity: 1;
   transform: scaleX(1);
 }
-.conn--on .flowline__storage {
+.flowline__storage {
   opacity: 0;
   transform: translateY(10px);
   transition: opacity 0.5s ease, transform 0.5s ease;
 }
-.conn--on .flowline__storage.is-shown { opacity: 1; transform: none; }
+.flowline__storage.is-shown { opacity: 1; transform: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .flowline__steps .modstep__item,
+  .flowline__steps .modstep__arrow,
+  .flowline__storage { transition: none; }
+}
 
 /* mobile: explicit single-column vertical stack, not the desktop row left
    to wrap. flex-wrap is force-reset to nowrap here - flex-wrap:wrap
@@ -2309,7 +1868,7 @@ h1 em, h2 em, .chapter__title em { font-style: normal; color: var(--accent); }
    flex-direction:column is what was folding this into a multi-column
    jumble instead of one clean stack. */
 @media (max-width: 767px) {
-  .conn--on .conn__stage { padding-block: clamp(1.1rem, 3vw, 2rem); }
+  .conn__stage { padding-block: clamp(1.5rem, 4vw, 2.5rem); }
   .conn__head { margin-bottom: clamp(1rem, 3vw, 1.5rem); }
   .conn__head h2 { font-size: clamp(2.4rem, 1.6rem + 4vw, 3rem); }
   .conn__stage .flowline__steps {
@@ -2347,35 +1906,35 @@ h1 em, h2 em, .chapter__title em { font-style: normal; color: var(--accent); }
     border-left: 1.5px solid var(--accent);
     transform: translateX(-50%) rotate(-45deg);
   }
-  .conn--on .flowline__steps .modstep__arrow {
+  .flowline__steps .modstep__arrow {
     transform: scaleY(0);
     transform-origin: top center;
   }
-  .conn--on .flowline__steps .modstep__arrow.is-shown { transform: scaleY(1); }
+  .flowline__steps .modstep__arrow.is-shown { transform: scaleY(1); }
 }
 
 .flowline__storage {
-  margin: clamp(2rem, 4vw, 2.75rem) auto 0;
-  max-width: 32rem;
+  margin: clamp(1.25rem, 2.5vw, 1.75rem) auto 0;
+  max-width: 30rem;
   text-align: center;
 }
 .flowline__storage-label {
-  margin: 0 0 0.4rem;
+  margin: 0 0 0.25rem;
   font-family: var(--display);
-  font-size: 1.05rem;
-  font-weight: 640;
-  letter-spacing: -0.015em;
-  color: var(--ink);
+  font-size: 0.92rem;
+  font-weight: 580;
+  letter-spacing: -0.01em;
+  color: var(--muted);
 }
 .flowline__storage-sub {
   margin: 0;
-  font-size: 0.92rem;
+  font-size: 0.85rem;
   color: var(--muted);
 }
 
 /* modular expansion progression */
 .modstep {
-  margin: clamp(3rem, 6vw, 4.5rem) auto 0;
+  margin: clamp(1.75rem, 3.5vw, 2.5rem) auto 0;
   max-width: 54rem;
   text-align: center;
 }
@@ -2455,10 +2014,10 @@ h1 em, h2 em, .chapter__title em { font-style: normal; color: var(--accent); }
 
 .useit__panel {
   max-width: 44rem;
-  margin: clamp(2rem, 4vw, 3rem) auto 0;
+  margin: clamp(1.25rem, 2.5vw, 1.75rem) auto 0;
   text-align: center;
 }
-.useit__modes { border: 0; margin: 0 0 clamp(1.5rem, 3vw, 2.25rem); padding: 0; display: flex; justify-content: center; }
+.useit__modes { border: 0; margin: 0 0 clamp(1rem, 2vw, 1.5rem); padding: 0; display: flex; justify-content: center; }
 
 .useit__modepanel { display: none; }
 .useit__panel:has(input[value="day"]:checked) .useit__modepanel[data-useit-mode="day"],
@@ -2472,7 +2031,7 @@ h1 em, h2 em, .chapter__title em { font-style: normal; color: var(--accent); }
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  margin-bottom: 1.25rem;
+  margin-bottom: 0.85rem;
   flex-wrap: wrap;
 }
 .useit__mini-node {
@@ -2509,8 +2068,8 @@ h1 em, h2 em, .chapter__title em { font-style: normal; color: var(--accent); }
 
 .useit__storage {
   max-width: 46rem;
-  margin: clamp(3rem, 6vw, 4rem) auto 0;
-  padding-top: clamp(2rem, 4vw, 3rem);
+  margin: clamp(1.75rem, 3.5vw, 2.5rem) auto 0;
+  padding-top: clamp(1.25rem, 2.5vw, 1.75rem);
   border-top: 1px solid var(--line);
   text-align: center;
 }
@@ -2520,14 +2079,14 @@ h1 em, h2 em, .chapter__title em { font-style: normal; color: var(--accent); }
   font-weight: 620;
   letter-spacing: -0.02em;
   color: var(--ink);
-  margin: 0 0 1rem;
+  margin: 0 0 0.75rem;
 }
-.useit__sizes { border: 0; margin: 0 0 0.75rem; padding: 0; display: flex; justify-content: center; }
+.useit__sizes { border: 0; margin: 0 0 0.6rem; padding: 0; display: flex; justify-content: center; }
 
 /* tier label ("Everyday essentials" / "More evening flexibility" / "More
    energy, for longer") - JS-driven, changes with the selected size */
 .useit__tier-label {
-  margin: 0 0 clamp(1.25rem, 2.5vw, 1.75rem);
+  margin: 0 0 clamp(0.85rem, 1.75vw, 1.25rem);
   font-size: 0.9rem;
   color: var(--accent);
   font-weight: 620;
@@ -2585,24 +2144,8 @@ h1 em, h2 em, .chapter__title em { font-style: normal; color: var(--accent); }
   margin-inline: auto;
 }
 
-/* ==========================================================================
-   MOBILE CINEMATIC SCRUB — a real recomposition, not a shrunk desktop
-   layout. Placed last so it wins cascade order against every earlier
-   unscoped chapter rule. The film now runs on phones; it no longer falls
-   back to the poster just because the viewport is narrow.
-
-   Design decision: every hold (left/right/bottom) reads as a bottom-
-   anchored band on mobile, reusing the same proven pattern the desktop
-   "connection" hold already uses. A phone doesn't have the width for the
-   desktop left/right split without either overlapping the product or
-   clipping text, and anchoring everything to the lower third - which is
-   open in every hold - solves both the "never cover the product" and
-   "never overlap the logo" requirements at once, since nothing is
-   positioned near the top-left logo safe zone any more.
-   ========================================================================== */
+/* ---------- mobile hero type scale ---------- */
 @media (max-width: 767px) {
-
-  /* ---- opening title ---- */
   .film__copy {
     max-width: calc(100% - 2.5rem);
     padding-inline: 1.25rem;
@@ -2613,88 +2156,50 @@ h1 em, h2 em, .chapter__title em { font-style: normal; color: var(--accent); }
   }
   .film__kicker { font-size: clamp(1.05rem, 1rem + 1vw, 1.3rem); }
   .film__copy .lede { max-width: 30ch; font-size: 1rem; }
-
-  /* ---- every hold: one bottom-anchored band, full width, centred ---- */
-  .film--on .chapter--left,
-  .film--on .chapter--right {
-    align-items: end;
-  }
-  .film--on .chapter--left .chapter__inner,
-  .film--on .chapter--right .chapter__inner,
-  .film--on .chapter--bottom .chapter__inner {
-    width: calc(100% - 2.5rem);
-    max-width: none;
-    margin-left: 1.25rem;
-    margin-right: 1.25rem;
-    margin-top: 0;
-    max-height: 64vh;
-    text-align: center;
-    padding-bottom: clamp(2rem, 7vh, 3.25rem);
-  }
-  .film--on .chapter--right .chapter__inner { text-align: center; }
-
-  .film--on .chapter--left::before,
-  .film--on .chapter--right::before,
-  .film--on .chapter--bottom::before {
-    background: linear-gradient(to top, rgb(0 0 0 / 62%) 0%, rgb(0 0 0 / 24%) 40%, rgb(0 0 0 / 0%) 68%);
-  }
-
-  /* ---- mobile type scale - recomposed, not desktop px scaled down ---- */
-  .chapter__eyebrow { font-size: 0.64rem; margin-bottom: 0.55rem; }
-  .chapter__title {
-    font-size: clamp(2.5rem, 12vw, 4.5rem);
-    line-height: 1;
-  }
-  .chapter__lede {
-    max-width: 30ch;
-    margin-inline: auto;
-    font-size: clamp(1rem, 0.92rem + 1vw, 1.15rem);
-  }
-  .chapter__big { font-size: clamp(1.9rem, 1.2rem + 4.5vw, 2.6rem); }
-  .chapter__sub { max-width: 30ch; margin-inline: auto; }
-  .chapter__sub--rule { border-left: 0; padding-left: 0; margin-inline: auto; }
-
-  /* ---- battery hold: 1 kWh / 400 W / Outlet, one compact row ---- */
-  .specrow--hold {
-    justify-content: center;
-    gap: clamp(0.75rem, 4vw, 1.25rem);
-  }
-  .specrow--hold b { font-size: clamp(1.15rem, 0.95rem + 2.5vw, 1.5rem); }
-  .specrow--hold i { font-size: 0.7rem; }
-
-  /* ---- expandable storage hold: three equal columns, never falls off
-     the viewport ---- */
-  [data-chapter="stack"] .chapter__inner {
-    width: calc(100% - 2.5rem);
-    margin-left: 1.25rem;
-    margin-right: 1.25rem;
-    margin-top: 0;
-  }
-  [data-chapter="stack"] .specrow {
-    justify-content: center;
-    gap: 0;
-  }
-  [data-chapter="stack"] .specrow > div {
-    flex: 1 1 0;
-    text-align: center;
-  }
-  [data-chapter="stack"] .specrow > div + div {
-    padding-left: clamp(0.5rem, 3vw, 1rem);
-  }
-  [data-chapter="stack"] .specrow b {
-    font-size: clamp(1.05rem, 0.85rem + 3.5vw, 1.5rem);
-  }
-
-  /* ---- complete system / connection hold: bullets recompose into a
-     compact centred row instead of covering the equipment ---- */
-  .chapter--bottom .recap {
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 0.4rem 0.9rem;
-  }
-  .chapter--bottom .recap li {
-    font-size: clamp(0.88rem, 0.8rem + 1vw, 1rem);
-  }
-  .chapter--bottom .recap li + li::before { display: none; }
 }
+
+/* ---------- generic scroll reveal ---------- */
+/* Selective, lightweight motion: a fade + slight rise, triggered once by
+   IntersectionObserver (initReveal in site.js) and never repeated. Applies
+   to any element carrying [data-reveal]. Reduced-motion visitors and
+   no-JS visitors both just see the content - see initReveal and the
+   media query below. */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+[data-reveal].is-shown { opacity: 1; transform: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal] { opacity: 1; transform: none; transition: none; }
+}
+
+/* ---------- placement gallery ---------- */
+/* Section E: flexible placement. Plain photography grid today; each tile
+   is exactly where a short Runway clip can drop in later using the same
+   .film__media/.film__poster/.film__video pattern the hero uses. */
+.placement__grid {
+  display: grid;
+  gap: clamp(1rem, 2vw, 1.5rem);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+}
+.placement__item { text-align: left; }
+.placement__item img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  margin-bottom: 0.9rem;
+}
+.placement__item b {
+  display: block;
+  font-family: var(--display);
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin-bottom: 0.2rem;
+}
+.placement__item span { display: block; color: var(--muted); font-size: 0.9rem; }

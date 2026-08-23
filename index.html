@@ -3,14 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Terrace Solar — solar that fits your life</title>
+<title>Terrace Solar — solar without the rooftop</title>
 <meta name="description" content="Ultra-thin, semi-flexible solar panels for balconies, terraces, fences and patios. Start at 400&nbsp;W and build from there.">
 <meta name="robots" content="noindex, nofollow">
 <link rel="canonical" href="https://www.terracesolar.com/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Terrace Solar">
 <meta property="og:url" content="https://www.terracesolar.com/">
-<meta property="og:title" content="Terrace Solar — solar that fits your life">
+<meta property="og:title" content="Terrace Solar — solar without the rooftop">
 <meta property="og:description" content="Ultra-thin, semi-flexible solar panels for balconies, terraces, fences and patios. Start at 400&nbsp;W and build from there.">
 <meta property="og:image" content="https://www.terracesolar.com/assets/video/hero-poster.jpg">
 <meta name="twitter:card" content="summary_large_image">
@@ -34,146 +34,92 @@
 
 <main id="main">
 
-  <!-- ============================ HERO — scroll-scrubbed film ============================ -->
-  <!-- One stitched master (assets/video/hero.mp4, 42.875 s, 1280x720, 24 fps).
-       Scroll position maps to video currentTime: down advances, up reverses, stopping
-       holds the frame. Nothing autoplays and nothing loops. The stage is pinned for the
-       whole journey; the retail page below is never visible until the film ends on its
-       dark frame, which the black background beneath continues.
+  <!-- ============================ HERO — autoplay cinematic loop ============================ -->
+  <!-- Full cinematic sequence (42.875 s, 1280x720, 24fps, H.264 High
+       profile, audio stripped, faststart), playing as a normal muted/
+       looping background at 1.2x speed - no longer scroll-driven, no
+       currentTime scrubbing. Dedicated web-optimized production encodes,
+       both re-encoded from assets/video/hero.mp4 (kept untouched as the
+       source master): hero-desktop-web.mp4 (~26 MB, CRF 19) and
+       hero-mobile-web.mp4 (~23 MB, CRF 20) - same native 1280x720
+       resolution on both (the master has no more detail to give at a
+       higher res, so mobile is not upscaled), same broadly-compatible
+       H.264/yuv420p/faststart for iOS Safari and Android Chrome. Autoplay,
+       muted, loop, playsinline, no controls. object-fit: cover keeps the
+       crop full-bleed at any viewport. The poster image is always in the
+       DOM and painted first; the video only crossfades over it once a
+       frame has decoded (site.js), so an autoplay block or slow
+       connection just leaves the poster - the hero is always readable
+       without video or JS.
 
-       Falls back to the poster still — no video fetched at all — for reduced-motion
-       visitors, narrow viewports and short viewports. -->
+       Reusable "CinematicSection" pattern: duplicate this markup with new
+       data-hero-src/poster/copy for any future short clip section. -->
   <section class="film" id="top" aria-labelledby="hero-title"
-           data-film data-film-src="assets/video/hero.mp4"
-           data-film-src-mobile="assets/video/hero-scrub-mobile.mp4">
-    <div class="film__track" data-film-track>
-      <div class="film__stage" data-film-stage>
+           data-hero data-hero-src="assets/video/hero-desktop-web.mp4"
+           data-hero-src-mobile="assets/video/hero-mobile-web.mp4"
+           data-hero-rate="1.2">
+    <div class="film__stage">
 
-        <div class="film__media">
-          <img class="film__poster" src="assets/video/hero-poster.jpg"
-               width="1920" height="1080" fetchpriority="high" decoding="async"
-               alt="Sunrise over an American townhouse neighbourhood, seen from high above through golden haze.">
-          <!-- src is attached by JS only when the scrub is actually enabled, so phones
-               and reduced-motion visitors never download 40 MB -->
-          <video class="film__video" data-film-video
-                 muted playsinline preload="none"
-                 disablepictureinpicture disableremoteplayback
-                 tabindex="-1" aria-hidden="true"></video>
-          <div class="film__scrim" aria-hidden="true"></div>
-          <div class="film__fadeout" aria-hidden="true"></div>
-        </div>
+      <div class="film__media">
+        <img class="film__poster" src="assets/video/hero-poster.jpg"
+             width="1920" height="1080" fetchpriority="high" decoding="async"
+             alt="Sunrise over an American townhouse neighbourhood, seen from high above through golden haze.">
+        <!-- src is attached by JS only when autoplay is appropriate, so
+             reduced-motion visitors never download any video -->
+        <video class="film__video" data-hero-video
+               muted loop playsinline autoplay preload="auto"
+               disablepictureinpicture disableremoteplayback
+               tabindex="-1" aria-hidden="true"></video>
+        <div class="film__scrim" aria-hidden="true"></div>
+      </div>
 
-        <!-- Opening title. Fades out before the first equipment chapter so the
-             product, not the headline, carries the rest of the film. -->
-        <div class="film__content" data-film-intro>
-          <div class="wrap film__copy">
-            <h1 id="hero-title">Solar that fits<br>your life.</h1>
-            <p class="film__kicker">No rooftop required.</p>
-            <p class="lede">
-              No complicated solar lesson. Just a simpler way to make some of the
-              electricity you already use.
-            </p>
-            <p class="film__scrollcue" aria-hidden="true">Scroll</p>
+      <div class="film__content">
+        <div class="wrap film__copy">
+          <p class="film__kicker">No rooftop required.</p>
+          <h1 id="hero-title">Solar without<br>the rooftop.</h1>
+          <p class="lede">
+            Lightweight, plug-in solar systems designed for balconies, patios,
+            fences and yards &mdash; for homes where traditional rooftop solar
+            isn&rsquo;t practical.
+          </p>
+          <div class="actions">
+            <a class="btn btn--primary" href="#shop">Shop Solar Kits</a>
+            <a class="btn btn--ghost" href="#how">See How It Works</a>
           </div>
         </div>
-
-        <!-- Equipment chapters. Each one is pinned over its own held video frame;
-             the film is frozen at that timestamp while the chapter scrolls. -->
-        <!-- Equipment chapters. Each is pinned over its own held frame and reveals in
-             steps as the hold scrolls. Every factual line traces to the Craftstrom
-             brochure - see assets/products/SOURCE-MAP.md. Page refs are kept as HTML
-             comments only; no citation badges are shown to the customer. -->
-        <!-- Equipment chapters. One idea per step. Facts trace to the Craftstrom
-             brochure; audit trail in assets/products/SOURCE-MAP.md. -->
-        <div class="film__chapters" data-film-chapters>
-
-          <article class="chapter chapter--right" data-chapter="panel" aria-labelledby="ch-panel">
-            <div class="chapter__inner">
-              <div class="chapter__step">
-                <p class="chapter__eyebrow">The panel</p>
-                <h2 class="chapter__title" id="ch-panel">Solar that fits<br>where you live.</h2>
-              </div>
-              <div class="chapter__step">
-                <p class="chapter__lede">Thin. Semi-flexible. Made for spaces traditional rooftop solar may not reach.</p>
-              </div>
-              <div class="chapter__step">
-                <p class="chapter__big"><em>200&nbsp;W</em> or <em>400&nbsp;W</em> panels</p>
-                <p class="chapter__sub">Build around the space you have.</p>
-              </div>
-              <div class="chapter__step">
-                <p class="chapter__sub chapter__sub--rule">Systems from 400 to 2000&nbsp;W.</p>
-              </div>
-            </div>
-          </article>
-
-          <article class="chapter chapter--right" data-chapter="battery" aria-labelledby="ch-battery">
-            <div class="chapter__inner">
-              <div class="chapter__step">
-                <p class="chapter__eyebrow">Storage</p>
-                <h2 class="chapter__title" id="ch-battery">Save the power<br>you make.</h2>
-              </div>
-              <div class="chapter__step">
-                <p class="chapter__lede">Solar charges it during the day. Use that energy later.</p>
-              </div>
-              <div class="chapter__step">
-                <div class="specrow specrow--hold">
-                  <div><b>1&nbsp;kWh</b><i>storage per unit</i></div>
-                  <div><b>400&nbsp;W</b><i>output per unit</i></div>
-                  <div><b>Outlet</b><i>standard connection</i></div>
-                </div>
-              </div>
-            </div>
-          </article>
-
-          <article class="chapter chapter--left" data-chapter="stack" aria-labelledby="ch-stack">
-            <div class="chapter__inner">
-              <div class="chapter__step">
-                <p class="chapter__eyebrow">Expandable</p>
-                <h2 class="chapter__title" id="ch-stack">Grows<br>with you.</h2>
-              </div>
-              <div class="chapter__step">
-                <p class="chapter__lede">Start small. Add more when you need it.</p>
-              </div>
-              <div class="chapter__step">
-                <div class="specrow">
-                  <div><b>1&nbsp;kWh</b><i>400&nbsp;W</i></div>
-                  <div><b>2&nbsp;kWh</b><i>800&nbsp;W</i></div>
-                  <div><b>4&nbsp;kWh</b><i>per set</i></div>
-                </div>
-              </div>
-            </div>
-          </article>
-
-          <article class="chapter chapter--bottom" data-chapter="connect" aria-labelledby="ch-connect">
-            <div class="chapter__inner">
-              <div class="chapter__step">
-                <p class="chapter__eyebrow">The complete system</p>
-                <h2 class="chapter__title" id="ch-connect">Everything<br>working together.</h2>
-              </div>
-              <div class="chapter__step">
-                <ul class="recap">
-                  <li>Fits your space.</li>
-                  <li>Stores your power.</li>
-                  <li>Grows with you.</li>
-                </ul>
-              </div>
-              <div class="chapter__step">
-                <p class="chapter__sub">Designed around the home you already have.</p>
-              </div>
-            </div>
-          </article>
-
-        </div>
-
-        <p class="film__hint" aria-hidden="true">Scroll</p>
-        <div class="film__progress" data-film-progress aria-hidden="true"></div>
       </div>
+
     </div>
   </section>
 
-  <!-- The film ends on a dark frame; this carries that black down and hands off to the
-       retail page rather than cutting to it. -->
-  <div class="film__handoff" aria-hidden="true"></div>
+  <!-- ===================== THE PROBLEM ===================== -->
+  <section class="section" id="why" aria-labelledby="why-title">
+    <div class="wrap">
+      <div class="section-head" data-reveal>
+        <p class="eyebrow">Why Terrace Solar</p>
+        <h2 id="why-title">Rooftop solar doesn&rsquo;t fit every home.</h2>
+        <p class="lede">Renters, condo and townhome owners, and anyone whose roof isn&rsquo;t a good candidate for a traditional install have had few real options &mdash; Terrace Solar is built for the space you actually have.</p>
+      </div>
+      <div class="grid" data-reveal>
+        <div class="card">
+          <h3>Renters</h3>
+          <p>No permanent rooftop install. Panels sit on stands or mount to a railing or fence.</p>
+        </div>
+        <div class="card">
+          <h3>Condos &amp; townhomes</h3>
+          <p>Shared roofs and building or HOA rules can rule out a traditional system.</p>
+        </div>
+        <div class="card">
+          <h3>Balconies &amp; patios</h3>
+          <p>A system sized for the space you have, not a roof you don&rsquo;t.</p>
+        </div>
+        <div class="card">
+          <h3>Unsuitable roofs</h3>
+          <p>Shading, orientation or structure don&rsquo;t have to end the conversation.</p>
+        </div>
+      </div>
+    </div>
+  </section>
 
   <!-- ===================== HOW IT WORKS ===================== -->
   <section class="steps" id="how" aria-labelledby="how-title" data-steps>
@@ -295,45 +241,80 @@
     </div>
   </section>
 
+  <!-- ===================== FLEXIBLE PLACEMENT ===================== -->
+  <section class="section" id="placement" aria-labelledby="placement-title">
+    <div class="wrap">
+      <div class="section-head" data-reveal>
+        <p class="eyebrow">Flexible placement</p>
+        <h2 id="placement-title">Built to go<br><em>where you live.</em></h2>
+        <p class="lede">The same semi-flexible panels and stands work across balconies, fences, patios and yards &mdash; wherever there&rsquo;s sun and a nearby outlet.</p>
+      </div>
+      <div class="placement__grid" data-reveal>
+        <figure class="placement__item">
+          <img src="assets/img/panel-flex.jpg" width="1782" height="1189" loading="lazy" decoding="async"
+               alt="Semi-flexible Terrace Solar panel showing its thin profile.">
+          <b>Balconies &amp; railings</b>
+          <span>Thin panels that sit close to the structure.</span>
+        </figure>
+        <figure class="placement__item">
+          <img src="assets/img/panel-handling.jpg" width="1782" height="1189" loading="lazy" decoding="async"
+               alt="A Terrace Solar panel being carried and positioned by hand.">
+          <b>Fences &amp; yards</b>
+          <span>Lightweight enough to position by hand.</span>
+        </figure>
+        <figure class="placement__item">
+          <img src="assets/img/battery-patio.jpg" width="1920" height="1080" loading="lazy" decoding="async"
+               alt="Terrace Solar battery storage unit on a patio.">
+          <b>Patios</b>
+          <span>Panels and storage that fit outdoor living space.</span>
+        </figure>
+        <figure class="placement__item">
+          <img src="assets/img/outlet-outdoor.jpg" width="784" height="596" loading="lazy" decoding="async"
+               alt="Cable connected to a standard outdoor receptacle.">
+          <b>Anywhere there&rsquo;s an outlet</b>
+          <span>One AC cable reaches a standard receptacle.</span>
+        </figure>
+      </div>
+    </div>
+  </section>
+
   <!-- ===================== HOW THE POWER MOVES ===================== -->
   <!-- Original Terrace Solar flow diagram - concept only from the CraftStrom wiring
        reference page, no supplier layout, icon set or copy reused. -->
   <section class="section flow-diagram conn" id="connection" aria-labelledby="sp-conn" data-conn>
-    <div class="conn__track" data-conn-track>
-      <div class="conn__stage">
-        <div class="wrap">
-          <div class="section-head conn__head">
-            <p class="eyebrow">How it works</p>
-            <h2 id="sp-conn">A few connections.<br><em>That&rsquo;s it.</em></h2>
-            <p class="lede">Panels make the power. The microinverter converts it. Plug into the home.</p>
-          </div>
+    <div class="conn__stage">
+      <div class="wrap">
+        <div class="section-head conn__head">
+          <p class="eyebrow">How it works</p>
+          <h2 id="sp-conn">A few connections.<br><em>That&rsquo;s it.</em></h2>
+          <p class="lede">Panels make the power. The microinverter converts it. Plug into the home.</p>
+        </div>
 
-          <ol class="modstep__list flowline__steps" data-conn-list>
-            <li class="modstep__item" data-conn-step>
-              <b>Panels</b>
-              <span>Make electricity.</span>
-            </li>
-            <li class="modstep__arrow" data-conn-arrow aria-hidden="true"></li>
-            <li class="modstep__item" data-conn-step>
-              <b>Microinverter</b>
-              <span>Makes it usable by the home.</span>
-            </li>
-            <li class="modstep__arrow" data-conn-arrow aria-hidden="true"></li>
-            <li class="modstep__item" data-conn-step>
-              <b>Outlet</b>
-              <span>Connects to your existing wiring.</span>
-            </li>
-            <li class="modstep__arrow" data-conn-arrow aria-hidden="true"></li>
-            <li class="modstep__item" data-conn-step>
-              <b>Done!</b>
-              <span>Your solar is working with the home.</span>
-            </li>
-          </ol>
+        <ol class="modstep__list flowline__steps" data-conn-list>
+          <li class="modstep__item" data-conn-step>
+            <b>Panels</b>
+            <span>Make electricity.</span>
+          </li>
+          <li class="modstep__arrow" data-conn-arrow aria-hidden="true"></li>
+          <li class="modstep__item" data-conn-step>
+            <b>Microinverter</b>
+            <span>Makes it usable by the home.</span>
+          </li>
+          <li class="modstep__arrow" data-conn-arrow aria-hidden="true"></li>
+          <li class="modstep__item" data-conn-step>
+            <b>Outlet</b>
+            <span>Connects to your existing wiring.</span>
+          </li>
+          <li class="modstep__arrow" data-conn-arrow aria-hidden="true"></li>
+          <li class="modstep__item" data-conn-step>
+            <b>Done!</b>
+            <span>Your solar is working with the home.</span>
+          </li>
+        </ol>
 
-          <div class="flowline__storage" data-conn-storage>
-            <p class="flowline__storage-label">Storage<span class="step__badge">Optional</span></p>
-            <p class="flowline__storage-sub">Add storage if you want to save some of that energy for later.</p>
-          </div>
+        <div class="flowline__storage" data-conn-storage>
+          <p class="flowline__storage-label">Storage<span class="step__badge">Optional</span></p>
+          <p class="flowline__storage-sub">Add storage if you want to save some of that energy for later.</p>
         </div>
       </div>
     </div>
@@ -787,10 +768,10 @@
       <div>
         <h3>Product</h3>
         <ul>
-          <li><a href="#panel">The panel</a></li>
-          <li><a href="#configure">Configure a system</a></li>
-          <li><a href="#system">System architecture</a></li>
-          <li><a href="#mounting">Mounting</a></li>
+          <li><a href="#panels">The panel</a></li>
+          <li><a href="#shop">Configure a system</a></li>
+          <li><a href="#connection">System architecture</a></li>
+          <li><a href="#placement">Placement</a></li>
         </ul>
       </div>
       <div>
@@ -804,13 +785,13 @@
       <div>
         <h3>Contact</h3>
         <ul>
-          <li><a href="#availability">Request availability</a></li>
+          <li><a href="#shop">Request availability</a></li>
           <li><a href="mailto:hello@terracesolar.com">hello@terracesolar.com</a> <span class="src src--pending">Placeholder</span></li>
         </ul>
       </div>
     </div>
 
-    <div class="colophon">
+    <div class="colophon" id="sources">
       <p>
         <strong>Pre-launch draft.</strong> Product information from CraftStrom Solar. Nothing here is an offer of sale. Whether this equipment
         may be installed and connected at a given address depends on local electrical and

@@ -5,6 +5,8 @@ node_modules/
 .DS_Store
 Thumbs.db
 assets/video/*.mp4
+!assets/video/hero-desktop-web.mp4
+!assets/video/hero-mobile-web.mp4
 !assets/video/hero.mp4
 !assets/video/hero-scrub-mobile.mp4
 assets/video/*.webm

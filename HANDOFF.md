@@ -2,6 +2,16 @@
 
 Status as of 2026-08-18. Static site, no framework, no dependencies, no build step.
 
+> **Update, 2026-08-23: the scroll-scrubbed film hero described below has been
+> replaced.** The hero is now a short autoplay/muted/looping clip
+> (`assets/video/hero-loop.mp4`, ~7.5 s, trimmed from `hero.mp4`) with normal
+> document scrolling underneath — no pinning, no `currentTime` scrubbing, no
+> giant scroll-height track. The "Hero film" and "Chaptered hero" sections
+> below describe the retired architecture for historical context only; see
+> the current `index.html` (`[data-hero]`) and `assets/js/site.js` for what
+> actually ships now. `hero.mp4` / `hero-scrub-mobile.mp4` are unused but kept
+> on disk in case future edits want to draw from the original 42.875 s master.
+
 ## What exists
 
 ```

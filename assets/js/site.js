@@ -1,645 +1,178 @@
 /* Terrace Solar — progressive enhancement only.
-   The page is fully readable and usable with JavaScript disabled;
-   this script only updates the configurator readout, drives the hero scrub,
-   and runs the starting-size estimator. */
+   The page is fully readable and usable with JavaScript disabled; this
+   script plays the autoplay hero loop, reveals sections lightly as they
+   scroll into view, and drives the configurator/calculator readouts.
+   Nothing here hijacks scroll, calls preventDefault, or maps scroll
+   position to video currentTime. */
 
+/* ---------------------------------------------------------------------------
+   Generic scroll reveal: fade + slight rise, one-shot, for any [data-reveal]
+   element. Reduced-motion and no-IntersectionObserver visitors just see the
+   content immediately - this is decoration, never a gate on reading it.
+--------------------------------------------------------------------------- */
 (function () {
   'use strict';
+  var els = [].slice.call(document.querySelectorAll('[data-reveal]'));
+  if (!els.length) return;
 
-  var KIT_W = 400;
-  var PANEL_W = 200;
-
-  var form = document.querySelector('[data-config]');
-  if (!form) return;
-
-  var out = {
-    system: document.querySelector('[data-out="system"]'),
-    kits: document.querySelector('[data-out="kits"]'),
-    panels: document.querySelector('[data-out="panels"]'),
-    inverters: document.querySelector('[data-out="inverters"]')
-  };
-
-  function plural(n, one, many) {
-    return n + ' ' + (n === 1 ? one : many);
+  var motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+  if (motionQuery.matches || !window.IntersectionObserver) {
+    els.forEach(function (el) { el.classList.add('is-shown'); });
+    return;
   }
 
-  function render() {
-    var checked = form.querySelector('input[name="system-size"]:checked');
-    if (!checked) return;
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (!entry.isIntersecting) return;
+      entry.target.classList.add('is-shown');
+      io.unobserve(entry.target);
+    });
+  }, { threshold: 0.15, rootMargin: '0px 0px -8% 0px' });
 
-    var watts = parseInt(checked.value, 10);
-    if (!isFinite(watts) || watts <= 0) return;
-
-    var kits = watts / KIT_W;
-    var panels = watts / PANEL_W;
-
-    if (out.system) out.system.textContent = watts.toLocaleString() + ' W';
-    if (out.kits) out.kits.textContent = plural(kits, 'kit', 'kits');
-    if (out.panels) out.panels.textContent = plural(panels, 'panel', 'panels') + ' x ' + PANEL_W + ' W';
-    if (out.inverters) {
-      out.inverters.textContent = plural(kits, 'microinverter', 'microinverters') + ' x ' + KIT_W + ' W';
-    }
-  }
-
-  form.addEventListener('change', render);
-  render();
+  els.forEach(function (el) { io.observe(el); });
 })();
 
 
 /* ---------------------------------------------------------------------------
-   Scroll-scrubbed, chaptered film hero.
+   Hero: autoplay cinematic loop.
 
-   Scroll position drives video currentTime. Native scroll only - nothing is
-   hijacked, preventDefault is never called.
+   No scroll listener, no rAF loop, no currentTime writes, no waiting for
+   scroll or IntersectionObserver to fire before starting - the hero is
+   always above the fold, so playback starts the instant the browser will
+   allow it. A poster image is always painted first and stays visible until
+   a frame has actually decoded (.film--ready); if the browser blocks
+   autoplay outright, the poster remains and the first click/tap anywhere
+   on the page retries play() (which always satisfies autoplay policy).
 
-   Timeline is alternating segments:
-     scrub(0 -> hold1) | hold1 | scrub | hold2 | ... | scrub(-> duration)
-   Inside a scrub, scroll maps to time. Inside a hold, time is clamped and the
-   chapter's steps reveal instead. Purely positional, so reverse is exact.
+   This is a muted, looping, decorative background loop - no scroll-linked
+   or flashing motion - so it is intentionally NOT gated behind
+   prefers-reduced-motion, the same choice most premium sites make for
+   ambient hero video. Reduced motion still fully applies everywhere else
+   on the page (scroll reveals, transitions - see the global CSS rule and
+   initReveal above).
 
-   DEV OVERRIDE
-     ?motion=full   force the cinematic path even when the OS asks for reduced
-                    motion. Remembered for the tab session.
-     ?motion=auto   clear the override.
-     ?debug=1       on-screen readout. Press H to capture the current timestamp.
+   Reusable pattern: any future CinematicSection can reuse this same shape
+   of controller against a different root - it only depends on the
+   data-*-src attributes and the .film__video/__poster structure, not on
+   anything hero-specific.
 --------------------------------------------------------------------------- */
-
-var TerraceFilm = (function () {
+(function () {
   'use strict';
 
-  var root = document.querySelector('[data-film]');
-  if (!root) return null;
+  var root = document.querySelector('[data-hero]');
+  if (!root) return;
 
-  /* Mobile gets less physical scroll for the same story, and can use a
-     lighter-weight source file if one is supplied. This is a real recompose,
-     not a shrunk desktop layout - see the mobile film CSS. */
+  var video = root.querySelector('[data-hero-video]');
+  if (!video) return;
+
+  /* Belt-and-suspenders for iOS Safari: the muted HTML attribute is
+     usually enough, but setting the IDL properties directly guarantees
+     the element is actually muted before any play() is attempted. */
+  video.muted = true;
+  video.defaultMuted = true;
+
   var mobileQuery = window.matchMedia('(max-width: 767px)');
+  var dataset = root.dataset || {};
+  var src = (mobileQuery.matches && dataset.heroSrcMobile) || dataset.heroSrc;
+  if (!src) return;
+  var rate = parseFloat(dataset.heroRate) || 1;
 
-  /* Master film source. Swap the file at these paths, or point
-     data-film-src / data-film-src-mobile at different files in index.html -
-     no JS change needed. If a mobile file doesn't exist yet, this falls
-     back to the desktop master automatically - same asset, just recomposed
-     on screen. Both sources must share the same timeline/timestamps.
+  function applyRate() { video.playbackRate = rate; }
 
-     PERFORMANCE NOTE: the shipped master (hero.mp4) has a sparse ~66-frame
-     GOP, which is fine for desktop but makes mobile seeking heavier than it
-     needs to be. Once a dense-keyframe mobile encode exists (see
-     tools/README or the project notes for the ffmpeg recipe - roughly
-     960x540, same 24fps/duration, -g 6 -keyint_min 6 -sc_threshold 0),
-     drop it at assets/video/hero-scrub-mobile.mp4 and add
-     data-film-src-mobile="assets/video/hero-scrub-mobile.mp4" to the
-     [data-film] element below. Nothing else has to change - this file
-     already prefers that attribute over the desktop master whenever it's
-     present, and falls back cleanly whenever it isn't. */
-  var filmDataset = root.dataset || {};
-  var DESKTOP_SRC = filmDataset.filmSrc || 'assets/video/hero.mp4';
-  var MOBILE_SRC = filmDataset.filmSrcMobile || DESKTOP_SRC;
-  function currentVideoSrc() { return mobileQuery.matches ? MOBILE_SRC : DESKTOP_SRC; }
+  /* Chrome can abort/suspend playback of muted background video it decides
+     is decorative - both on the very first play() (before the element has
+     laid out: "video-only background media was paused to save power") and,
+     separately, at every loop restart (the native `loop` seek-to-0 counts
+     as a fresh autoplay attempt subject to the same heuristic). Neither is
+     a real "autoplay blocked" case - a prompt retry reliably clears it. So
+     rather than treat every 'pause' as final, treat any pause we didn't
+     ask for ourselves as something to recover from automatically, with a
+     short retry chain that only gives up and waits for a real interaction
+     (which always satisfies autoplay policy) after repeated failures. */
+  var intentionalPause = false;
+  var retryTimer = null;
 
-  /* How fast displayed time eases toward the scroll-derived target. Kept
-     separate per breakpoint (item 9): touch scrubbing benefits from a
-     snappier constant since the seek-delta gating below already prevents
-     it from spamming seeks, so a faster ease doesn't cost extra decodes. */
-  var DAMPING = 0.16;
-  var DAMPING_MOBILE = 0.22;
-  function currentDamping() { return mobileQuery.matches ? DAMPING_MOBILE : DAMPING; }
+  function tryPlay(onFail) {
+    var p = video.play();
+    if (p && p.catch) { p.catch(onFail || function () {}); }
+  }
 
-  /* SETTLE is the tight epsilon used only to decide whether the easing loop
-     itself has converged, and to guarantee an exact write once a hold has
-     snapped to its precise timestamp - it must stay sub-frame (a 24fps frame
-     is ~0.0417s) so holds land on the exact configured frame.
+  function pauseIntentionally() {
+    intentionalPause = true;
+    video.pause();
+  }
 
-     MIN_SEEK_DELTA is the separate, coarser threshold that gates actual
-     video.currentTime writes *while actively scrubbing* (not holding). Every
-     currentTime write forces a decode, and on mobile that decode is the
-     expensive part - so during a scrub we skip writes that would land on an
-     effectively identical frame. Sized to roughly one to one and a half
-     frames at 24fps, per item 8. Mobile gets a hair more slack since its
-     decode cost per seek is higher. */
-  var SETTLE = 0.004;
-  var MIN_SEEK_DELTA = 0.05;
-  var MIN_SEEK_DELTA_MOBILE = 0.06;
-  function currentSeekDelta() { return mobileQuery.matches ? MIN_SEEK_DELTA_MOBILE : MIN_SEEK_DELTA; }
+  function resume() {
+    intentionalPause = false;
+    tryPlay();
+  }
 
-  /* Known duration of the shipped master, used only to reserve the track's
-     height before video metadata has loaded, so the page never jumps once
-     it arrives. Corrected immediately by the real duration either way. */
-  var FALLBACK_DURATION = 42.875;
-
-  /* ===================================================================
-     HOLD FRAMES - the equipment shots the film stops on.
-     `t` is the timestamp in hero.mp4 to freeze on - identical on mobile
-     and desktop, since both sources share one timeline.
-     `vh` is how much scroll that chapter gets on desktop, in viewport
-     heights; mobile applies HOLD_VH_MOBILE_FACTOR on top of this so holds
-     stay long enough to read without feeling endless on a phone.
-     Only `stack` (28.96) is confirmed against the master; the others are
-     estimates. Load ?motion=full&debug=1 and press H on each shot to capture.
-     =================================================================== */
-  var HOLDS = [
-    { id: 'panel',   t: 14.20, vh: 190, confirmed: false },
-    { id: 'battery', t: 24.80, vh: 190, confirmed: false },
-    { id: 'stack',   t: 28.96, vh: 190, confirmed: true  },
-    { id: 'connect', t: 37.60, vh: 210, confirmed: false }
-  ];
-
-  var SCRUB_VH_PER_SECOND = 17;
-  var SCRUB_VH_PER_SECOND_MOBILE = 10;
-  /* the closing fall-to-black needs only enough scroll to hide the seam */
-  var TAIL_SCRUB_VH_PER_SECOND = 6;
-  var TAIL_SCRUB_VH_PER_SECOND_MOBILE = 4;
-  var HOLD_VH_MOBILE_FACTOR = 0.62;
-  var INTRO_FADE_LEAD = 2.0;
-
-  var track = root.querySelector('[data-film-track]');
-  var video = root.querySelector('[data-film-video]');
-  var captions = [].slice.call(root.querySelectorAll('.film__caption'));
-  var intro = root.querySelector('[data-film-intro]');
-  var chapterEls = {};
-  [].slice.call(root.querySelectorAll('[data-chapter]')).forEach(function (el) {
-    chapterEls[el.getAttribute('data-chapter')] = el;
+  video.addEventListener('pause', function () {
+    if (intentionalPause || video.ended) return;
+    if (retryTimer) return; /* a retry is already in flight */
+    retryTimer = window.setTimeout(function () {
+      retryTimer = null;
+      tryPlay(function () {
+        /* still blocked after a prompt retry - wait for a real interaction */
+        function onInteract() { tryPlay(); }
+        document.addEventListener('click', onInteract, { once: true });
+        document.addEventListener('touchstart', onInteract, { once: true, passive: true });
+        document.addEventListener('keydown', onInteract, { once: true });
+      });
+    }, 200);
   });
 
-  /* captions were the prototype's narration; the equipment chapters replace
-     them, so they are optional now */
-  if (!track || !video) {
-    if (window.console) {
-      console.error('[film] markup missing', { track: !!track, video: !!video });
-    }
-    return null;
-  }
-
-  /* ---- dev flags ---- */
-  var forceMotion = false;
-  var debug = false;
-  try {
-    var qs = new URLSearchParams(window.location.search);
-    var m = qs.get('motion');
-    if (m === 'full') {
-      window.sessionStorage.setItem('ts-motion', 'full');
-    } else if (m === 'auto' || m === 'off') {
-      window.sessionStorage.removeItem('ts-motion');
-    }
-    forceMotion = window.sessionStorage.getItem('ts-motion') === 'full';
-
-    /* Debug is URL-only and never persisted, so the public URL is always clean. */
-    window.sessionStorage.removeItem('ts-debug');
-    debug = qs.get('debug') === '1';
-  } catch (e) {
-    forceMotion = window.location.search.indexOf('motion=full') !== -1;
-    debug = window.location.search.indexOf('debug=1') !== -1;
-  }
-
-  /* Ephemeral init-stage trace, ?debug=1 only - not for production reading,
-     just to make "which stage did it stop at" obvious when diagnosing. */
-  if (debug && window.console) {
-    console.log('[film] FILM INIT START');
-    console.log('[film] FILM ELEMENT FOUND', { track: true, video: true });
-  }
-
-  /* No width gate: mobile phones run the same scrubbed film, recomposed by
-     the mobile film CSS. This is only a genuine sanity floor for viewports
-     too short to pin a stage in at all (a stray embedded iframe, a
-     collapsed panel) - real phones in portrait are always well above it. */
-  var heightOkQuery = window.matchMedia('(min-height: 360px)');
-  var motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-
-  var enabled = false;
-  var loaded = false;
-  var inView = true;
-  var rafId = 0;
-  var progress = 0;
-  var shownTime = 0;
-  var targetTime = 0;
-  var lastSeekDelta = 0;
-  var duration = 0;
-  var lastIndex = -1;
-  var loadError = null;
-  var timeline = [];
-  var totalPx = 0;
-  var activeChapter = null;
-  var holding = false;
-
-  function clamp01(n) { return n < 0 ? 0 : (n > 1 ? 1 : n); }
-  function reducedMotionWins() { return motionQuery.matches && !forceMotion; }
-
-  function fallbackReason() {
-    if (enabled) return null;
-    if (!heightOkQuery.matches) {
-      return 'viewport height ' + window.innerHeight + 'px is under 360px';
-    }
-    if (reducedMotionWins()) {
-      return 'prefers-reduced-motion is on - add ?motion=full to override';
-    }
-    return 'gate passes but hero not enabled - sync() has not run since the last change';
-  }
-
-  /* Builds the timeline against either the real duration or, before video
-     metadata has arrived, FALLBACK_DURATION - so the track's height (and
-     therefore the page layout) is reserved up front and never jumps once
-     the real duration is known. useFallback lets frame()/enable() ask for
-     that provisional sizing explicitly. */
-  function buildTimeline(useFallback) {
-    timeline = [];
-    var d = duration || (useFallback ? FALLBACK_DURATION : 0);
-    if (!d) return;
-
-    var mobile = mobileQuery.matches;
-    var scrubRate = mobile ? SCRUB_VH_PER_SECOND_MOBILE : SCRUB_VH_PER_SECOND;
-    var tailRate = mobile ? TAIL_SCRUB_VH_PER_SECOND_MOBILE : TAIL_SCRUB_VH_PER_SECOND;
-    var holdFactor = mobile ? HOLD_VH_MOBILE_FACTOR : 1;
-
-    var vh = window.innerHeight / 100;
-    var prev = 0;
-
-    HOLDS.forEach(function (h) {
-      if (h.t > prev) {
-        timeline.push({ type: 'scrub', from: prev, to: h.t,
-                        px: Math.max(1, (h.t - prev) * scrubRate * vh) });
-      }
-      timeline.push({ type: 'hold', at: h.t, id: h.id, px: Math.max(1, h.vh * holdFactor * vh) });
-      prev = h.t;
-    });
-    if (d > prev) {
-      timeline.push({ type: 'scrub', from: prev, to: d,
-                      px: Math.max(1, (d - prev) * tailRate * vh) });
-    }
-
-    totalPx = timeline.reduce(function (sum, seg) { return sum + seg.px; }, 0);
-    track.style.height = Math.round(totalPx + window.innerHeight) + 'px';
-    if (debug && window.console) {
-      console.log('[film] TIMELINE BUILT', { segments: timeline.length, trackPx: track.style.height });
-    }
-  }
-
-  /* Both scroll position (x, in px along the track) and overall progress
-     (0-1) are derived from the same single getBoundingClientRect() read.
-     Only measure() touches layout each frame - resolve()/progressFrom() are
-     pure math against numbers already in hand, so a frame never forces more
-     than one reflow (item 10). Static geometry (innerHeight) is re-read here
-     too since it's cheap and can change on rotation, but nothing is written
-     to the DOM before this read, so there's no read/write layout thrash. */
-  function measure() {
-    var rect = track.getBoundingClientRect();
-    var travel = rect.height - window.innerHeight;
-    return { top: rect.top, travel: travel };
-  }
-
-  function resolve(x) {
-    var acc = 0;
-    for (var i = 0; i < timeline.length; i++) {
-      var seg = timeline[i];
-      if (x < acc + seg.px || i === timeline.length - 1) {
-        var local = clamp01((x - acc) / seg.px);
-        if (seg.type === 'scrub') {
-          return { time: seg.from + (seg.to - seg.from) * local, chapter: null, cp: 0 };
-        }
-        return { time: seg.at, chapter: seg.id, cp: local };
-      }
-      acc += seg.px;
-    }
-    return { time: 0, chapter: null, cp: 0 };
-  }
-
-  function setCaption(p) {
-    if (!captions.length) return;
-    var i = Math.min(captions.length - 1, Math.floor(p * captions.length));
-    if (i === lastIndex) return;
-    lastIndex = i;
-    for (var n = 0; n < captions.length; n++) {
-      captions[n].classList.toggle('is-active', n === i);
-    }
-  }
-
-  function setChapter(id, cp) {
-    if (id !== activeChapter) {
-      if (activeChapter && chapterEls[activeChapter]) {
-        chapterEls[activeChapter].classList.remove('is-live', 'is-in');
-      }
-      activeChapter = id;
-      if (id && chapterEls[id]) chapterEls[id].classList.add('is-live');
-    }
-    if (!id) { root.classList.remove('is-holding'); return; }
-    root.classList.add('is-holding');
-    var el = chapterEls[id];
-    if (!el) return;
-
-    var inner = el.querySelector('.chapter__inner');
-    if (inner) inner.style.setProperty('--c', cp.toFixed(3));
-
-    /* Progressive disclosure inside the hold: steps arrive one at a time across
-       the hold's scroll range, so only a couple of ideas are on screen at once.
-       Purely positional, so scrolling back up hides them again in reverse. */
-    var steps = el.__steps || (el.__steps = [].slice.call(el.querySelectorAll('.chapter__step')));
-    if (!steps.length) return;
-
-    var LEAD = 0.06, TAIL = 0.90;
-    var span = (TAIL - LEAD) / steps.length;
-
-    for (var i = 0; i < steps.length; i++) {
-      var start = LEAD + i * span;
-      /* once shown, a step stays shown - the whole chapter fades out together */
-      steps[i].classList.toggle('is-shown', cp >= start);
-    }
-  }
-
-  var loggedFirstFrame = false;
-  function frame() {
-    rafId = 0;
-    if (!enabled) return;
-    if (debug && !loggedFirstFrame && window.console) {
-      loggedFirstFrame = true;
-      console.log('[film] SCRUB LOOP STARTED');
-    }
-
-    /* Self-correcting gate. resize and matchMedia change events are the primary
-       signal, but some embedded viewports never dispatch them. */
-    if (!heightOkQuery.matches || reducedMotionWins()) { disable(); return; }
-
-    var m = measure();
-    progress = m.travel > 0 ? clamp01(-m.top / m.travel) : 0;
-    var x = m.travel > 0 ? Math.max(0, Math.min(m.travel, -m.top)) : 0;
-    root.style.setProperty('--p', progress.toFixed(4));
-    setCaption(progress);
-
-    if (duration > 0) {
-      if (!timeline.length) buildTimeline();
-      var r = resolve(x);
-      targetTime = r.time;
-      holding = !!r.chapter;
-      setChapter(r.chapter, r.cp);
-
-      var lead = HOLDS.length ? HOLDS[0].t - INTRO_FADE_LEAD : duration;
-      var introOpacity = lead > 0 ? clamp01(1 - targetTime / lead) : 0;
-      if (intro) root.style.setProperty('--intro', introOpacity.toFixed(3));
-
-      shownTime += (targetTime - shownTime) * currentDamping();
-      if (holding && Math.abs(targetTime - shownTime) < 0.02) shownTime = targetTime;
-      if (progress <= 0) { shownTime = 0; }
-      if (progress >= 1) { shownTime = duration; }
-
-      /* Holds must land on their exact configured frame (SETTLE, sub-frame);
-         active scrubbing tolerates a roughly frame-sized slop (MIN_SEEK_DELTA)
-         so a fast swipe doesn't force a decode for every intermediate pixel
-         of scroll - see item 8/9 notes above DAMPING. */
-      lastSeekDelta = Math.abs(video.currentTime - shownTime);
-      var seekThreshold = holding ? SETTLE : currentSeekDelta();
-      if (!video.seeking && lastSeekDelta > seekThreshold) {
-        try { video.currentTime = shownTime; } catch (e) { /* not seekable yet */ }
-      }
-      if (Math.abs(targetTime - shownTime) > SETTLE) { schedule(); }
-    }
-    if (debug) { paintDebug(); }
-  }
-
-  /* inView is a performance hint only (skip work once the whole multi-
-     thousand-pixel track has scrolled fully out of view), never a
-     correctness gate. It's driven by an async IntersectionObserver that
-     can lag behind a page that's already mid-scroll or evaluate before
-     buildTimeline() has set the track's real height - blocking scheduling
-     on it risked the engine never starting at all if that first callback
-     landed at the wrong moment. schedule() no longer depends on it. */
-  function schedule() {
-    if (rafId || !enabled) return;
-    rafId = window.requestAnimationFrame(frame);
-  }
-
-  function load() {
-    if (loaded) return;
-    loaded = true;
-    /* attached only now, once the scrub experience is actually selected -
-       reduced-motion visitors never trigger this at all */
-    video.setAttribute('src', currentVideoSrc());
-    video.preload = 'auto';
-    video.load();
-    if (debug && window.console) {
-      console.log('[film] VIDEO SOURCE', currentVideoSrc());
-    }
-  }
-
-  video.addEventListener('loadedmetadata', function () {
-    duration = video.duration || 0;
-    loadError = null;
-    if (window.console) {
-      console.log('[film] metadata loaded: ' + duration.toFixed(3) + 's, ' +
-                  video.videoWidth + 'x' + video.videoHeight);
-    }
-    buildTimeline();
-    schedule();
-  });
-
-  /* Cross to the video only once a frame exists. loadedmetadata is readyState 1
-     - duration known but no pixels decoded - so hiding the poster there flashes
-     black. loadeddata is readyState 2, first frame available. */
+  video.addEventListener('loadedmetadata', applyRate);
   video.addEventListener('loadeddata', function () {
     root.classList.add('film--ready');
-    buildTimeline();
-    schedule();
+  });
+
+  /* First play attempt, once there's an actual frame to show - calling
+     play() any earlier (readyState 0) is the single biggest trigger for
+     the power-save abort above, so this alone clears most of the risk;
+     the 'pause' watchdog above is what recovers if it happens anyway. */
+  video.addEventListener('canplay', function firstPlay() {
+    video.removeEventListener('canplay', firstPlay);
+    applyRate();
+    tryPlay();
   });
 
   video.addEventListener('error', function () {
-    loadError = video.error
-      ? ('code ' + video.error.code + ' ' + (video.error.message || ''))
-      : 'unknown';
-    if (window.console) console.error('[film] video failed:', loadError, currentVideoSrc());
-    if (debug) paintDebug();
+    if (window.console) console.error('[hero] video failed to load:', src, video.error);
   });
 
-  /* never plays on its own */
-  video.addEventListener('play', function () { video.pause(); });
-
-  /* Chrome defers media loading in background tabs - retry on return.
-     Also true on iOS Safari after an app-switch. Either way, once visible
-     again a fresh schedule() re-measures the real current scroll position
-     and reconciles toward it - there's no queue of stale seeks to replay,
-     since targetTime is always recomputed from live scroll, never queued. */
-  document.addEventListener('visibilitychange', function () {
-    if (document.visibilityState !== 'visible' || !enabled) return;
-    if (video.readyState === 0) { video.load(); }
-    schedule();
-  });
-
-  function enable() {
-    if (enabled) return;
-    enabled = true;
-    root.classList.add('film--on');
-    if (forceMotion) root.classList.add('film--force');
-    /* reserve the track's height immediately, against the known fallback
-       duration, so the page never jumps once real metadata arrives */
-    if (!duration) buildTimeline(true);
-    load();
-    window.addEventListener('scroll', schedule, { passive: true });
-    schedule();
+  var attached = false;
+  function attach() {
+    if (attached) return;
+    attached = true;
+    video.setAttribute('src', src);
+    video.load();
+    /* the 'pause' watchdog above covers the actual first play attempt too -
+       video.load() leaves the element paused, and this first pause is
+       exactly what triggers the watchdog's retry chain */
   }
+  attach();
 
-  function disable() {
-    if (!enabled) return;
-    enabled = false;
-    root.classList.remove('film--on');
-    root.classList.remove('film--force');
-    window.removeEventListener('scroll', schedule);
-    if (rafId) { window.cancelAnimationFrame(rafId); rafId = 0; }
-    root.style.removeProperty('--p');
-    root.style.removeProperty('--intro');
-    root.classList.remove('is-holding');
-    track.style.removeProperty('height');
-    timeline = [];
-    if (activeChapter && chapterEls[activeChapter]) {
-      chapterEls[activeChapter].classList.remove('is-live', 'is-in');
-    }
-    activeChapter = null;
-    holding = false;
-    progress = 0;
-    lastIndex = -1;
-    for (var i = 0; i < captions.length; i++) {
-      captions[i].classList.toggle('is-active', i === 0);
-    }
-  }
-
-  function sync() {
-    if (heightOkQuery.matches && !reducedMotionWins()) { enable(); } else { disable(); }
-    if (debug) paintDebug();
-  }
-
-  function listen(q) {
-    if (q.addEventListener) { q.addEventListener('change', sync); }
-    else if (q.addListener) { q.addListener(sync); }
-  }
-
-  /* Always listening, enabled or not. matchMedia change events are the primary
-     signal but are not guaranteed in every embedded viewport. */
-  window.addEventListener('resize', function () {
-    buildTimeline();
-    sync();
-    schedule();
-  }, { passive: true });
-
+  /* Pause off-screen video for performance, resume when it scrolls back. */
   if (window.IntersectionObserver) {
     new IntersectionObserver(function (entries) {
-      inView = entries[0].isIntersecting;
-      if (inView) schedule();
-    }, { rootMargin: '100px' }).observe(track);
+      if (!attached) return;
+      var visible = entries[0].isIntersecting;
+      if (visible && video.paused) { resume(); }
+      else if (!visible && !video.paused) { pauseIntentionally(); }
+    }, { rootMargin: '200px' }).observe(root);
   }
 
-  /* ---- debug readout ---- */
-  var panel = null;
-  function paintDebug() {
-    if (!panel) {
-      panel = document.createElement('div');
-      panel.id = 'filmdiag';
-      panel.setAttribute('role', 'status');
-      panel.style.cssText = 'position:fixed;top:8px;left:8px;z-index:9999;' +
-        'background:#0b1220;color:#e8ecf4;' +
-        'font:12px/1.5 ui-monospace,Menlo,Consolas,monospace;padding:8px 10px;' +
-        'border-radius:8px;border:1px solid #2b3a55;min-width:300px;' +
-        'white-space:pre;box-shadow:0 8px 28px rgba(0,0,0,.45);pointer-events:none';
-      document.body.appendChild(panel);
+  document.addEventListener('visibilitychange', function () {
+    if (!attached) return;
+    if (document.visibilityState === 'visible') {
+      resume();
+    } else {
+      pauseIntentionally();
     }
-    var v = video;
-    panel.textContent = [
-      'FILM DIAGNOSTIC',
-      'viewport       ' + window.innerWidth + ' x ' + window.innerHeight,
-      'reduced-motion ' + (motionQuery.matches ? 'YES' : 'no') +
-        (forceMotion ? '  OVERRIDDEN' : ''),
-      'film--on       ' + (enabled ? 'YES' : 'NO'),
-      'inView         ' + inView + '  (hint only, does not block scheduling)',
-      'rafId          ' + (rafId || 'none pending'),
-      'fallback       ' + (fallbackReason() || '-'),
-      'video src      ' + (v.getAttribute('src') || 'not attached'),
-      'readyState     ' + v.readyState + '    networkState ' + v.networkState,
-      'duration       ' + (duration ? duration.toFixed(3) + 's' : '-'),
-      'buffered       ' + (v.buffered.length ? v.buffered.end(0).toFixed(1) + 's' : 'none'),
-      'scrub mode     ' + (mobileQuery.matches ? 'mobile' : 'desktop') +
-        '  (damping ' + currentDamping().toFixed(2) +
-        ', seek-delta ' + currentSeekDelta().toFixed(3) + 's)',
-      'progress       ' + progress.toFixed(4),
-      'target time    ' + targetTime.toFixed(3) + 's',
-      'currentTime    ' + (v.currentTime || 0).toFixed(3) + 's' +
-        (v.seeking ? '  (seeking)' : ''),
-      'seek delta     ' + lastSeekDelta.toFixed(4) + 's',
-      'track height   ' + Math.round(track.getBoundingClientRect().height) + 'px',
-      'mode           ' + (holding ? 'HOLD - ' + activeChapter : 'scrub'),
-      'chapter        ' + (activeChapter || '-'),
-      'segments       ' + timeline.length,
-      'press H        capture this timestamp as a hold',
-      'error          ' + (loadError || 'none')
-    ].join('\n');
-  }
-
-  listen(heightOkQuery);
-  listen(motionQuery);
-  /* crossing the mobile/desktop breakpoint (rotation, resize) needs the
-     timeline rebuilt with the matching scrub/hold rates - sync() alone is a
-     no-op here since enable() only acts on first entry. Only reload the
-     video element if the breakpoint actually points at a different file
-     (a real mobile source configured via data-film-src-mobile); when both
-     resolve to the same master, swapping is unnecessary. */
-  function onMobileBreakpointChange() {
-    if (!enabled) return;
-    var wanted = currentVideoSrc();
-    if (loaded && video.getAttribute('src') !== wanted) {
-      loaded = false;
-      video.removeAttribute('src');
-      load();
-    }
-    buildTimeline();
-    schedule();
-  }
-  if (mobileQuery.addEventListener) { mobileQuery.addEventListener('change', onMobileBreakpointChange); }
-  else if (mobileQuery.addListener) { mobileQuery.addListener(onMobileBreakpointChange); }
-  sync();
-
-  if (debug) {
-    paintDebug();
-    window.setInterval(paintDebug, 250);
-
-    /* Press H to record the frame currently on screen. */
-    window.__holds = [];
-    document.addEventListener('keydown', function (ev) {
-      if (ev.key !== 'h' && ev.key !== 'H') return;
-      var t = +video.currentTime.toFixed(3);
-      window.__holds.push(t);
-      var text = window.__holds.join(', ');
-      if (window.console) console.log('[film] captured hold at ' + t + 's -> [' + text + ']');
-      try { navigator.clipboard.writeText(text); } catch (e) { /* no clipboard */ }
-      if (panel) {
-        panel.textContent += String.fromCharCode(10) +
-          'captured       ' + t + 's  (' + window.__holds.length + ' total)';
-      }
-    });
-  }
-
-  if (window.console) {
-    console.log('[film] init', {
-      videoElement: !!video,
-      src: currentVideoSrc(),
-      mobile: mobileQuery.matches,
-      forceMotion: forceMotion,
-      reducedMotion: motionQuery.matches,
-      gatePasses: heightOkQuery.matches,
-      enabled: enabled,
-      fallbackReason: fallbackReason()
-    });
-  }
-
-  return {
-    root: root, video: video, track: track, captions: captions,
-    heightOkQuery: heightOkQuery, motionQuery: motionQuery, mobileQuery: mobileQuery,
-    isEnabled: function () { return enabled; },
-    isForced: function () { return forceMotion; },
-    getProgress: function () {
-      if (enabled) return progress;
-      var m = measure();
-      return m.travel > 0 ? clamp01(-m.top / m.travel) : 0;
-    },
-    getTargetTime: function () { return targetTime; },
-    getDuration: function () { return duration; },
-    getIndex: function () { return lastIndex; },
-    getFallbackReason: fallbackReason,
-    getError: function () { return loadError; },
-    forceEnable: function () { forceMotion = true; sync(); }
-  };
+  });
 })();
+
 
 
 /* ---------------------------------------------------------------------------
@@ -1166,127 +699,89 @@ var SOLAR_CALCULATOR_CONFIG = {
 
 
 /* ---------------------------------------------------------------------------
-   How it works - short sticky reveal. Same positional idea as the film: scroll
-   position drives which steps are shown, steps stay once shown, and the whole
-   group fades as the section leaves. No scroll hijacking.
+   How it works - each product step fades/rises in as it individually
+   scrolls into view (IntersectionObserver), staggered slightly by index for
+   a light cascade. One-shot, not scroll-position-driven, no pinning.
 --------------------------------------------------------------------------- */
 (function () {
   'use strict';
   var root = document.querySelector('[data-steps]');
   if (!root) return;
-  var track = root.querySelector('[data-steps-track]');
   var steps = [].slice.call(root.querySelectorAll('.step'));
-  if (!track || !steps.length) return;
+  if (!steps.length) return;
 
   var motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-  var narrow = window.matchMedia('(max-width: 899px)');
-  var ticking = false;
-  /* same dev override the film uses, so both behave consistently */
-  var forced = window.location.search.indexOf('motion=full') !== -1;
-  function reduced() { return motionQuery.matches && !forced; }
-
-  function apply() {
-    ticking = false;
-    if (reduced() || narrow.matches) {
-      root.classList.remove('steps--on');
-      steps.forEach(function (el) { el.classList.add('is-shown'); });
-      return;
-    }
-    root.classList.add('steps--on');
-    var rect = track.getBoundingClientRect();
-    var travel = rect.height - window.innerHeight;
-    var p = travel > 0 ? Math.max(0, Math.min(1, -rect.top / travel)) : 0;
-    var LEAD = 0.08, TAIL = 0.88;
-    var span = (TAIL - LEAD) / steps.length;
-    for (var i = 0; i < steps.length; i++) {
-      steps[i].classList.toggle('is-shown', p >= LEAD + i * span);
-    }
-    root.style.setProperty('--sp', p.toFixed(3));
+  if (motionQuery.matches || !window.IntersectionObserver) {
+    steps.forEach(function (el) { el.classList.add('is-shown'); });
+    return;
   }
 
-  function onScroll() {
-    if (ticking) return;
-    ticking = true;
-    window.requestAnimationFrame(apply);
-  }
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (!entry.isIntersecting) return;
+      var el = entry.target;
+      var i = steps.indexOf(el);
+      window.setTimeout(function () { el.classList.add('is-shown'); }, Math.max(0, i) * 80);
+      io.unobserve(el);
+    });
+  }, { threshold: 0.3, rootMargin: '0px 0px -10% 0px' });
 
-  window.addEventListener('scroll', onScroll, { passive: true });
-  window.addEventListener('resize', onScroll, { passive: true });
-  if (motionQuery.addEventListener) motionQuery.addEventListener('change', apply);
-  apply();
+  steps.forEach(function (el) { io.observe(el); });
 })();
 
 
 /* ---------------------------------------------------------------------------
-   "A few connections. That's it." - short sticky scrollytelling reveal.
+   "A few connections. That's it." - the one contained interactive How It
+   Works moment (Panels -> Microinverter -> Outlet -> Done -> Storage).
 
-   Same positional idea as the film and the "How it works" product-overview
-   reveal above: scroll position (0-1) across a short sticky track drives
-   which steps are shown. Once shown, a step stays shown - by the end of the
-   track all four steps plus the storage note are visible together, and they
-   STAY that way. There is no fade-out: once the track's progress reaches 1,
-   every item is locked to its final visible state and nothing further is
-   computed from scroll distance past that point - the sticky stage just
-   releases and normal page scrolling continues under it. Reverse scrolling
-   while still inside the track un-reveals items in exact reverse order,
-   same as the film's holds; nothing here is a one-time animation.
-
-   Deliberately no width gate (unlike the section above): the request this
-   implements specifically wants the progressive reveal on mobile too, not
-   an instant-show fallback - only reduced motion skips it. */
+   Not scroll-linked: an IntersectionObserver fires once when the section
+   scrolls into view, then a short automatic staggered reveal plays through
+   the sequence on a timer. Simpler and more reliable than driving it off
+   continuous scroll position, and it still reads as one deliberate beat.
+--------------------------------------------------------------------------- */
 (function () {
   'use strict';
   var root = document.querySelector('[data-conn]');
   if (!root) return;
-  var track = root.querySelector('[data-conn-track]');
   var steps = [].slice.call(root.querySelectorAll('[data-conn-step]'));
   var arrows = [].slice.call(root.querySelectorAll('[data-conn-arrow]'));
   var storage = root.querySelector('[data-conn-storage]');
-  if (!track || !steps.length) return;
+  if (!steps.length) return;
 
   var motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-  var ticking = false;
-  var forced = window.location.search.indexOf('motion=full') !== -1;
-  function reduced() { return motionQuery.matches && !forced; }
 
-  /* five even reveal beats across the track: Panels, Microinverter, Outlet,
-     Done, then Storage as the final beat - tune these to retime the reveal,
-     nothing else in apply() needs to change. */
-  var BEATS = [0, 0.2, 0.4, 0.6, 0.8];
-
-  function apply() {
-    ticking = false;
-    if (reduced()) {
-      root.classList.remove('conn--on');
-      steps.forEach(function (el) { el.classList.add('is-shown'); });
-      arrows.forEach(function (el) { el.classList.add('is-shown'); });
-      if (storage) storage.classList.add('is-shown');
-      return;
-    }
-    root.classList.add('conn--on');
-    var rect = track.getBoundingClientRect();
-    var travel = rect.height - window.innerHeight;
-    var p = travel > 0 ? Math.max(0, Math.min(1, -rect.top / travel)) : 0;
-
-    for (var i = 0; i < steps.length; i++) {
-      var shown = p >= BEATS[i];
-      steps[i].classList.toggle('is-shown', shown);
-      /* the arrow leading into a step arrives with that step, not before */
-      if (arrows[i - 1]) arrows[i - 1].classList.toggle('is-shown', shown);
-    }
-    if (storage) storage.classList.toggle('is-shown', p >= BEATS[4]);
+  function showAll() {
+    steps.forEach(function (el) { el.classList.add('is-shown'); });
+    arrows.forEach(function (el) { el.classList.add('is-shown'); });
+    if (storage) storage.classList.add('is-shown');
   }
 
-  function onScroll() {
-    if (ticking) return;
-    ticking = true;
-    window.requestAnimationFrame(apply);
+  if (motionQuery.matches || !window.IntersectionObserver) {
+    showAll();
+    return;
   }
 
-  window.addEventListener('scroll', onScroll, { passive: true });
-  window.addEventListener('resize', onScroll, { passive: true });
-  if (motionQuery.addEventListener) motionQuery.addEventListener('change', apply);
-  apply();
+  var STEP_DELAY = 220; /* ms between each beat of the sequence */
+  var played = false;
+
+  function play() {
+    if (played) return;
+    played = true;
+    steps.forEach(function (el, i) {
+      window.setTimeout(function () {
+        el.classList.add('is-shown');
+        if (arrows[i - 1]) arrows[i - 1].classList.add('is-shown');
+      }, i * STEP_DELAY);
+    });
+    if (storage) {
+      window.setTimeout(function () { storage.classList.add('is-shown'); }, steps.length * STEP_DELAY);
+    }
+  }
+
+  var io = new IntersectionObserver(function (entries) {
+    if (entries[0].isIntersecting) { play(); io.disconnect(); }
+  }, { threshold: 0.35 });
+  io.observe(root);
 })();
 
 
