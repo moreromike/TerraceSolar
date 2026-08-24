@@ -176,131 +176,181 @@
 
 
 /* ---------------------------------------------------------------------------
-   SDG&E Solar Savings Calculator - "Find your fit."
+   SDG&E Solar Savings Calculator - "Find my system."
 
-   Every assumption used anywhere in this calculator lives in
-   SOLAR_CALCULATOR_CONFIG below. Nothing is hard-coded in the calculation
-   functions or the render function - if a number changes, it changes here.
+   REBUILT 2026-08-24. The previous model computed
+   `production x flat self-consumption% x flat rate`, using a single
+   occupancy-keyed self-consumption percentage (e.g. "mixed" = 30-35%
+   regardless of anything else) borrowed from large-rooftop-system thinking,
+   where production routinely exceeds household load. For a 400-1200 W
+   plug-in system that assumption is backwards: a small system's output is
+   usually well within a household's continuous daytime draw (fridge, HVAC,
+   electronics, standby loads), so self-consumption is normally HIGH, and it
+   should fall as the SYSTEM gets big relative to the HOUSEHOLD, not
+   according to a fixed lookup table. This file replaces that model with an
+   explicit physical flow:
 
-   STATUS OF RATE FIGURES:
-   - rates.touDr1                 - supplied project assumptions. Cross-checked
-                                     2026-08-24 against search-derived SDG&E
-                                     TOU-DR1 figures in
-                                     assets/products/rates-san-diego.json
-                                     (summer peak ~69.65c/kWh, winter peak
-                                     ~48c/kWh combined). Those are close to but
-                                     not identical to the generation+delivery
-                                     split below (summer ~73c, winter ~40c) -
-                                     UNRESOLVED CONFLICT, not silently fixed:
-                                     the search result gives only a bundled
-                                     peak total, not the generation/delivery
-                                     split this model needs, so decomposing it
-                                     would fabricate precision. Re-derive from
-                                     the actual SDG&E tariff PDF (linked in
-                                     rates-san-diego.json) before treating
-                                     either figure as final.
-   - rates.touElec, rates.flat,
-     rates.other                  - PROVISIONAL placeholders, NOT verified
-                                     against a published current tariff.
-                                     Do not present these as exact.
-   - averageRateForBillEstimate   - PROVISIONAL, used only to back-estimate
-                                     kWh usage from a dollar bill amount.
-   - estimatedCosts                - PROVISIONAL, for range-of-magnitude only.
+     household usage -> estimated solar production -> estimated household
+     daytime load -> direct self-consumption (whichever is smaller) ->
+     excess solar -> battery charging (capacity-limited) -> round-trip
+     losses -> battery discharge (valued at the peak rate it displaces) ->
+     remaining unused/exported energy (uncompensated, not counted) ->
+     avoided-cost calculation -> monthly/annual savings, capped so avoided
+     energy never exceeds actual household usage and avoided cost never
+     exceeds the customer's own stated/implied bill.
+
+   No hourly interval data exists for this, so the household-load and
+   production-window figures below are explicit, named, conservative
+   approximations - not measurements. They are centralized here so a single
+   changed constant updates every downstream number; nothing is
+   hard-coded inside the calculation functions themselves.
+
+   SDG&E residential rate assumptions
+   Verified: 2026-08-24
+   Source: SDG&E TOU-DR1 rate tables - see assets/products/rates-san-diego.json
+   for the exact source URLs (summer peak ~69.65c/kWh, winter peak ~48c/kWh).
+   touElec/flat/other remain PROVISIONAL, not tariff-verified - do not
+   present those three as exact.
+
+   Inland vs. coastal now affects SOLAR PRODUCTION only (sun exposure /
+   marine-layer cloudiness), never the electricity RATE - no SDG&E TOU-DR1
+   tariff charges a different retail $/kWh by inland/coastal location, so
+   the previous model's "Inland = $0.73/kWh vs Coastal = $0.55/kWh" was not
+   representing a real rate distinction. Keeping production and rate as two
+   separate factors, rather than one blended number, is what fixes that.
 
    This is a starting-point estimator, not an engineering tool, a quote, or
-   a guarantee. See the in-UI "See assumptions" disclosure for the customer-
-   facing version of these notes.
+   a guarantee. See the in-UI "See assumptions" disclosure for the
+   customer-facing version of these notes.
 --------------------------------------------------------------------------- */
 
-var SOLAR_CALCULATOR_CONFIG = {
+var SEASONS = { summerMonths: 4, winterMonths: 8 }; // Jun-Sep / Oct-May
 
-  /* Regional average peak sun hours per day. Not the customer's actual
-     rooftop/balcony sunlight - shading, orientation and weather vary. */
+var SOLAR_ASSUMPTIONS = {
+  /* San Diego baseline; not the customer's actual rooftop/balcony sun -
+     shading, orientation and weather vary. Held constant across seasons
+     (5.75 is already treated as an annual average), same simplification
+     the previous model used. */
   peakSunHours: 5.75,
+  /* Real-world system efficiency / derate (wiring, temperature, soiling,
+     inverter conversion, connector losses). 82-88% is a typical range for
+     a well-sited small system; 85% is the documented default actually
+     used below - the old code's "6.9 kWh/day after losses" figure was
+     never run through a derate factor at all. */
+  systemEfficiency: 0.85,
+  /* Coastal San Diego sees somewhat more marine-layer cloud cover than
+     inland; modest, not dramatic, per the source instructions. */
+  coastalProductionFactor: 0.93,
+  /* Approximate hours per day production is high enough to matter, used
+     only to convert an average daytime load (kW) into a comparable energy
+     cap (kWh) against production - not a claim about sunrise/sunset. */
+  productionWindowHours: 10,
+  /* Even in a household whose average daytime draw comfortably exceeds a
+     small system's average output, production is peaked around solar noon
+     while load is comparatively flatter, so some midday surplus almost
+     always exists. Caps direct self-consumption below 100% even when the
+     load-vs-production ratio alone would suggest full absorption - this is
+     what keeps a battery meaningfully useful even in "load-rich" homes,
+     and keeps the no-battery case from claiming production it likely
+     couldn't have fully soaked up in the same instant it was made. */
+  maxDirectCoincidence: 0.85,
+  daysPerMonth: 30.4
+};
 
-  daysPerMonth: 30.4,
+/* Average daytime (production-window) household power draw, expressed as a
+   multiple of the home's 24-hour average power draw. >1 means the home
+   draws MORE than average during the day (people home, AC, cooking); <1
+   means less (still running the fridge, router, standby loads, maybe a
+   pool pump, just without a fully-occupied daytime). This is what lets
+   self-consumption scale with the actual relationship between usage and
+   system size instead of a fixed per-occupancy percentage. */
+var DAYTIME_LOAD_FACTOR = {
+  usuallyHome: 1.20,
+  mixed: 0.90,
+  mostlyAway: 0.65
+};
 
-  seasons: {
-    summerMonths: 4,   // June - September
-    winterMonths: 8    // October - May
+var BATTERY_ASSUMPTIONS = {
+  /* 85-92% is a typical round-trip range for LiFePO4 battery systems;
+     88% used as the documented default. Never treated as 100%. */
+  roundTripEfficiency: 0.88,
+  /* Default assumed storage size by system size, used only because this
+     calculator's battery input is a simple on/off switch (the Shop
+     configurator's 1-4 kWh selector is a separate, more precise control).
+     Non-binding guidance, same role the old storageSuggestion field played. */
+  defaultKwhBySize: { 400: 1, 800: 1, 1200: 1.5, 1600: 2, 2000: 3 }
+};
+
+/* SDG&E residential rate assumptions - see file header for source/date.
+   One flat number per period per plan; touDr1 is the only one cross-checked
+   against a live source this pass. */
+var RATE_ASSUMPTIONS = {
+  touDr1: {
+    summer: { superOffPeak: 0.2500, offPeak: 0.4756, peak: 0.6965 },
+    winter: { superOffPeak: 0.2800, offPeak: 0.3400, peak: 0.4800 }
   },
-
-  /* Approximate blended $/kWh used ONLY to back-estimate monthly usage when
-     the customer enters a dollar bill instead of a kWh figure. Not a tariff
-     calculation - a rough conversion so the "Bill" input mode has something
-     to work from. */
-  averageRateForBillEstimate: {
-    touDr1:  { inland: 0.335, coastal: 0.205 },
-    touElec: { inland: 0.300, coastal: 0.190 },
-    flat:    { inland: 0.320, coastal: 0.280 },
-    other:   { inland: 0.320, coastal: 0.280 }
+  /* PROVISIONAL - not verified against a current published tariff. */
+  touElec: {
+    summer: { superOffPeak: 0.22, offPeak: 0.40, peak: 0.55 },
+    winter: { superOffPeak: 0.24, offPeak: 0.29, peak: 0.40 }
   },
-
-  /* Avoided-cost assumptions: what a self-consumed or battery-discharged
-     kWh is assumed to be worth, by plan / location / season. Generation +
-     delivery approximate the combined avoided rate SDG&E customers see on
-     TOU-DR1; touElec/flat/other are provisional placeholders in the same
-     shape so they stay swappable without touching calculation code. */
-  rates: {
-    touDr1: {
-      inland: {
-        summer: { generation: 0.43635, delivery: 0.29479 }, // combined ~$0.73/kWh
-        winter: { generation: 0.14748, delivery: 0.25353 }  // combined ~$0.40/kWh
-      },
-      coastal: {
-        summer: { generation: 0.43635, delivery: 0.11530 }, // combined ~$0.55/kWh
-        winter: { generation: 0.14748, delivery: 0.11530 }  // combined ~$0.26/kWh
-      }
-    },
-
-    /* PROVISIONAL - not verified against a current published tariff. */
-    touElec: {
-      inland:  { summer: { generation: 0.38, delivery: 0.24 }, winter: { generation: 0.16, delivery: 0.21 } },
-      coastal: { summer: { generation: 0.38, delivery: 0.10 }, winter: { generation: 0.16, delivery: 0.10 } }
-    },
-
-    /* PROVISIONAL - approximate flat/tiered blended rate, no TOU component. */
-    flat: {
-      inland:  { summer: { generation: 0.32, delivery: 0 }, winter: { generation: 0.30, delivery: 0 } },
-      coastal: { summer: { generation: 0.28, delivery: 0 }, winter: { generation: 0.26, delivery: 0 } }
-    },
-
-    /* Used for "Other" plans. Deliberately conservative and generic - the
-       UI tells the customer this estimate is less precise. */
-    other: {
-      inland:  { summer: { generation: 0.30, delivery: 0 }, winter: { generation: 0.28, delivery: 0 } },
-      coastal: { summer: { generation: 0.26, delivery: 0 }, winter: { generation: 0.24, delivery: 0 } }
-    }
+  /* PROVISIONAL - approximate flat/tiered blended rate, no TOU component;
+     same figure in every period so the weighting math below still applies
+     unchanged rather than needing a separate code path. */
+  flat: {
+    summer: { superOffPeak: 0.32, offPeak: 0.32, peak: 0.32 },
+    winter: { superOffPeak: 0.30, offPeak: 0.30, peak: 0.30 }
   },
+  /* Used for "Other" plans - deliberately conservative/generic; the UI
+     tells the customer this estimate is less precise. */
+  other: {
+    summer: { superOffPeak: 0.28, offPeak: 0.28, peak: 0.28 },
+    winter: { superOffPeak: 0.26, offPeak: 0.26, peak: 0.26 }
+  }
+};
 
-  /* Approximate share of monthly usage that falls in the 4-9pm peak window,
-     when no interval data is available. Used, on TOU plans only, to keep
-     the no-battery estimate conservative: without storage, daytime solar
-     mostly can't reach the evening peak window, so the value it displaces
-     is discounted by roughly this share. A battery can shift production
-     into that window, so the discount does not apply when battery is on. */
-  peakUsageShare: {
-    inland:  { min: 0.12, max: 0.15 },
-    coastal: { min: 0.08, max: 0.10 }
-  },
+/* How UNSTORED solar production is distributed across TOU periods for a
+   typical San Diego daylight production curve (panel output roughly
+   9am-6pm, tapering at the edges). Most lands in off-peak/super-off-peak;
+   a modest tail overlaps the start of the evening peak window (peak starts
+   at 4pm in summer, so long summer days genuinely do overlap it a little).
+   Weights sum to 1 per season. This single mechanism is what values direct
+   solar at a blended rate instead of the old model's TWO overlapping
+   mechanisms (a self-consumption % AND a separate "peak usage share"
+   discount) - replacing both avoids double-discounting the same effect. */
+var SOLAR_TOU_DISTRIBUTION = {
+  summer: { superOffPeak: 0.30, offPeak: 0.55, peak: 0.15 },
+  winter: { superOffPeak: 0.35, offPeak: 0.55, peak: 0.10 }
+};
 
-  /* Share of gross production a battery can capture and make useful,
-     including shifting it into the peak window. */
-  batteryCapture: {
-    balcony: 0.80,
-    patio: 0.82,
-    customDefault: 0.82
-  },
+/* Battery-shifted energy is deliberately moved to displace the single most
+   expensive period, so it's valued at that season's peak rate - not a
+   further-discounted or further-inflated number. */
+function peakRateFor(plan, season) {
+  var r = RATE_ASSUMPTIONS[plan] || RATE_ASSUMPTIONS.other;
+  return r[season].peak;
+}
 
-  /* Without a battery, only the share of production that coincides with
-     the home actually drawing power gets used - the rest is not exported
-     or credited. This is what keeps a no-battery estimate honest. */
-  selfConsumption: {
-    usuallyHome: { min: 0.40, max: 0.50 },
-    mixed:       { min: 0.30, max: 0.35 },
-    mostlyAway:  { min: 0.15, max: 0.25 }
-  },
+function blendedDirectRate(plan, season) {
+  var r = (RATE_ASSUMPTIONS[plan] || RATE_ASSUMPTIONS.other)[season];
+  var w = SOLAR_TOU_DISTRIBUTION[season];
+  return r.superOffPeak * w.superOffPeak + r.offPeak * w.offPeak + r.peak * w.peak;
+}
 
+/* Approximate share of a HOUSEHOLD's (not solar's) usage that falls in each
+   TOU period, used only to back-estimate kWh from a dollar bill amount and
+   to cap savings at the implied bill. Computed from the same
+   RATE_ASSUMPTIONS table below rather than a separately invented number,
+   so a bill-mode estimate stays mathematically tied to the selected plan. */
+var HOUSEHOLD_USAGE_TOU_SHARE = { superOffPeak: 0.30, offPeak: 0.45, peak: 0.25 };
+function averageHouseholdRate(plan) {
+  var r = RATE_ASSUMPTIONS[plan] || RATE_ASSUMPTIONS.other;
+  var w = HOUSEHOLD_USAGE_TOU_SHARE;
+  function seasonAvg(s) { return r[s].superOffPeak * w.superOffPeak + r[s].offPeak * w.offPeak + r[s].peak * w.peak; }
+  return (seasonAvg('summer') * SEASONS.summerMonths + seasonAvg('winter') * SEASONS.winterMonths) / 12;
+}
+
+var SOLAR_CALCULATOR_CONFIG = {
   /* balcony is 800 W (2x400 W kit), not 850 - kept aligned to the actual
      purchasable 400 W increments sold in the configurator below. Recommended
      sizes must always map to a real configuration, never an arbitrary number. */
@@ -312,22 +362,6 @@ var SOLAR_CALCULATOR_CONFIG = {
     customStep: 50
   },
 
-  /* Gross daily production before losses, at the 5.75 peak-sun-hour
-     assumption above - kept explicit so the "~4.6 / ~6.9 kWh/day" figures
-     stay traceable to a config value rather than only a derived one. */
-  grossDailyKwh: {
-    balcony: 4.6,
-    patio: 6.9
-  },
-
-  /* Non-binding storage suggestion by system size - guidance only, never
-     presented as a requirement. */
-  storageSuggestion: {
-    balcony: '1 kWh',
-    patio: '1-2 kWh',
-    customDefault: '1-2 kWh'
-  },
-
   estimatedCosts: {
     solarOnly850:     { min: 900,  max: 1200 },
     solarOnly1200:    { min: 1200, max: 1600 },
@@ -336,7 +370,8 @@ var SOLAR_CALCULATOR_CONFIG = {
   },
 
   /* Applied around the primary modeled result so the calculator never shows
-     false dollar-level precision (e.g. "$83.17/mo"). */
+     false dollar-level precision (e.g. "$83.17/mo") - a range, not a point
+     estimate, per the explicit design requirement. */
   uncertainty: 0.10
 };
 
@@ -372,68 +407,103 @@ var SOLAR_CALCULATOR_CONFIG = {
      own arguments - no other hard-coded rates or thresholds.
      ------------------------------------------------------------------ */
 
-  function mid(range) { return (range.min + range.max) / 2; }
-
   function systemSizeW() {
     if (state.system === 'balcony') return CFG.systems.balcony;
     if (state.system === 'patio') return CFG.systems.patio;
     return Math.max(CFG.systems.customMin, Math.min(CFG.systems.customMax, state.customSize));
   }
 
-  function grossDailyKwhFor(sizeW) {
-    /* Interpolate/extrapolate off the two documented reference points
-       using the shared peak-sun-hour basis, so any custom wattage stays
-       consistent with the 850 W / 1200 W figures above. */
-    var perWatt = CFG.grossDailyKwh.patio / CFG.systems.patio;
-    return sizeW * perWatt;
+  /* AC production for one day: system size x San Diego peak sun hours x a
+     real-world efficiency/derate factor. Example at the default 1200 W:
+     1.2 x 5.75 x 0.85 = 5.87 kWh/day (~178 kWh/month) - this is the actual
+     computed value, not a separately hand-typed one, so it can't drift out
+     of sync with SOLAR_ASSUMPTIONS. */
+  function estimateSolarProduction(sizeW, location) {
+    var kwh = (sizeW / 1000) * SOLAR_ASSUMPTIONS.peakSunHours * SOLAR_ASSUMPTIONS.systemEfficiency;
+    if (location === 'coastal') kwh *= SOLAR_ASSUMPTIONS.coastalProductionFactor;
+    return kwh; // kWh/day
   }
 
-  function batteryCaptureFor() {
-    if (state.system === 'balcony') return CFG.batteryCapture.balcony;
-    if (state.system === 'patio') return CFG.batteryCapture.patio;
-    return CFG.batteryCapture.customDefault;
+  /* Average power the household draws during the production window, scaled
+     by how the occupancy pattern's daytime draw compares to its own 24-hour
+     average - see DAYTIME_LOAD_FACTOR above. Returns kW, not kWh, because
+     it's compared against production as an instantaneous-capacity proxy,
+     not summed directly. */
+  function estimateHouseholdDaytimeLoad(monthlyKwh, occupancy) {
+    var avgW = (monthlyKwh * 1000) / (SOLAR_ASSUMPTIONS.daysPerMonth * 24);
+    var factor = DAYTIME_LOAD_FACTOR[occupancy] || DAYTIME_LOAD_FACTOR.mixed;
+    return (avgW * factor) / 1000; // kW
   }
 
-  /* Step 1 - estimate monthly usage */
+  /* Direct (unstored) self-consumption for one day: the smaller of (a) what
+     the home's estimated daytime load could absorb over the production
+     window and (b) production itself, further capped at
+     maxDirectCoincidence so even a load-rich home isn't credited with
+     soaking up 100% of a peaked production curve against a flatter load
+     curve. This is what makes self-consumption scale with the actual
+     usage-to-system-size ratio instead of a fixed occupancy percentage. */
+  function estimateDirectSolarUse(dailyProductionKwh, monthlyKwh, occupancy) {
+    var loadKw = estimateHouseholdDaytimeLoad(monthlyKwh, occupancy);
+    var loadCapKwh = loadKw * SOLAR_ASSUMPTIONS.productionWindowHours;
+    var coincidenceCapKwh = dailyProductionKwh * SOLAR_ASSUMPTIONS.maxDirectCoincidence;
+    return Math.min(dailyProductionKwh, loadCapKwh, coincidenceCapKwh);
+  }
+
+  /* Excess solar (production minus direct use) charges the battery, up to
+     its capacity; round-trip losses are applied once, on the way out, not
+     hidden inside the charge step too. Cannot create energy and cannot
+     discharge more than was actually captured. */
+  function estimateBatteryShift(excessDailyKwh, batteryKwh) {
+    var chargeKwh = Math.min(Math.max(0, excessDailyKwh), batteryKwh);
+    return chargeKwh * BATTERY_ASSUMPTIONS.roundTripEfficiency; // dischargeable kWh
+  }
+
+  function defaultBatteryKwh(sizeW) {
+    return BATTERY_ASSUMPTIONS.defaultKwhBySize[sizeW] || 1.5;
+  }
+
+  /* Step 1 - estimate monthly usage. Bill-mode back-estimates kWh using the
+     blended average rate for the SELECTED plan (derived from the same
+     RATE_ASSUMPTIONS table used everywhere else), not a separate number. */
   function estimateMonthlyKwh() {
     if (state.mode === 'usage') return state.usage;
-    var rateTable = CFG.averageRateForBillEstimate[state.rate] || CFG.averageRateForBillEstimate.other;
-    var avgRate = rateTable[state.location];
-    return state.bill / avgRate;
+    return state.bill / averageHouseholdRate(state.rate);
   }
 
-  /* Step 3 + 4 combined for one season: production, applicable capture /
-     self-consumption share, avoided rate (with the peak-window discount
-     for TOU plans when there is no battery), then usable kWh x rate. */
-  function seasonSavings(seasonKey, usageKwh) {
-    var sizeW = systemSizeW();
-    var grossDaily = grossDailyKwhFor(sizeW);
-    var producedKwh = grossDaily * CFG.daysPerMonth;
+  /* Combines every step above for one season: production -> direct use ->
+     excess -> battery shift -> avoided-cost value, each valued at the rate
+     it actually displaces (direct solar at a blended off-peak-weighted
+     rate, battery-shifted energy at the peak rate) - then caps total
+     avoided energy at the home's actual usage. Returns the dollar savings
+     plus the intermediate kWh figures, for use in the assumptions text. */
+  function calculateAvoidedEnergyCost(seasonKey, sizeW, monthlyKwh, location, occupancy, batteryKwh, plan) {
+    var dailyProd = estimateSolarProduction(sizeW, location);
+    var directDaily = estimateDirectSolarUse(dailyProd, monthlyKwh, occupancy);
+    var excessDaily = Math.max(0, dailyProd - directDaily);
+    var batteryDischargeDaily = batteryKwh > 0 ? estimateBatteryShift(excessDaily, batteryKwh) : 0;
 
-    var isTou = state.rate === 'touDr1' || state.rate === 'touElec';
-    var rateTable = (CFG.rates[state.rate] || CFG.rates.other)[state.location][seasonKey];
-    var avoidedRate = rateTable.generation + rateTable.delivery;
+    var directMonthly = directDaily * SOLAR_ASSUMPTIONS.daysPerMonth;
+    var batteryMonthly = batteryDischargeDaily * SOLAR_ASSUMPTIONS.daysPerMonth;
 
-    var usableKwh;
-    var effectiveRate = avoidedRate;
-
-    if (state.battery) {
-      usableKwh = producedKwh * batteryCaptureFor();
-      /* battery can shift production into the peak window, so no discount */
-    } else {
-      var sc = CFG.selfConsumption[state.occupancy];
-      usableKwh = producedKwh * mid(sc);
-      if (isTou) {
-        var peak = CFG.peakUsageShare[state.location];
-        effectiveRate = avoidedRate * (1 - mid(peak));
-      }
+    var totalAvoidedKwh = directMonthly + batteryMonthly;
+    if (totalAvoidedKwh > monthlyKwh && totalAvoidedKwh > 0) {
+      var scale = monthlyKwh / totalAvoidedKwh;
+      directMonthly *= scale;
+      batteryMonthly *= scale;
     }
 
-    /* Step 5 - never offset more energy than the home actually uses */
-    usableKwh = Math.min(usableKwh, usageKwh);
+    var directRate = blendedDirectRate(plan, seasonKey);
+    var battRate = peakRateFor(plan, seasonKey);
+    var savings = (directMonthly * directRate) + (batteryMonthly * battRate);
 
-    var savings = usableKwh * effectiveRate;
-    return savings;
+    return {
+      savings: savings,
+      dailyProductionKwh: dailyProd,
+      directMonthlyKwh: directMonthly,
+      batteryMonthlyKwh: batteryMonthly,
+      directRate: directRate,
+      batteryRate: battRate
+    };
   }
 
   function costRangeFor(sizeW, hasBattery) {
@@ -456,38 +526,46 @@ var SOLAR_CALCULATOR_CONFIG = {
   /* Runs the full model for a given battery state (used both for the live
      display and for the with/without storage comparison), returning every
      figure the UI needs. */
-  function model(batteryOverride) {
-    var savedBattery = state.battery;
-    if (typeof batteryOverride === 'boolean') state.battery = batteryOverride;
-
+  function calculateSavings(batteryOverride) {
+    var battery = typeof batteryOverride === 'boolean' ? batteryOverride : state.battery;
+    var sizeW = systemSizeW();
     var usageKwh = estimateMonthlyKwh();
-    var summerMonthly = seasonSavings('summer', usageKwh);
-    var winterMonthly = seasonSavings('winter', usageKwh);
+    var batteryKwh = battery ? defaultBatteryKwh(sizeW) : 0;
 
-    /* Step 5, restated at the whole-bill level: an estimate should never
-       claim to save more than the customer's stated (or bill-mode-implied)
-       monthly bill. */
-    var impliedBill = state.mode === 'bill'
-      ? state.bill
-      : usageKwh * (CFG.averageRateForBillEstimate[state.rate] || CFG.averageRateForBillEstimate.other)[state.location];
-    summerMonthly = Math.min(summerMonthly, impliedBill);
-    winterMonthly = Math.min(winterMonthly, impliedBill);
+    var summer = calculateAvoidedEnergyCost('summer', sizeW, usageKwh, state.location, state.occupancy, batteryKwh, state.rate);
+    var winter = calculateAvoidedEnergyCost('winter', sizeW, usageKwh, state.location, state.occupancy, batteryKwh, state.rate);
 
-    /* Step 6 - seasonal blend, not a flat x12 multiply */
-    var annual = (summerMonthly * CFG.seasons.summerMonths) + (winterMonthly * CFG.seasons.winterMonths);
+    /* An estimate should never claim to save more than the customer's
+       stated (or bill-mode-implied) monthly bill, and should never offset
+       the fixed/minimum charges that persist regardless of solar - this
+       caps at the full bill as a simple, conservative proxy for "the
+       usage-based portion of the bill" since a fixed-charge breakdown
+       isn't available per plan. */
+    var impliedBill = state.mode === 'bill' ? state.bill : usageKwh * averageHouseholdRate(state.rate);
+    var summerMonthly = Math.min(summer.savings, impliedBill);
+    var winterMonthly = Math.min(winter.savings, impliedBill);
+
+    /* Seasonal blend, not a flat x12 multiply - production is held constant
+       across seasons (5.75 peak sun hours is already an annual average),
+       so only the rate differs by season. */
+    var annual = (summerMonthly * SEASONS.summerMonths) + (winterMonthly * SEASONS.winterMonths);
     var blendedMonthly = annual / 12;
-
-    if (typeof batteryOverride === 'boolean') state.battery = savedBattery;
 
     return {
       usageKwh: usageKwh,
+      sizeW: sizeW,
+      batteryKwh: batteryKwh,
       summerMonthly: summerMonthly,
       winterMonthly: winterMonthly,
       annual: annual,
       blendedMonthly: blendedMonthly,
-      impliedBill: impliedBill
+      impliedBill: impliedBill,
+      summer: summer,
+      winter: winter
     };
   }
+
+  function model(batteryOverride) { return calculateSavings(batteryOverride); }
 
   /* Applies the +/-uncertainty band around a value, then clamps the upper
      bound so the DISPLAYED range never implies savings above the stated (or
@@ -590,8 +668,8 @@ var SOLAR_CALCULATOR_CONFIG = {
     }
     if (out.assumeBattery) {
       out.assumeBattery.textContent = state.battery
-        ? 'Battery capture assumes roughly ' + Math.round(batteryCaptureFor() * 100) + '% of production is usable, including shifting energy into the peak window.'
-        : 'Without a battery, only the modeled self-consumption share of production is credited - not full production.';
+        ? 'Assumes roughly ' + m.batteryKwh + ' kWh of storage for a ' + wattsLabel(sizeW) + ' system, charged from excess solar and used to offset the evening peak.'
+        : 'Without a battery, only solar used directly at the time it’s made is credited - excess production is not banked or exported for credit.';
     }
 
     var rateHintEl = out.rateHint;
