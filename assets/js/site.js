@@ -301,8 +301,11 @@ var SOLAR_CALCULATOR_CONFIG = {
     mostlyAway:  { min: 0.15, max: 0.25 }
   },
 
+  /* balcony is 800 W (2x400 W kit), not 850 - kept aligned to the actual
+     purchasable 400 W increments sold in the configurator below. Recommended
+     sizes must always map to a real configuration, never an arbitrary number. */
   systems: {
-    balcony: 850,
+    balcony: 800,
     patio: 1200,
     customMin: 400,
     customMax: 1200,
@@ -310,10 +313,10 @@ var SOLAR_CALCULATOR_CONFIG = {
   },
 
   /* Gross daily production before losses, at the 5.75 peak-sun-hour
-     assumption above - kept explicit so the "~4.9 / ~6.9 kWh/day" figures
+     assumption above - kept explicit so the "~4.6 / ~6.9 kWh/day" figures
      stay traceable to a config value rather than only a derived one. */
   grossDailyKwh: {
-    balcony: 4.9,
+    balcony: 4.6,
     patio: 6.9
   },
 

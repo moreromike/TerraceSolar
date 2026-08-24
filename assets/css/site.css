@@ -374,6 +374,37 @@ a { color: inherit; }
 .list-check strong { color: var(--ink); font-weight: 640; }
 .section--ink .list-check strong { color: #f1efe9; }
 .section--ink .list-check li { color: #b6c0d4; }
+/* Bug fix: .list-check sits inside sections/wraps that centre text by
+   default (.section > .wrap, or .spot__text on mobile). text-align:center
+   is inherited by the <li> text while the ::before dot stays pinned at
+   left:0 of the (full-width) <li> box, orphaning the dot far from its
+   text. Force left alignment here regardless of ancestor. */
+.list-check { text-align: left; }
+
+/* ---------- fact list: label + description, no marker at all ---------- */
+/* Used wherever a bulleted list previously risked the same orphaned-dot
+   bug, and anywhere a short set of facts reads better as typography than
+   as list items - no dot, no pill, no card. */
+.fact-list { text-align: left; margin: 1.5rem 0 0; }
+.fact-list__item { margin: 0 0 1rem; }
+.fact-list__item:last-child { margin-bottom: 0; }
+.fact-list__item b {
+  display: block;
+  font-family: var(--display);
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  font-size: 0.98rem;
+  margin-bottom: 0.15rem;
+}
+.fact-list__item span {
+  display: block;
+  color: var(--muted);
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+.section--ink .fact-list__item b { color: #f1efe9; }
+.section--ink .fact-list__item span { color: #b6c0d4; }
 
 /* ---------- what you'll need (compact readiness checklist) ---------- */
 .ready-check {
@@ -394,8 +425,7 @@ a { color: inherit; }
   color: var(--muted);
   margin: 0 0 0.9rem;
 }
-.ready-check .list-check { margin-top: 0; }
-.ready-check .list-check li:last-child { margin-bottom: 0; }
+.ready-check .fact-list { margin-top: 0; }
 
 /* ---------- flow diagram ---------- */
 .flow {
