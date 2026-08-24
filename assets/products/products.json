@@ -297,5 +297,65 @@
     "Inverter MPPT range (label unreadable at brochure resolution)",
     "Any warranty term for any component",
     "Maximum number of battery units beyond the 1-4 kWh set range"
-  ]
+  ],
+  "market_research_2026": {
+    "note": "Added 2026-08-24 from live web research (craftstrom.com homepage + how-it-works page, legislative/tax-credit sources). Lower priority than an exact-SKU manufacturer sheet or supplier agreement per the source hierarchy - treat as directional, not contractual. Re-verify before using as a hard technical claim.",
+    "craftstrom_current_homepage_phrases_to_avoid": [
+      "Breaking Barriers with Plug-in Solar",
+      "All the benefits without the commitments",
+      "Plugs in to Any Standard Outlet",
+      "Tired of High Electricity Bills?",
+      "energy independence",
+      "No Contracts / No Permits / No Net-metering",
+      "Anyone can install",
+      "Available in all 50 states",
+      "Certified and Legal"
+    ],
+    "craftstrom_current_public_kit_lineup_asof_2026_08_24": {
+      "status": "web-scraped from craftstrom.com, NOT verified against a Terrace supplier agreement or SKU sheet - do not treat as Terrace's own catalog or pricing",
+      "kits": [
+        { "name": "1200 Watt Eco-Line", "panels": "6x 200W Shield Series", "inverters": "3x 400W Smart Inverter", "power_meter": "1x Smart PowerMeter", "listed_price_usd": 2390.63 },
+        { "name": "1600 Watt Premium Kit", "panels": "8x 200W Bifacial", "inverters": "4x 400W Smart Inverter", "power_meter": "1x Smart PowerMeter", "listed_price_usd": 4318.00 },
+        { "name": "2kW Solar + 3kWh Battery (Screw-my-Utility Kit)", "panels": "10x 200W Bifacial", "inverters": "5x 400W Smart Inverter", "battery": "3x 1kWh Battery Tower + 1x Smart Battery Base", "backup_inverter": "1x 600W/1200W Offgrid Inverter", "breaker": "1x NEC Smart Breaker", "listed_price_usd": 8711.44 }
+      ],
+      "conflict_flag": "This public lineup (bifacial panels on the 1600W/2kW kits, named kit tiers) does not exactly match the 400/800/1200/1600/2000W panel-count ladder currently used on the Terrace site (sourced from the older brochure PDF). UNRESOLVED - do not silently reconcile; confirm current exact SKUs with the supplier before publishing a kit ladder as final."
+    },
+    "smart_breaker": {
+      "status": "verified via craftstrom.com/how-it-works, 2026-08-24",
+      "when_required": "Conditionally required - CraftStrom's own copy: \"Use this, if you don't have a dedicated outlet (leading directly to the breaker box without any other outlets).\"",
+      "function": "Monitors that circuit and turns off Terrace/CraftStrom equipment if combined draw exceeds what's advisable alongside solar input.",
+      "not_a_conventional_breaker": true
+    },
+    "power_meter_function": {
+      "status": "verified via craftstrom.com/how-it-works, 2026-08-24",
+      "craftstrom_claim": "Measures appliance/home power usage in real time so the system can balance solar production with consumption.",
+      "excluded_from_terrace_copy": "CraftStrom's own copy pairs this with a 'permit-free' claim - not adopted here; permit status is jurisdiction-dependent and SB 868 is not yet law (see california_regulatory)."
+    },
+    "circuit_requirements": {
+      "status": "verified via craftstrom.com/how-it-works, 2026-08-24",
+      "requirements": [
+        "A sunny spot to mount the panels",
+        "A designated/dedicated outdoor outlet for the solar kit",
+        "Outlets on separate circuits to add Smart Batteries",
+        "Access to the breaker box",
+        "2.4GHz Wi-Fi connection"
+      ],
+      "implication": "Not accurately described as zero-configuration plug-and-play with no special wiring - there is a real circuit/outlet requirement and conditional Smart Breaker need. Terrace copy should say requirements depend on the circuit, not promise universal standard-outlet compatibility."
+    },
+    "california_regulatory": {
+      "sb_868": {
+        "status_as_of": "2026-08-24",
+        "current_state": "NOT LAW. Passed CA Senate 35-1 (2026-05-20); passed Assembly Appropriations Committee 11-0 (2026-08-13); pending full Assembly floor vote (must act by 2026-08-31) and Governor's signature.",
+        "effective_if_signed": "2027-01-01",
+        "would_cap": "1,200 W aggregated AC output per dwelling, UL-certified, anti-backfeed required, exempt from interconnection requirements subject to simple online registration",
+        "publication_rule": "Do not publish 'California legal', 'SB 868 compliant', or 'no permit required' language until this is enacted law and matched to Terrace's exact equipment/certifications.",
+        "source_url": "https://leginfo.legislature.ca.gov/faces/billNavClient.xhtml?bill_id=202520260SB868"
+      }
+    },
+    "federal_tax_credit": {
+      "status_as_of": "2026-08-24",
+      "finding": "The 30% Residential Clean Energy Credit (IRC Section 25D) expired 2025-12-31 under the One Big Beautiful Bill Act. No federal residential tax credit currently applies to a system purchased/installed in 2026.",
+      "publication_rule": "Do not display any federal solar tax-credit percentage on the site."
+    }
+  }
 }

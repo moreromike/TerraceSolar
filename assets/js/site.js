@@ -183,7 +183,22 @@
    functions or the render function - if a number changes, it changes here.
 
    STATUS OF RATE FIGURES:
-   - rates.touDr1                 - supplied project assumptions
+   - rates.touDr1                 - supplied project assumptions. Cross-checked
+                                     2026-08-24 against search-derived SDG&E
+                                     TOU-DR1 figures in
+                                     assets/products/rates-san-diego.json
+                                     (summer peak ~69.65c/kWh, winter peak
+                                     ~48c/kWh combined). Those are close to but
+                                     not identical to the generation+delivery
+                                     split below (summer ~73c, winter ~40c) -
+                                     UNRESOLVED CONFLICT, not silently fixed:
+                                     the search result gives only a bundled
+                                     peak total, not the generation/delivery
+                                     split this model needs, so decomposing it
+                                     would fabricate precision. Re-derive from
+                                     the actual SDG&E tariff PDF (linked in
+                                     rates-san-diego.json) before treating
+                                     either figure as final.
    - rates.touElec, rates.flat,
      rates.other                  - PROVISIONAL placeholders, NOT verified
                                      against a published current tariff.
@@ -331,6 +346,7 @@ var SOLAR_CALCULATOR_CONFIG = {
   var CFG = SOLAR_CALCULATOR_CONFIG;
 
   var state = {
+    zip: '',
     mode: 'bill',        // 'bill' | 'usage'
     bill: 175,
     usage: 600,
@@ -591,6 +607,28 @@ var SOLAR_CALCULATOR_CONFIG = {
     });
   }
 
+  /* San Diego County ZIP ranges (approximate - covers 919xx and 920xx-921xx).
+     Purely informational: it toggles an honest "outside our current focus
+     area" hint, it does NOT silently reassign inland/coastal or swap rate
+     tables - that stays under the visitor's own control via the segmented
+     buttons below, since a ZIP-to-utility/CCA mapping precise enough to do
+     that automatically isn't something this static site can verify. */
+  function isSanDiegoCountyZip(zip) {
+    var z = parseInt(zip, 10);
+    if (!zip || zip.length !== 5 || isNaN(z)) return null;
+    return (z >= 91901 && z <= 91980) || (z >= 92003 && z <= 92199);
+  }
+
+  var zipInput = root.querySelector('[data-calc-input="zip"]');
+  if (zipInput) {
+    zipInput.addEventListener('input', function () {
+      state.zip = zipInput.value.replace(/[^0-9]/g, '').slice(0, 5);
+      if (zipInput.value !== state.zip) zipInput.value = state.zip;
+      var inSD = isSanDiegoCountyZip(state.zip);
+      if (out.zipHint) out.zipHint.hidden = inSD !== false;
+    });
+  }
+
   // mode toggle (bill / usage)
   var modeButtons = [].slice.call(root.querySelectorAll('[data-calc-mode-btn]'));
   modeButtons.forEach(function (btn) {
@@ -699,40 +737,9 @@ var SOLAR_CALCULATOR_CONFIG = {
 
 
 /* ---------------------------------------------------------------------------
-   How it works - each product step fades/rises in as it individually
-   scrolls into view (IntersectionObserver), staggered slightly by index for
-   a light cascade. One-shot, not scroll-position-driven, no pinning.
---------------------------------------------------------------------------- */
-(function () {
-  'use strict';
-  var root = document.querySelector('[data-steps]');
-  if (!root) return;
-  var steps = [].slice.call(root.querySelectorAll('.step'));
-  if (!steps.length) return;
-
-  var motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-  if (motionQuery.matches || !window.IntersectionObserver) {
-    steps.forEach(function (el) { el.classList.add('is-shown'); });
-    return;
-  }
-
-  var io = new IntersectionObserver(function (entries) {
-    entries.forEach(function (entry) {
-      if (!entry.isIntersecting) return;
-      var el = entry.target;
-      var i = steps.indexOf(el);
-      window.setTimeout(function () { el.classList.add('is-shown'); }, Math.max(0, i) * 80);
-      io.unobserve(el);
-    });
-  }, { threshold: 0.3, rootMargin: '0px 0px -10% 0px' });
-
-  steps.forEach(function (el) { io.observe(el); });
-})();
-
-
-/* ---------------------------------------------------------------------------
-   "A few connections. That's it." - the one contained interactive How It
-   Works moment (Panels -> Microinverter -> Outlet -> Done -> Storage).
+   "Wherever there's sun and an outlet." - the one contained interactive How
+   It Works moment (Panels -> Microinverter -> Outlet, Power meter shown
+   separately).
 
    Not scroll-linked: an IntersectionObserver fires once when the section
    scrolls into view, then a short automatic staggered reveal plays through

@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "note": "Structured, sourced San Diego County electricity rate/provider data for the 'Find My System' calculator. Rates change - re-verify before relying on these for anything beyond a rough, clearly-labeled estimate. Web-search-derived figures below are NOT a substitute for the exact current SDG&E tariff PDF; treat as approximate pending direct tariff verification.",
+  "last_verified": "2026-08-24",
+  "verification_status": "approximate - derived from search-engine summaries of SDG&E's published rate tables and secondary sources, not a direct read of the tariff PDF. Re-verify against the source URLs below before publishing exact cents-per-kWh figures as fact.",
+  "delivery_utility": {
+    "name": "San Diego Gas & Electric (SDG&E)",
+    "role": "Delivers electricity to essentially all of San Diego County regardless of who supplies generation. Delivery charges apply whether a customer is bundled with SDG&E or enrolled in a CCA.",
+    "source_url": "https://www.sdge.com/residential/pricing-plans/about-our-pricing-plans/whenmatters"
+  },
+  "ccas": [
+    {
+      "name": "San Diego Community Power",
+      "type": "Community Choice Aggregation (CCA) - generation only, SDG&E still delivers",
+      "service_area_cities": ["San Diego (city)", "Chula Vista", "La Mesa", "Encinitas", "National City", "Imperial Beach", "unincorporated San Diego County"],
+      "note": "Default PowerOn generation service reported at roughly 4% below SDG&E's comparable 2026 generation rate. Customers can opt out back to SDG&E generation at any time. Does not cover all San Diego County cities (e.g. not every incorporated city has joined).",
+      "source_url": "https://sdcommunitypower.org/residential-rates/2021v/",
+      "last_checked": "2026-08-24"
+    }
+  ],
+  "rate_plans": {
+    "touDr1": {
+      "label": "TOU-DR1",
+      "provider": "SDG&E (default residential TOU plan)",
+      "effective": "rates shown reflect the ~April 2026 SDG&E residential total-rate table window; SDG&E updates these multiple times per year",
+      "periods": {
+        "summer": {
+          "months": "June - September",
+          "peak": { "window": "4pm - 9pm", "rate_per_kwh": 0.6965 },
+          "offPeak": { "window": "12am-4pm, 9pm-midnight", "rate_per_kwh": 0.4756 },
+          "superOffPeak": { "window": "12am - 6am", "rate_per_kwh": 0.25 }
+        },
+        "winter": {
+          "months": "October - May",
+          "peak": { "window": "5pm - 8pm", "rate_per_kwh": 0.48 },
+          "offPeak": { "window": "8am-5pm, 8pm-midnight", "rate_per_kwh": 0.34 },
+          "superOffPeak": { "window": "12am - 8am", "rate_per_kwh": 0.28 }
+        }
+      },
+      "baseline_credit_per_kwh": 0.10892,
+      "baseline_credit_note": "Applies to usage up to ~130% of baseline allocation; reduces effective rate across all periods.",
+      "source_url": "https://www.sdge.com/sites/default/files/regulatory/6-1-26%20Schedule%20TOU-DR1-CARE_MB%20Total%20Rates%20Table.pdf"
+    }
+  },
+  "peak_window_note": "SDG&E's expensive period is late afternoon/evening (4-9pm summer, 5-8pm winter). Solar production is strongest mid-day, so a solar-only system mainly offsets electricity used while the sun is up, not the evening peak. A battery can shift some daytime production into the evening peak, but does not eliminate the peak - impact depends on battery capacity and continuous output limits, not just kWh stored."
+}

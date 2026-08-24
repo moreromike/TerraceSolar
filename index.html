@@ -4,14 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Terrace Solar — solar without the rooftop</title>
-<meta name="description" content="Ultra-thin, semi-flexible solar panels for balconies, terraces, fences and patios. Start at 400&nbsp;W and build from there.">
+<meta name="description" content="Ultra-thin, semi-flexible solar panels for balconies, terraces, fences and patios. Built around San Diego County. Start at 400&nbsp;W and build from there.">
 <meta name="robots" content="noindex, nofollow">
 <link rel="canonical" href="https://www.terracesolar.com/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Terrace Solar">
 <meta property="og:url" content="https://www.terracesolar.com/">
 <meta property="og:title" content="Terrace Solar — solar without the rooftop">
-<meta property="og:description" content="Ultra-thin, semi-flexible solar panels for balconies, terraces, fences and patios. Start at 400&nbsp;W and build from there.">
+<meta property="og:description" content="Ultra-thin, semi-flexible solar panels for balconies, terraces, fences and patios. Built around San Diego County. Start at 400&nbsp;W and build from there.">
 <meta property="og:image" content="https://www.terracesolar.com/assets/video/hero-poster.jpg">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="color-scheme" content="dark">
@@ -35,22 +35,16 @@
 <main id="main">
 
   <!-- ============================ HERO — autoplay cinematic loop ============================ -->
-  <!-- Full cinematic sequence (42.875 s, 1280x720, 24fps, H.264 High
-       profile, audio stripped, faststart), playing as a normal muted/
-       looping background at 1.2x speed - no longer scroll-driven, no
-       currentTime scrubbing. Dedicated web-optimized production encodes,
-       both re-encoded from assets/video/hero.mp4 (kept untouched as the
-       source master): hero-desktop-web.mp4 (~26 MB, CRF 19) and
-       hero-mobile-web.mp4 (~23 MB, CRF 20) - same native 1280x720
-       resolution on both (the master has no more detail to give at a
-       higher res, so mobile is not upscaled), same broadly-compatible
-       H.264/yuv420p/faststart for iOS Safari and Android Chrome. Autoplay,
-       muted, loop, playsinline, no controls. object-fit: cover keeps the
-       crop full-bleed at any viewport. The poster image is always in the
-       DOM and painted first; the video only crossfades over it once a
-       frame has decoded (site.js), so an autoplay block or slow
-       connection just leaves the poster - the hero is always readable
-       without video or JS.
+  <!-- Full cinematic sequence (1920x1080, 30fps, H.264 High profile, audio
+       stripped, faststart), playing as a normal muted/looping background at
+       1.2x speed - not scroll-driven, no currentTime scrubbing. Dedicated
+       web-optimized production encodes: hero-desktop-web.mp4 and
+       hero-mobile-web.mp4, re-encoded from assets/video/hero-master-ff.mp4
+       (kept as the source master). Autoplay, muted, loop, playsinline, no
+       controls. The poster image is always in the DOM and painted first;
+       the video only crossfades over it once a frame has decoded (site.js),
+       so an autoplay block or slow connection just leaves the poster - the
+       hero is always readable without video or JS.
 
        Reusable "CinematicSection" pattern: duplicate this markup with new
        data-hero-src/poster/copy for any future short clip section. -->
@@ -78,7 +72,7 @@
           <h1 id="hero-title">Solar without<br>the rooftop.</h1>
           <p class="lede">Lightweight solar panels that plug into a regular outlet.</p>
           <div class="actions">
-            <a class="btn btn--primary" href="#shop">Shop Solar Kits</a>
+            <a class="btn btn--primary" href="#sizer">Find My System</a>
             <a class="btn btn--ghost" href="#how">See How It Works</a>
           </div>
         </div>
@@ -87,93 +81,78 @@
     </div>
   </section>
 
-  <!-- ===================== THE PROBLEM ===================== -->
+  <!-- ===================== WHY THIS EXISTS ===================== -->
   <section class="section" id="why" aria-labelledby="why-title">
     <div class="wrap">
       <div class="section-head" data-reveal>
         <p class="eyebrow">Why Terrace Solar</p>
         <h2 id="why-title">Rooftop solar doesn&rsquo;t fit every home.</h2>
-        <p class="lede">Renters, condo and townhome owners, and anyone whose roof isn&rsquo;t a good candidate for a traditional install have had few real options &mdash; Terrace Solar is built for the space you actually have.</p>
+        <p class="lede">A rented unit, a shared roof, a condo board, an unusable roofline &mdash; any of them can end the conversation before it starts. Terrace starts smaller and sizes around the space you actually have.</p>
       </div>
-      <div class="grid" data-reveal>
-        <div class="card">
-          <h3>Renters</h3>
-          <p>No permanent rooftop install. Panels sit on stands or mount to a railing or fence.</p>
-        </div>
-        <div class="card">
-          <h3>Condos &amp; townhomes</h3>
-          <p>Shared roofs and building or HOA rules can rule out a traditional system.</p>
-        </div>
-        <div class="card">
-          <h3>Balconies &amp; patios</h3>
-          <p>A system sized for the space you have, not a roof you don&rsquo;t.</p>
-        </div>
-        <div class="card">
-          <h3>Unsuitable roofs</h3>
-          <p>Shading, orientation or structure don&rsquo;t have to end the conversation.</p>
-        </div>
-      </div>
+      <ul class="list-check" data-reveal>
+        <li><strong>Renters &amp; condos</strong> &mdash; a solar option that doesn&rsquo;t begin with permanently modifying the roof.</li>
+        <li><strong>Modular</strong> &mdash; start with one kit, add more when you need it.</li>
+        <li><strong>Flexible placement</strong> &mdash; sized around a balcony, patio or yard, not a fixed roof plane.</li>
+      </ul>
     </div>
   </section>
 
-  <!-- ===================== HOW IT WORKS ===================== -->
-  <section class="steps" id="how" aria-labelledby="how-title" data-steps>
-    <div class="steps__track" data-steps-track>
-      <div class="steps__stage">
-        <div class="wrap">
-          <div class="steps__head">
-            <p class="eyebrow">How it works</p>
-            <h2 id="how-title">From sunlight<br><em>to your outlet.</em></h2>
-          </div>
+  <!-- ===================== WHERE IT GOES + HOW IT WORKS ===================== -->
+  <!-- Merged placement + connection story: one section, one job. Placement
+       imagery does most of the explaining; the flow diagram is typography
+       only, on purpose - a system diagram, not another photo gallery. -->
+  <section class="section flow-diagram conn" id="how" aria-labelledby="how-title" data-conn>
+    <div class="wrap">
+      <div class="section-head" data-reveal>
+        <p class="eyebrow">Where it goes, how it works</p>
+        <h2 id="how-title">Wherever there&rsquo;s sun<br><em>and an outlet.</em></h2>
+      </div>
+      <div class="placement__grid" data-reveal>
+        <figure class="placement__item">
+          <img src="assets/img/panel-single-stand.jpg" width="480" height="480" loading="lazy" decoding="async"
+               alt="Semi-flexible Terrace Solar panel on its stand.">
+          <b>Balconies &amp; railings</b>
+          <span>Lightweight panels mount without taking over the space.</span>
+        </figure>
+        <figure class="placement__item">
+          <img src="assets/img/panels-outdoor.jpg" width="1782" height="1189" loading="lazy" decoding="async"
+               alt="Semi-flexible Terrace Solar panels on low stands in a yard.">
+          <b>Patios &amp; yards</b>
+          <span>Stands on the ground, sized to the space you have.</span>
+        </figure>
+        <figure class="placement__item">
+          <img src="assets/img/panel-row-stands.jpg" width="800" height="400" loading="lazy" decoding="async"
+               alt="A row of semi-flexible Terrace Solar panels on stands.">
+          <b>More space, more panels</b>
+          <span>Bigger yards support a bigger system.</span>
+        </figure>
+      </div>
+    </div>
 
-          <ol class="steps__list">
-            <li class="step" data-step-i="0">
-              <div class="step__figure">
-                <span class="step__n">01</span>
-                <img src="assets/img/overview-panels.jpg" width="1782" height="750" loading="lazy" decoding="async"
-                     alt="Semi-flexible Terrace Solar panels on low stands outdoors.">
-              </div>
-              <b>Panels</b>
-              <span class="step__d">Turns sunlight into power.</span>
-            </li>
-            <li class="step" data-step-i="1">
-              <div class="step__figure">
-                <span class="step__n">02</span>
-                <img src="assets/img/microinverter-angle.jpg" width="933" height="531" loading="lazy" decoding="async"
-                     alt="CraftStrom microinverter.">
-              </div>
-              <b>Microinverter</b>
-              <span class="step__d">Makes it usable by your home.</span>
-            </li>
-            <li class="step" data-step-i="2">
-              <div class="step__figure">
-                <span class="step__n">03</span>
-                <img src="assets/img/overview-outlet.jpg" width="784" height="596" loading="lazy" decoding="async"
-                     alt="Cable connected to a standard outdoor receptacle.">
-              </div>
-              <b>Cable + outlet</b>
-              <span class="step__d">Connects the system to your home.</span>
-            </li>
-            <li class="step" data-step-i="3">
-              <div class="step__figure">
-                <span class="step__n">04</span>
-                <img src="assets/img/power-meter.jpg" width="4096" height="2730" loading="lazy" decoding="async"
-                     alt="Power meter and current sensors.">
-              </div>
-              <b>Power meter</b>
-              <span class="step__d">Matches solar output to home usage.</span>
-            </li>
-            <li class="step" data-step-i="4">
-              <div class="step__figure">
-                <span class="step__n">05</span>
-                <img src="assets/img/overview-battery.jpg" width="460" height="990" loading="lazy" decoding="async"
-                     alt="Terrace Solar battery storage unit.">
-              </div>
-              <span class="step__optional">Optional</span>
-              <b>Battery</b>
-              <span class="step__d">Stores solar energy for later.</span>
-            </li>
-          </ol>
+    <div class="conn__stage">
+      <div class="wrap">
+        <ol class="modstep__list flowline__steps" data-conn-list>
+          <li class="modstep__item" data-conn-step>
+            <b>Panels</b>
+            <span>Make electricity.</span>
+          </li>
+          <li class="modstep__arrow" data-conn-arrow aria-hidden="true"></li>
+          <li class="modstep__item" data-conn-step>
+            <b>Microinverter</b>
+            <span>Makes it usable by the home.</span>
+          </li>
+          <li class="modstep__arrow" data-conn-arrow aria-hidden="true"></li>
+          <li class="modstep__item" data-conn-step>
+            <b>Outlet</b>
+            <span>Connects to a dedicated outdoor outlet.</span>
+          </li>
+        </ol>
+
+        <!-- Power meter is the measurement/control layer, not a fourth link in
+             the electricity chain - shown separately, not chained by an arrow. -->
+        <div class="flowline__storage" data-conn-storage>
+          <p class="flowline__storage-label">Power meter</p>
+          <p class="flowline__storage-sub">Watches what your home is using, so the system knows how much to produce.</p>
         </div>
       </div>
     </div>
@@ -189,7 +168,7 @@
       <div class="spot__text">
         <p class="eyebrow">Panels</p>
         <h2 id="sp-panels">Solar that fits<br><em>your space.</em></h2>
-        <p class="spot__sub">Thin, semi-flexible panels make solar possible in places traditional rooftop systems may not reach.</p>
+        <p class="spot__sub">Thin, semi-flexible panels &mdash; not the thick glass modules built for a roof. Light enough to carry and position by hand, on stands rather than bolted down.</p>
         <div class="specrow">
           <div><b>200&nbsp;W / 400&nbsp;W</b><i>panel options</i></div>
         </div>
@@ -197,264 +176,45 @@
     </div>
   </section>
 
-  <!-- ===================== SPOTLIGHT: MICROINVERTER ===================== -->
-  <!-- Internal model name "Hedy" is kept in products.json / SOURCE-MAP.md for
-       traceability; customer-facing copy uses "microinverter" throughout. -->
-  <section class="section spot spot--reverse" id="microinverter" aria-labelledby="sp-hedy">
-    <div class="spot__inner">
-      <div class="spot__media spot__media--product">
-        <img src="assets/img/microinverter-angle.jpg" width="933" height="531" loading="lazy" decoding="async"
-             alt="CraftStrom microinverter.">
-      </div>
-      <div class="spot__text">
-        <p class="eyebrow">Microinverter</p>
-        <h2 id="sp-hedy">Small box.<br><em>Important job.</em></h2>
-        <p class="spot__sub">It converts solar power into electricity your home can use.</p>
-        <div class="specrow">
-          <div><b>400&nbsp;W</b><i>per microinverter</i></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===================== SPOTLIGHT: BATTERY ===================== -->
-  <section class="section spot" id="storage" aria-labelledby="sp-batt">
-    <div class="spot__inner">
-      <div class="spot__media">
-        <img src="assets/img/battery-home.jpg" width="1920" height="1080" loading="lazy" decoding="async"
-             alt="Terrace Solar battery storage unit standing on a wooden floor in a living room.">
-      </div>
-      <div class="spot__text">
-        <p class="eyebrow">Storage &mdash; optional</p>
-        <h2 id="sp-batt">Save it<br><em>for later.</em></h2>
-        <p class="spot__sub">Solar can charge the battery during the day. Use that stored energy later.</p>
-        <div class="specrow">
-          <div><b>1&nbsp;kWh</b><i>storage per unit</i></div>
-          <div><b>400&nbsp;W</b><i>per unit</i></div>
-        </div>
-        <p class="spot__sub">Add more storage as your needs grow.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===================== FLEXIBLE PLACEMENT ===================== -->
-  <section class="section" id="placement" aria-labelledby="placement-title">
+  <!-- ===================== BUILT AROUND SAN DIEGO ===================== -->
+  <!-- Rate/provider facts sourced in assets/products/rates-san-diego.json -
+       last_verified date kept in sync with the copy below by hand (static
+       site, no build step to inject JSON at compile time). -->
+  <section class="section section--ink" id="san-diego" aria-labelledby="sd-title">
     <div class="wrap">
       <div class="section-head" data-reveal>
-        <p class="eyebrow">Flexible placement</p>
-        <h2 id="placement-title">Wherever there&rsquo;s sun<br><em>and an outlet.</em></h2>
+        <p class="eyebrow">San Diego County</p>
+        <h2 id="sd-title">Built around San Diego<br><em>homes and power bills.</em></h2>
+        <p class="lede">In San Diego, when you use electricity can matter almost as much as how much you use. SDG&amp;E&rsquo;s most expensive hours are typically late afternoon into evening; solar production peaks closer to midday. &ldquo;Find My System&rdquo; below uses your ZIP, your bill and San Diego&rsquo;s own rate structure &mdash; not a national average.</p>
       </div>
-      <div class="placement__grid" data-reveal>
-        <figure class="placement__item">
-          <img src="assets/img/panel-single-stand.jpg" width="480" height="480" loading="lazy" decoding="async"
-               alt="Semi-flexible Terrace Solar panel on its stand.">
-          <b>Balconies &amp; railings</b>
-          <span>Lightweight panels mount without taking over the space.</span>
-        </figure>
-        <figure class="placement__item">
-          <img src="assets/img/panels-outdoor.jpg" width="1782" height="1189" loading="lazy" decoding="async"
-               alt="Semi-flexible Terrace Solar panels on low stands near a wooden fence.">
-          <b>Fences &amp; yards</b>
-          <span>Stands in the yard &mdash; nothing mounted to the fence.</span>
-        </figure>
-        <figure class="placement__item">
-          <img src="assets/img/panel-row-stands.jpg" width="800" height="400" loading="lazy" decoding="async"
-               alt="A row of semi-flexible Terrace Solar panels on stands.">
-          <b>Patios</b>
-          <span>Turns a sunny corner into working power.</span>
-        </figure>
-        <figure class="placement__item">
-          <img src="assets/img/outlet-outdoor.jpg" width="784" height="596" loading="lazy" decoding="async"
-               alt="Cable connected to a standard outdoor receptacle.">
-          <b>Anywhere there&rsquo;s an outlet</b>
-          <span>No special wiring &mdash; just a standard outdoor plug.</span>
-        </figure>
-      </div>
+      <ul class="list-check" data-reveal>
+        <li><strong>SDG&amp;E delivers</strong> power countywide; San Diego, Chula Vista, La Mesa, Encinitas, National City and Imperial Beach also get generation through San Diego Community Power.</li>
+        <li><strong>Coastal vs. inland</strong> sun exposure changes what a system can realistically produce.</li>
+        <li><strong>Renters, condos and townhomes</strong> are common across the county &mdash; sizing here often starts smaller than a typical rooftop quote.</li>
+      </ul>
+      <p class="muted" style="font-size:0.82rem;margin-top:1.5rem;">Rate data last verified 2026-08-24 &middot; <a href="https://www.sdge.com/residential/pricing-plans/about-our-pricing-plans/whenmatters">SDG&amp;E</a> &middot; <a href="https://sdcommunitypower.org/residential-rates/2021v/">San Diego Community Power</a></p>
     </div>
   </section>
 
-  <!-- ===================== HOW THE POWER MOVES ===================== -->
-  <!-- Original Terrace Solar flow diagram - concept only from the CraftStrom wiring
-       reference page, no supplier layout, icon set or copy reused. -->
-  <section class="section flow-diagram conn" id="connection" aria-labelledby="sp-conn" data-conn>
-    <div class="conn__stage">
-      <div class="wrap">
-        <div class="section-head conn__head">
-          <p class="eyebrow">The setup</p>
-          <h2 id="sp-conn">A few connections.<br><em>That&rsquo;s it.</em></h2>
-        </div>
-
-        <ol class="modstep__list flowline__steps" data-conn-list>
-          <li class="modstep__item" data-conn-step>
-            <b>Panels</b>
-            <span>Make electricity.</span>
-          </li>
-          <li class="modstep__arrow" data-conn-arrow aria-hidden="true"></li>
-          <li class="modstep__item" data-conn-step>
-            <b>Microinverter</b>
-            <span>Makes it usable by the home.</span>
-          </li>
-          <li class="modstep__arrow" data-conn-arrow aria-hidden="true"></li>
-          <li class="modstep__item" data-conn-step>
-            <b>Outlet</b>
-            <span>Connects to your existing wiring.</span>
-          </li>
-          <li class="modstep__arrow" data-conn-arrow aria-hidden="true"></li>
-          <li class="modstep__item" data-conn-step>
-            <b>Done!</b>
-            <span>Your solar is working with the home.</span>
-          </li>
-        </ol>
-
-        <div class="flowline__storage" data-conn-storage>
-          <p class="flowline__storage-label">Storage<span class="step__badge">Optional</span></p>
-          <p class="flowline__storage-sub">Add storage if you want to save some of that energy for later.</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="wrap">
-      <div class="modstep">
-        <p class="modstep__label">Grows in 400&nbsp;W steps</p>
-        <ol class="modstep__list">
-          <li class="modstep__item">
-            <b>400&nbsp;W</b>
-            <span>2 &times; 200&nbsp;W panels<br>1 &times; microinverter</span>
-          </li>
-          <li class="modstep__arrow" aria-hidden="true"></li>
-          <li class="modstep__item">
-            <b>800&nbsp;W</b>
-            <span>4 &times; 200&nbsp;W panels<br>2 &times; microinverters</span>
-          </li>
-          <li class="modstep__arrow" aria-hidden="true"></li>
-          <li class="modstep__item">
-            <b>1,200&nbsp;W</b>
-            <span>6 &times; 200&nbsp;W panels<br>3 &times; microinverters</span>
-          </li>
-        </ol>
-        <p class="modstep__note">Continues in the same 400&nbsp;W steps, up to 2,000&nbsp;W.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===================== USE SOLAR YOUR WAY ===================== -->
-  <!-- Original Terrace Solar interactive: time-of-day explainer combined with the
-       storage-help visual, kept as one compact section per the requested consolidation.
-       CSS-only state switching via :has(), no runtime/appliance claims - see
-       assets/products/products.json "withheld_claims" for what is deliberately absent. -->
-  <section class="section useit" id="useit" aria-labelledby="useit-title">
-    <div class="wrap">
-      <div class="section-head">
-        <p class="eyebrow">Everyday use</p>
-        <h2 id="useit-title">Use solar your way.</h2>
-      </div>
-
-      <div class="useit__panel">
-        <fieldset class="useit__modes">
-          <legend class="sr-only">Time of day</legend>
-          <div class="steps-chips">
-            <label class="step-chip"><input type="radio" name="useit-mode" value="day" checked><span>Day</span></label>
-            <label class="step-chip"><input type="radio" name="useit-mode" value="night"><span>Night</span></label>
-            <label class="step-chip"><input type="radio" name="useit-mode" value="away"><span>Away from home</span></label>
-          </div>
-        </fieldset>
-
-        <div class="useit__modepanel" data-useit-mode="day">
-          <div class="useit__mini" aria-hidden="true">
-            <span class="useit__mini-node">Sun</span>
-            <span class="useit__mini-conn"></span>
-            <span class="useit__mini-node">Panels</span>
-            <span class="useit__mini-conn"></span>
-            <span class="useit__mini-node">Home</span>
-          </div>
-          <h3>Make it. Use it.</h3>
-          <p>Solar helps power what your home is using during the day. If storage is included, available solar can also charge the battery.</p>
-        </div>
-
-        <div class="useit__modepanel" data-useit-mode="night">
-          <div class="useit__mini" aria-hidden="true">
-            <span class="useit__mini-node">Storage</span>
-            <span class="useit__mini-conn"></span>
-            <span class="useit__mini-node">Home</span>
-          </div>
-          <h3>Runs after dark.</h3>
-          <p>Stored solar energy can be used after the sun goes down.</p>
-        </div>
-
-        <div class="useit__modepanel" data-useit-mode="away">
-          <div class="useit__mini" aria-hidden="true">
-            <span class="useit__mini-node">Storage</span>
-            <span class="useit__mini-conn"></span>
-            <span class="useit__mini-node">Small devices</span>
-          </div>
-          <h3>Power where the outlet isn&rsquo;t.</h3>
-          <p>The battery has its own port for charging small compatible electronics directly, independent of your home&rsquo;s wiring.</p>
-        </div>
-      </div>
-
-      <div class="useit__storage">
-        <p class="useit__storage-label">What can storage help power?</p>
-
-        <fieldset class="useit__sizes">
-          <legend class="sr-only">Storage size</legend>
-          <div class="steps-chips">
-            <label class="step-chip"><input type="radio" name="useit-size" value="1" checked><span>1&nbsp;kWh</span></label>
-            <label class="step-chip"><input type="radio" name="useit-size" value="2"><span>2&nbsp;kWh</span></label>
-            <label class="step-chip"><input type="radio" name="useit-size" value="4"><span>4&nbsp;kWh</span></label>
-          </div>
-        </fieldset>
-
-        <p class="useit__tier-label" data-useit-tier-label>Everyday essentials</p>
-
-        <ul class="useit__loads" data-useit-loads>
-          <li data-load="router">
-            <svg class="useit__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8.5a15 15 0 0 1 18 0"/><path d="M6.5 12.5a10 10 0 0 1 11 0"/><path d="M10 16.5a5 5 0 0 1 4 0"/><circle cx="12" cy="20" r="1"/></svg>
-            <span class="useit__load-label">Wi-Fi + router</span>
-            <b class="useit__load-runtime" data-runtime></b>
-          </li>
-          <li data-load="lighting">
-            <svg class="useit__icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="10" r="6"/><line x1="9" y1="21" x2="15" y2="21"/><line x1="12" y1="16" x2="12" y2="21"/></svg>
-            <span class="useit__load-label">LED lighting</span>
-            <b class="useit__load-runtime" data-runtime></b>
-          </li>
-          <li data-load="laptop">
-            <svg class="useit__icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="1.5"/><line x1="2" y1="20" x2="22" y2="20"/></svg>
-            <span class="useit__load-label">Laptop</span>
-            <b class="useit__load-runtime" data-runtime></b>
-          </li>
-          <li data-load="security">
-            <svg class="useit__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 5 5v6c0 5 3 8.5 7 9 4-.5 7-4 7-9V5z"/></svg>
-            <span class="useit__load-label">Security system</span>
-            <b class="useit__load-runtime" data-runtime></b>
-          </li>
-          <li data-load="tv">
-            <svg class="useit__icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4" width="20" height="13" rx="1.5"/><line x1="8" y1="20" x2="16" y2="20"/><line x1="12" y1="17" x2="12" y2="20"/></svg>
-            <span class="useit__load-label">TV</span>
-            <b class="useit__load-runtime" data-runtime></b>
-          </li>
-          <li data-load="desktop">
-            <svg class="useit__icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="3" width="12" height="18" rx="1.5"/><line x1="9" y1="7" x2="15" y2="7"/><circle cx="12" cy="16" r="1.5"/></svg>
-            <span class="useit__load-label">Desktop / electronics</span>
-            <b class="useit__load-runtime" data-runtime></b>
-          </li>
-        </ul>
-        <p class="useit__loads-caption">Illustrative estimates. Actual runtime depends on the device, battery charge, system losses and how equipment is used.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===================== FIND YOUR FIT — SDG&E SOLAR SAVINGS CALCULATOR ===================== -->
+  <!-- ===================== FIND MY SYSTEM — SDG&E SOLAR SAVINGS CALCULATOR ===================== -->
   <section class="section calc" id="sizer" aria-labelledby="calc-title" data-calc>
     <div class="calc__card">
       <div class="calc__head">
-        <h2 id="calc-title">Find your fit.</h2>
-        <p class="calc__subhead">Tell us a little about your electric use. We&rsquo;ll show you a starting point.</p>
+        <h2 id="calc-title">Find my system.</h2>
+        <p class="calc__subhead">Tell us your ZIP and a little about your electric use. We&rsquo;ll show you a starting point.</p>
       </div>
 
       <div class="calc__body">
 
         <!-- LEFT — inputs -->
         <div class="calc__inputs">
+
+          <div class="calc__field">
+            <label class="calc__field-label" for="calc-zip">ZIP code</label>
+            <input class="calc__select" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="5"
+                   id="calc-zip" placeholder="92101" data-calc-input="zip" aria-describedby="calc-zip-hint">
+            <p class="calc__hint" id="calc-zip-hint" data-calc-out="zipHint" hidden>We&rsquo;re focused on San Diego County right now &mdash; this estimate uses San Diego assumptions regardless, so treat it as less precise outside the county.</p>
+          </div>
 
           <div class="calc__field">
             <div class="calc__field-head">
@@ -542,7 +302,7 @@
         <div class="calc__results" aria-live="polite">
 
           <div class="calc__result-main">
-            <span class="calc__result-eyebrow">Your estimated savings</span>
+            <span class="calc__result-eyebrow">Your estimated avoided electricity cost</span>
             <b class="calc__result-hero"><span data-calc-out="monthlyRange">$75&ndash;$90</span><i>/mo</i></b>
             <span class="calc__result-annual" data-calc-out="annualRange">About $900&ndash;$1,050/year</span>
           </div>
@@ -587,7 +347,7 @@
           </div>
 
           <p class="calc__disclaimer">
-            Estimate only. Actual savings depend on sunlight, shading, system placement, electricity use, rate plan and future utility rates.
+            Estimate only, based on SDG&amp;E's published TOU-DR1 rate structure (rates updated 2026-08-24). Actual savings depend on sunlight, shading, system placement, electricity use, rate plan and future utility rates. Solar mainly offsets electricity used while it's being produced, not SDG&amp;E's evening peak window - storage can shift some of that, not all of it.
           </p>
           <details class="calc__assumptions">
             <summary>See assumptions</summary>
@@ -598,7 +358,7 @@
               <li data-calc-out="assumeOccupancy">Daytime usage share is an approximation, not a measurement of your home.</li>
               <li data-calc-out="assumeBattery">Battery and self-consumption capture are approximated, not guaranteed.</li>
               <li>Summer (Jun&ndash;Sep) and winter/shoulder (Oct&ndash;May) are calculated separately and blended, not averaged evenly.</li>
-              <li>This does not model future utility rate changes, incentives, financing or maintenance.</li>
+              <li>This does not model future utility rate changes, incentives, financing or maintenance. No federal solar tax credit currently applies to a 2026 purchase (the 30% residential credit expired 2025-12-31).</li>
             </ul>
           </details>
 
@@ -613,28 +373,81 @@
     </div>
   </section>
 
-  <!-- ===================== QUESTIONS ===================== -->
-  <section class="section" id="faq" aria-labelledby="faq-title">
-    <div class="wrap">
-      <div class="section-head">
-        <p class="eyebrow">Questions</p>
-        <h2 id="faq-title">Good to know.</h2>
+  <!-- ===================== SPOTLIGHT: BATTERY ===================== -->
+  <!-- Outage behaviour: grid-connected solar must stop exporting when the grid
+       goes down (anti-islanding, for lineworker safety) - only the battery's
+       own backup outlets keep working, and only for directly connected
+       devices, never the whole home. Do not imply whole-home backup. -->
+  <section class="section spot" id="storage" aria-labelledby="sp-batt">
+    <div class="spot__inner">
+      <div class="spot__media">
+        <img src="assets/img/battery-home.jpg" width="1920" height="1080" loading="lazy" decoding="async"
+             alt="Terrace Solar battery storage unit standing on a wooden floor in a living room.">
       </div>
-      <div class="faq">
-        <details><summary>Can I start with a smaller system?</summary>
-          <div><p>Yes. The smallest system is 400&nbsp;W: two panels and one microinverter.</p></div></details>
-        <details><summary>Can I add more later?</summary>
-          <div><p>Yes. Systems grow in 400&nbsp;W steps. Storage grows by adding units, up to 4&nbsp;kWh per set.</p></div></details>
-        <details><summary>Do I need a battery?</summary>
-          <div><p>No. Solar works on its own. A battery lets you use more of what you make, after the sun goes down.</p></div></details>
-        <details><summary>Where can the panels go?</summary>
-          <div><p>Balconies, terraces, fences, patios and gardens. The panels are semi-flexible and sit on stands rather than being bolted to a roof.</p></div></details>
-        <details><summary>How does it connect to my home?</summary>
-          <div><p>Panels connect to a microinverter, and one AC cable reaches a standard receptacle on your existing wiring. A power meter helps match production to what your home is using.</p></div></details>
-        <details><summary>Can I move the system?</summary>
-          <div><p>The panels sit on stands and the battery plugs into an outlet, so components are not permanently fixed to the building. Moving a system is a question for your installer and your local rules.</p></div></details>
-        <details><summary>What rules or approvals may apply?</summary>
-          <div><p>Requirements depend on your address: your local electrical and building rules, your utility, and your building, landlord or HOA policy. Confirm these locally, and use a licensed electrician where required, before ordering.</p></div></details>
+      <div class="spot__text">
+        <p class="eyebrow">Storage &mdash; optional</p>
+        <h2 id="sp-batt">What battery<br><em>adds.</em></h2>
+        <p class="spot__sub">Solar works on its own. A battery adds three things.</p>
+        <ul class="list-check">
+          <li><strong>Use now</strong> &mdash; solar offsets what your home is using while it&rsquo;s being produced.</li>
+          <li><strong>Save for later</strong> &mdash; stored energy can be used after the sun goes down.</li>
+          <li><strong>Backup</strong> &mdash; the battery&rsquo;s own outlets can power select devices during an outage. Solar itself shuts off during an outage, for safety.</li>
+        </ul>
+        <div class="specrow">
+          <div><b>1&nbsp;kWh</b><i>storage per unit</i></div>
+          <div><b>400&nbsp;W</b><i>per unit</i></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="wrap" data-reveal>
+      <div class="useit__storage useit__storage--standalone">
+        <p class="useit__storage-label">What can storage help power?</p>
+
+        <fieldset class="useit__sizes">
+          <legend class="sr-only">Storage size</legend>
+          <div class="steps-chips">
+            <label class="step-chip"><input type="radio" name="useit-size" value="1" checked><span>1&nbsp;kWh</span></label>
+            <label class="step-chip"><input type="radio" name="useit-size" value="2"><span>2&nbsp;kWh</span></label>
+            <label class="step-chip"><input type="radio" name="useit-size" value="4"><span>4&nbsp;kWh</span></label>
+          </div>
+        </fieldset>
+
+        <p class="useit__tier-label" data-useit-tier-label>Everyday essentials</p>
+
+        <ul class="useit__loads" data-useit-loads>
+          <li data-load="router">
+            <svg class="useit__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8.5a15 15 0 0 1 18 0"/><path d="M6.5 12.5a10 10 0 0 1 11 0"/><path d="M10 16.5a5 5 0 0 1 4 0"/><circle cx="12" cy="20" r="1"/></svg>
+            <span class="useit__load-label">Wi-Fi + router</span>
+            <b class="useit__load-runtime" data-runtime></b>
+          </li>
+          <li data-load="lighting">
+            <svg class="useit__icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="10" r="6"/><line x1="9" y1="21" x2="15" y2="21"/><line x1="12" y1="16" x2="12" y2="21"/></svg>
+            <span class="useit__load-label">LED lighting</span>
+            <b class="useit__load-runtime" data-runtime></b>
+          </li>
+          <li data-load="laptop">
+            <svg class="useit__icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="1.5"/><line x1="2" y1="20" x2="22" y2="20"/></svg>
+            <span class="useit__load-label">Laptop</span>
+            <b class="useit__load-runtime" data-runtime></b>
+          </li>
+          <li data-load="security">
+            <svg class="useit__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 5 5v6c0 5 3 8.5 7 9 4-.5 7-4 7-9V5z"/></svg>
+            <span class="useit__load-label">Security system</span>
+            <b class="useit__load-runtime" data-runtime></b>
+          </li>
+          <li data-load="tv">
+            <svg class="useit__icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4" width="20" height="13" rx="1.5"/><line x1="8" y1="20" x2="16" y2="20"/><line x1="12" y1="17" x2="12" y2="20"/></svg>
+            <span class="useit__load-label">TV</span>
+            <b class="useit__load-runtime" data-runtime></b>
+          </li>
+          <li data-load="desktop">
+            <svg class="useit__icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="3" width="12" height="18" rx="1.5"/><line x1="9" y1="7" x2="15" y2="7"/><circle cx="12" cy="16" r="1.5"/></svg>
+            <span class="useit__load-label">Desktop / electronics</span>
+            <b class="useit__load-runtime" data-runtime></b>
+          </li>
+        </ul>
+        <p class="useit__loads-caption">Illustrative estimates. Actual runtime depends on the device, battery charge, system losses and how equipment is used.</p>
       </div>
     </div>
   </section>
@@ -642,7 +455,10 @@
   <!-- ===================== SHOP / CONFIGURATOR ===================== -->
   <!-- Panel/microinverter counts per size are the documented 400&nbsp;W kit ratio
        (2 panels + 1 microinverter per 400&nbsp;W - brochure p.8) applied across
-       the documented size ladder (400-2000&nbsp;W, p.2/p.6), not invented.
+       the documented size ladder (400-2000&nbsp;W, p.2/p.6). This ladder has NOT
+       been reconciled against CraftStrom's current public kit names (see
+       products.json market_research_2026.craftstrom_current_public_kit_lineup -
+       flagged as an unresolved conflict, not silently fixed.
        Battery unit count = kWh selected 1:1, per products.json
        (capacity_per_unit_kwh: 1) - not a fabricated relationship. -->
   <section class="section shop" id="shop" aria-labelledby="shop-title">
@@ -651,6 +467,18 @@
         <p class="eyebrow">Shop</p>
         <h2 id="shop-title">Build your system.</h2>
         <p class="lede">Choose your solar. Add storage if you want it.</p>
+      </div>
+
+      <div class="ready-check" data-reveal>
+        <p class="ready-check__label">What you&rsquo;ll need</p>
+        <ul class="list-check">
+          <li>A sunny spot for the panels</li>
+          <li>A dedicated outdoor outlet</li>
+          <li>Access to your breaker box, for the power meter</li>
+          <li>A 2.4GHz Wi-Fi connection</li>
+          <li>A separate circuit if you&rsquo;re adding battery storage</li>
+        </ul>
+        <p class="muted" style="font-size:0.85rem;margin-top:0.75rem;">Some setups may also need a Smart Breaker if there isn&rsquo;t a dedicated outlet leading straight to the breaker box.</p>
       </div>
 
       <ol class="shop__progress" data-shop-progress aria-label="Configuration steps">
@@ -744,6 +572,35 @@
     </div>
   </section>
 
+  <!-- ===================== QUESTIONS ===================== -->
+  <section class="section" id="faq" aria-labelledby="faq-title">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">Questions</p>
+        <h2 id="faq-title">What to know before you order.</h2>
+      </div>
+      <div class="faq">
+        <details><summary>Can I start with a smaller system?</summary>
+          <div><p>Yes. The smallest system is 400&nbsp;W: two panels and one microinverter.</p></div></details>
+        <details><summary>Can I add more later?</summary>
+          <div><p>Yes. Systems grow in 400&nbsp;W steps. Storage grows by adding units, up to 4&nbsp;kWh per set. Expansion is limited by your circuit and by local rules - confirm before assuming unlimited growth.</p></div></details>
+        <details><summary>Do I need a battery?</summary>
+          <div><p>No. Solar works on its own. A battery lets you use more of what you make, after the sun goes down, and adds limited backup for select devices during an outage.</p></div></details>
+        <details><summary>Where can the panels go?</summary>
+          <div><p>Balconies, patios, yards and railings. The panels are semi-flexible and sit on stands rather than being bolted to a roof.</p></div></details>
+        <details><summary>How does it connect to my home?</summary>
+          <div><p>Panels connect to a microinverter, which connects to a dedicated outdoor outlet. A power meter watches what your home is using so the system can match its output. Some setups need a Smart Breaker instead of a dedicated outlet - we'll help confirm which applies to you.</p></div></details>
+        <details><summary>What happens during a power outage?</summary>
+          <div><p>Grid-connected solar shuts off during an outage, for safety. If you have battery storage, its own backup outlets can keep select directly-connected devices running - this is not whole-home backup.</p></div></details>
+        <details><summary>Is this legal to install without a permit in California?</summary>
+          <div><p>Not guaranteed yet. A bill that would streamline small plug-in solar systems (SB&nbsp;868) has passed the State Senate and is moving through the Assembly, but it is not law as of this writing. Permit, HOA and utility requirements currently still depend on your address - confirm locally before ordering.</p></div></details>
+        <details><summary>Can I move the system?</summary>
+          <div><p>The panels sit on stands and the battery plugs into an outlet, so components are not permanently fixed to the building. Moving a system is a question for your installer and your local rules.</p></div></details>
+        <details><summary>What rules or approvals may apply?</summary>
+          <div><p>Requirements depend on your address: your local electrical and building rules, your utility, and your building, landlord or HOA policy. Confirm these locally, and use a licensed electrician where required, before ordering.</p></div></details>
+      </div>
+    </div>
+  </section>
 
 </main>
 
@@ -756,7 +613,7 @@
           <img src="assets/brand/terrace-solar-lockup-dark.png" width="640" height="270" alt="Terrace Solar">
         </a>
         <p style="max-width:34ch">
-          A residential solar concept built around ultra-thin, semi-flexible panels.
+          Plug-in solar for San Diego County homes, built around ultra-thin, semi-flexible panels.
         </p>
       </div>
       <div>
@@ -764,14 +621,14 @@
         <ul>
           <li><a href="#panels">The panel</a></li>
           <li><a href="#shop">Configure a system</a></li>
-          <li><a href="#connection">System architecture</a></li>
-          <li><a href="#placement">Placement</a></li>
+          <li><a href="#how">How it works</a></li>
+          <li><a href="#storage">Storage</a></li>
         </ul>
       </div>
       <div>
         <h3>Understand</h3>
         <ul>
-          <li><a href="#how">How it works</a></li>
+          <li><a href="#san-diego">San Diego County</a></li>
           <li><a href="#faq">FAQ</a></li>
           <li><a href="#sources">Sources and attribution</a></li>
         </ul>
@@ -780,22 +637,21 @@
         <h3>Contact</h3>
         <ul>
           <li><a href="#shop">Request availability</a></li>
-          <li><a href="mailto:hello@terracesolar.com">hello@terracesolar.com</a> <span class="src src--pending">Placeholder</span></li>
         </ul>
       </div>
     </div>
 
     <div class="colophon" id="sources">
       <p>
-        <strong>Pre-launch draft.</strong> Product information from CraftStrom Solar. Nothing here is an offer of sale. Whether this equipment
-        may be installed and connected at a given address depends on local electrical and
-        building codes, utility interconnection rules, and landlord, HOA or building
-        policy — confirm those locally and use a licensed electrician where required.
-        Commercial terms, warranty, returns and legal copy are unfinished placeholders,
-        and image rights, certification documentation and legal review are still
-        outstanding.
+        Product information sourced from CraftStrom Solar, the manufacturer, and independently
+        verified market/regulatory research where noted. This is not an offer of sale, and no
+        price shown is final. Whether this equipment may be installed and connected at a given
+        address depends on local electrical and building codes, utility interconnection rules,
+        and landlord, HOA or building policy &mdash; confirm those locally and use a licensed
+        electrician where required. California&rsquo;s SB&nbsp;868 (small plug-in solar) is not
+        yet law; no permit-free or no-approval claim is made for any jurisdiction.
       </p>
-      <p style="margin-top:0.75rem">Terrace Solar — storefront concept. Craftstrom — product source.</p>
+      <p style="margin-top:0.75rem">Terrace Solar &mdash; retailer. CraftStrom &mdash; equipment source. Terrace Solar is not represented as an authorized CraftStrom dealer or partner unless and until that relationship is confirmed.</p>
     </div>
   </div>
 </footer>

@@ -373,6 +373,29 @@ a { color: inherit; }
 }
 .list-check strong { color: var(--ink); font-weight: 640; }
 .section--ink .list-check strong { color: #f1efe9; }
+.section--ink .list-check li { color: #b6c0d4; }
+
+/* ---------- what you'll need (compact readiness checklist) ---------- */
+.ready-check {
+  max-width: 40rem;
+  margin: 0 auto clamp(2rem, 4vw, 2.75rem);
+  padding: clamp(1.25rem, 2.5vw, 1.75rem);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  text-align: left;
+}
+.ready-check__label {
+  font-family: var(--display);
+  font-size: 0.78rem;
+  font-weight: 650;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 0.9rem;
+}
+.ready-check .list-check { margin-top: 0; }
+.ready-check .list-check li:last-child { margin-bottom: 0; }
 
 /* ---------- flow diagram ---------- */
 .flow {
