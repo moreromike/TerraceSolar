@@ -2,659 +2,1391 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Terrace Solar — solar without the rooftop</title>
-<meta name="description" content="Ultra-thin, semi-flexible solar panels for balconies, patios and yards. Built around San Diego County. Start at 400&nbsp;W and build from there.">
-<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+<script>
+/* =====================================================================
+   TERRACE SOLAR SITE CONFIG
+   Edit prices, kits, links and button text here. Nothing else needs to change.
+   Phase 2: set purchase.mode to "checkout", change ctaText to "Buy",
+   and fill purchase.checkoutLinks with one link per kit size id.
+   ===================================================================== */
+window.SITE_CONFIG = {
+  brand: {
+    name: "Terrace Solar",
+    phone: "(619) 961-7234",
+    smsPhone: "(619) 961-7234",           // texting is the preferred way to reach us
+    email: "hello@terracesolar.com",     // from terracesolar.com. Change if needed
+    serviceArea: "San Diego County",
+    city: "San Diego",
+    region: "CA",
+    siteUrl: "https://www.terracesolar.com"
+  },
+
+  founder: {
+    name: "Mike Morero",
+    bio: "Terrace Solar was founded by Mike Morero, a San Diego native based in East County. Mike is a licensed California real estate agent and an independent solar broker.",
+    credentials: ["DRE #01887620", "HIS #157873"]
+  },
+
+  hero: {
+    // Full-screen looping background video. Muted, autoplay, no sound.
+    // Paths are relative to this file: keep the assets folder next to index.html when you upload.
+    videoDesktop: "assets/video/terrace-hero-1080.mp4",   // 1920x1080, ~6 MB
+    videoMobile: "assets/video/terrace-hero-mobile.mp4",  // 540x960 vertical crop, ~2 MB, used on screens under 720px wide
+    poster: "assets/video/terrace-hero-poster.jpg",       // shown while the video loads, and to visitors who turn off motion
+    headline: "Solar for renters, condos and HOA communities.",
+    subhead: "No roof needed. Plug-in solar mounts on a balcony, patio or yard and plugs into a standard outlet."
+  },
+
+  purchase: {
+    mode: "reserve",                     // "reserve" now, "checkout" in phase 2
+    ctaText: "Reserve",
+    ctaTextLong: "Reserve my kit",
+    depositAmount: 100,                  // refundable deposit
+    depositLink: "[STRIPE PAYMENT LINK]",// Stripe Payment Link or Shopify Buy Button URL
+    checkoutLinks: { "fw-800": "", "fw-1200": "", "mp-1200": "" },
+    billReviewLink: ""                   // optional booking link. Empty = use the form
+  },
+
+  hoa: { briefingLink: "" },             // optional booking link for HOA briefings. Empty = use the form
+
+  // Installation is NOT offered. This only measures interest.
+  install: {
+    pricePoints: ["Under $150", "$150 to $300", "Over $300"]
+  },
+
+  pricesAreSamples: true,                // shows an "Estimated pricing" tag until you set false
+
+  lines: [
+    {
+      id: "featherweight",
+      name: "Featherweight",
+      maker: "CraftStrom",
+      series: "CraftStrom Premium Line",
+      imageBg: "#A7A3A5",
+      bestFor: "Balconies, railings, window ledges, condos and renters",
+      pitch: "Thin, semi-flexible panels with no heavy glass. Easy to carry, easy to hang, safer on a railing.",
+      highlights: [
+        "About 9 lbs per panel and under a quarter inch thick",
+        "Bifacial panels: the back side also catches reflected light",
+        "400 W smart inverters, ETL listed to UL 1741 and IEEE 1547",
+        "PowerMeter keeps your solar power inside your home",
+        "Add a stackable battery, 1 to 4 kWh"
+      ],
+      sizes: [
+        { id: "fw-800",  label: "800 W",   watts: 800,  price: 2299, annualKwh: 1400, image: "assets/img/featherweight-800.jpg",
+          contents: ["4 x 200 W bifacial semi-flexible panels", "4 x panel mounts", "2 x 400 W smart inverters", "1 x PowerMeter", "Inverter connector cable", "AC power cable"] },
+        { id: "fw-1200", label: "1,200 W", watts: 1200, price: 3238, annualKwh: 2100, image: "assets/img/featherweight-1200.jpg",
+          contents: ["6 x 200 W bifacial semi-flexible panels", "6 x panel mounts", "3 x 400 W smart inverters", "1 x PowerMeter", "2 x inverter connector cables", "AC power cable"] }
+      ],
+      battery: {
+        name: "CraftStrom Plug&Play battery",
+        note: "Stackable 1 kWh LiFePO4 towers. Includes a smart base, a 600 W backup inverter with two outlets, and an NEC Smart Breaker.",
+        options: [ { kwh: 1, price: 1199 }, { kwh: 2, price: 1799 }, { kwh: 3, price: 2399 }, { kwh: 4, price: 2999 } ]
+      },
+      warranty: "10 years on panels. 20 years on inverters, PowerMeter and battery.",
+      certifications: [
+        "Inverters: ETL listed to UL 1741 and IEEE 1547",
+        "Panels: CE, RoHS",
+        "PowerMeter: CE, FCC",
+        "Battery: UL, VDE"
+      ]
+    },
+    {
+      id: "patio",
+      name: "Patio and Yard",
+      maker: "Mango Power",
+      series: "Mango Power S 1200W Plug-In Solar Kit",
+      imageBg: "#FFFFFF",
+      bestFor: "Patios, backyards, flat roofs and carports",
+      pitch: "Four full-size glass panels on a ground stand, for homes with a little more space.",
+      highlights: [
+        "Four 300 W N-type TOPCon panels, up to 24.8% efficient",
+        "A microinverter on every panel, so shade on one doesn't slow the others",
+        "Smart Gateway Lite with zero-export control",
+        "IP68 waterproof microinverters",
+        "Live tracking in the Mango Power app"
+      ],
+      sizes: [
+        { id: "mp-1200", label: "1,200 W", watts: 1200, price: 2698, annualKwh: 2000, image: "assets/img/patio-yard-kit.jpg",   // Mango MAP: kit $2,399 + Smart Gateway Lite $299
+          contents: ["4 x 300 W solar panels with brackets", "4 x Mango Power S microinverters, one per panel", "Smart Gateway Lite with CT sensor", "4-in-1 PIPV cable", "Stand"] }
+      ],
+      battery: null,
+      batteryNote: "Pairs with whole-home batteries like Tesla Powerwall, Enphase and FranklinWH. Want plug-in storage you can carry? Featherweight offers 1 to 4 kWh batteries.",
+      warranty: "25-year warranty.",
+      certifications: [
+        "CEC listed",
+        "UL 1741-SA (California Rule 21) and UL 1741-SB",
+        "IEEE 1547-2018",
+        "CSA C22.2"
+      ]
+    }
+  ],
+
+  calculator: {
+    ratePerKwh: 0.45,            // average SDG&E price per kWh, early 2026 (low end of the estimate)
+    peakRatePerKwh: 0.70,        // SDG&E's highest regular home rate: TOU-DR1 summer on-peak, 69.7 cents (Jan 1, 2026)
+    careDiscount: 0.30,          // CARE/FERA customers pay roughly this much less per kWh
+    // Share of the panels' power a home uses as it's made. Bigger bills mean more daytime use, so less goes unused.
+    captureMin: 0.60,            // at captureStartKwh a month and below
+    captureMax: 0.98,            // at captureFullKwh a month and above
+    captureStartKwh: 200,
+    captureFullKwh: 1300,
+    batteryDailyUse: 0.9,        // share of the battery's capacity used each evening (power valued at the peak price)
+    maxShareNoBattery: 0.35,     // savings never shown above this share of the bill
+    maxShareWithBattery: 0.50,
+    billMin: 50, billMax: 600, billDefault: 350,   // bill slider range, in dollars
+    spaceToLine: { balcony: "featherweight", window: "featherweight", patio: "patio" }
+    // assumed yearly production per kit lives on each size as annualKwh
+  },
+
+  stat: { value: "44%", label: "of California households rent their home.", source: "pv magazine USA, January 2026" },
+  law:  { name: "SB 868", signed: "September 30, 2026", effective: "January 1, 2027" },
+
+  images: {
+    // Paste image URLs here. Empty = a labeled placeholder shows instead.
+    "reveal-panels": "assets/img/reveal-panels.jpg", "reveal-inverter": "assets/img/reveal-inverter.jpg",
+    "reveal-meter": "assets/img/reveal-meter.jpg", "reveal-battery": "assets/img/reveal-battery.jpg", "reveal-app": "assets/img/reveal-app.jpg",
+    "install-video": "assets/img/diy-plug-in.jpg",     // swap for a short install video (.mp4) when you have one
+    // kit card photos are set on each kit size below (image) with a matching background color (imageBg)
+    "badge-craftstrom": "", "badge-mango": ""
+  },
+
+  showAuthorizedBadges: true,     // keep true only once both authorizations are confirmed in writing
+  leadForm: { netlify: true, endpoint: "" },   // netlify: true saves leads in your Netlify dashboard (Forms tab). Or set endpoint to a Formspree/Zapier/HubSpot URL
+  analytics: { metaPixelId: "", ga4Id: "" }
+};
+</script>
+
+<title>Terrace Solar | Plug-in Solar for San Diego Condos, Renters and HOAs</title>
+<meta name="description" content="Plug-in solar for San Diego County condos, townhomes and renters, plus a free plug-in solar standards program for HOAs and property managers. Reserve your kit today.">
 <link rel="canonical" href="https://www.terracesolar.com/">
+<link rel="icon" type="image/png" href="assets/brand/favicon-128.png">
+<link rel="preload" as="image" href="assets/video/terrace-hero-poster.jpg">
+<meta name="theme-color" content="#FAFAF8" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0E141F" media="(prefers-color-scheme: dark)">
+
+<!-- Open Graph / social -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Terrace Solar">
+<meta property="og:title" content="Terrace Solar | Solar for renters, condos and HOA communities">
+<meta property="og:description" content="Plug-in solar for San Diego balconies, patios, window ledges and yards, and a free standards program for HOAs.">
 <meta property="og:url" content="https://www.terracesolar.com/">
-<meta property="og:title" content="Terrace Solar — solar without the rooftop">
-<meta property="og:description" content="Ultra-thin, semi-flexible solar panels for balconies, patios and yards. Built around San Diego County. Start at 400&nbsp;W and build from there.">
-<meta property="og:image" content="https://www.terracesolar.com/assets/video/hero-poster.jpg">
+<meta property="og:image" content="https://www.terracesolar.com/assets/video/terrace-hero-poster.jpg">
+<meta property="og:locale" content="en_US">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="color-scheme" content="dark">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Inter:wght@400;500;600&display=swap">
-<link rel="stylesheet" href="assets/css/site.css">
-<link rel="icon" type="image/png" sizes="128x128" href="assets/brand/favicon-128.png">
-<meta name="theme-color" content="#0a0a0b">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- Meta Pixel and Google Analytics load automatically from SITE_CONFIG.analytics (script at bottom) -->
+
+<style>
+:root{
+  --bg:#FAFAF8;
+  --surface:#FFFFFF;
+  --surface-2:#F2F2EE;
+  --ink:#131C2C;
+  --muted:#545D6B;
+  --line:#E2E2DD;
+  --sun:#F4AE3A;
+  --sun-press:#E39B22;
+  --sun-ink:#8A5800;
+  --sun-soft:#FDF1DB;
+  --on-sun:#1D1505;
+  --navy:#1B2740;
+  --night:#0F1624;
+  --logo-word:#131C2C;
+  --logo-sun:#F4AE3A;
+  --radius-lg:24px;
+  --radius:16px;
+  --radius-sm:10px;
+  --gutter:clamp(20px,5vw,64px);
+  --max:1120px;
+  --display:"Montserrat", ui-sans-serif, system-ui, sans-serif;
+  --body:"Figtree", ui-sans-serif, system-ui, sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0E141F; --surface:#151D2A; --surface-2:#19222F; --ink:#EEF0F3; --muted:#A9B1BD;
+    --line:#283244; --sun-ink:#F6C46A; --sun-soft:#2A2315; --logo-word:#FFFFFF; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0E141F; --surface:#151D2A; --surface-2:#19222F; --ink:#EEF0F3; --muted:#A9B1BD;
+  --line:#283244; --sun-ink:#F6C46A; --sun-soft:#2A2315; --logo-word:#FFFFFF; color-scheme:dark;
+}
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:18px;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+img,video{display:block;max-width:100%}
+a{color:inherit}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--sun);outline-offset:3px;border-radius:6px}
+.wrap{width:100%;max-width:var(--max);margin:0 auto;padding:0 var(--gutter)}
+.skip{position:absolute;left:-999px;top:8px;background:var(--sun);color:var(--on-sun);padding:10px 14px;border-radius:8px;z-index:100}
+.skip:focus{left:8px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+h1,h2,h3,h4{font-family:var(--display);font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;text-wrap:balance}
+h2{font-size:clamp(2rem,4.4vw,3.4rem)}
+h3{font-size:clamp(1.2rem,2vw,1.45rem);line-height:1.25;letter-spacing:-0.01em}
+p{margin:0;text-wrap:pretty}
+ul,ol{text-wrap:pretty}
+.kicker{font-weight:700;color:var(--sun-ink);margin:0 0 14px;font-size:.95rem}
+.lede{font-size:clamp(1.08rem,1.5vw,1.25rem);color:var(--muted);max-width:44ch;margin-top:20px}
+.fine{font-size:.88rem;color:var(--muted);line-height:1.55}
+.head{max-width:780px;margin:0 auto clamp(40px,6vw,64px);text-align:center}
+.head .lede{margin-inline:auto}
+
+/* Sections: one even rhythm everywhere */
+.sec{padding:clamp(80px,11vw,136px) 0}
+.alt{background:var(--surface-2)}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:52px;padding:0 28px;border-radius:999px;border:0;font-weight:700;font-size:1rem;text-decoration:none;cursor:pointer;transition:background .2s,transform .15s,border-color .2s;white-space:nowrap}
+.btn:active{transform:scale(.98)}
+.btn-sun{background:var(--sun);color:var(--on-sun)}
+.btn-sun:hover{background:var(--sun-press)}
+.btn-ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+.btn-ghost:hover{border-color:var(--ink)}
+.btn-glass{background:rgba(255,255,255,.12);color:#fff;border:1.5px solid rgba(255,255,255,.45);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.btn-glass:hover{background:rgba(255,255,255,.22)}
+.btn-sm{min-height:42px;padding:0 20px;font-size:.95rem}
+
+/* Logo (recreated from the Terrace Solar logo) */
+.logo{display:inline-flex;align-items:center;text-decoration:none;flex:0 0 auto}
+.logo-img{display:block;height:54px;width:auto}
+.logo-on-light{display:none}
+.nav.solid .logo-on-light{display:block}
+.nav.solid .logo-on-dark{display:none}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .nav.solid .logo-on-light{display:none}:root:not([data-theme="light"]) .nav.solid .logo-on-dark{display:block}}
+:root[data-theme="dark"] .nav.solid .logo-on-light{display:none}
+:root[data-theme="dark"] .nav.solid .logo-on-dark{display:block}
+.foot-logo{display:block;width:min(280px,72vw);height:auto}
+.lw{fill:var(--logo-word)}
+.ls{fill:var(--logo-sun)}
+.lstroke{fill:none;stroke:var(--logo-sun);stroke-linecap:round}
+.logo-text{font-family:"Montserrat", Arial, sans-serif}
+
+/* Nav */
+.nav{position:fixed;inset:0 0 auto 0;z-index:50;transition:background .3s,box-shadow .3s,color .3s;color:#fff;--logo-word:#FFFFFF}
+.nav-in{display:flex;align-items:center;justify-content:space-between;height:76px;gap:24px}
+.nav-links{display:none;gap:32px;font-weight:600;font-size:.98rem}
+.nav-links a{text-decoration:none;opacity:.88}
+.nav-links a:hover{opacity:1}
+.nav.solid{background:color-mix(in srgb,var(--bg) 90%,transparent);backdrop-filter:saturate(1.4) blur(14px);-webkit-backdrop-filter:saturate(1.4) blur(14px);box-shadow:0 1px 0 var(--line);color:var(--ink)}
+@media (prefers-color-scheme: light){.nav.solid{--logo-word:#131C2C}}
+:root[data-theme="light"] .nav.solid{--logo-word:#131C2C}
+:root[data-theme="dark"] .nav.solid{--logo-word:#FFFFFF}
+@media (min-width:960px){.nav-links{display:flex}}
+
+/* Hero (full-bleed video) */
+.hero{position:relative;height:100svh;min-height:600px;overflow:hidden;background:var(--night);color:#fff;isolation:isolate}
+.hero-media{position:absolute;inset:0;z-index:-2}
+.hero-media img,.hero-media video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.hero-media video{opacity:0;transition:opacity .9s ease}
+.hero-media video.is-playing{opacity:1}
+.hero::after{content:"";position:absolute;inset:0;z-index:-1;background:
+  linear-gradient(0deg,rgba(10,15,25,.85) 0%,rgba(10,15,25,.45) 45%,rgba(10,15,25,.1) 72%),
+  radial-gradient(ellipse at 50% 70%,rgba(10,15,25,.35) 0%,rgba(10,15,25,0) 70%),
+  linear-gradient(180deg,rgba(10,15,25,.6) 0%,rgba(10,15,25,0) 22%)}
+.hero-content{position:absolute;left:0;right:0;bottom:clamp(56px,10vh,112px);text-align:center}
+.hero-content .wrap{display:flex;flex-direction:column;align-items:center}
+.hero h1{font-size:clamp(2.5rem,7vw,5.6rem);max-width:15ch;line-height:1.02;letter-spacing:-0.03em}
+.hero-sub{margin-top:24px;font-size:clamp(1.08rem,1.6vw,1.3rem);max-width:36ch;color:rgba(255,255,255,.9)}
+.hero-ctas{margin-top:32px;display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+.hero-hoa{display:inline-block;margin-top:26px;color:rgba(255,255,255,.9);font-weight:600;font-size:1rem;text-underline-offset:5px}
+.vid-toggle{position:absolute;right:var(--gutter);bottom:28px;width:44px;height:44px;border-radius:50%;border:1.5px solid rgba(255,255,255,.45);background:rgba(0,0,0,.25);color:#fff;display:grid;place-items:center;cursor:pointer}
+.vid-toggle svg{width:16px;height:16px}
+@media (max-width:640px){.vid-toggle{top:92px;bottom:auto}}
+
+/* Problem */
+.problem-grid{display:grid;gap:56px;align-items:end}
+@media (min-width:900px){.problem-grid{grid-template-columns:1.3fr 1fr;gap:88px}}
+.problem h2{max-width:15ch}
+.stat{border-left:4px solid var(--sun);padding:4px 0 4px 28px}
+.stat-num{font-family:var(--display);font-weight:700;font-size:clamp(4.2rem,10vw,7.5rem);line-height:.95;letter-spacing:-0.04em}
+.stat-label{font-size:1.2rem;font-weight:600;margin-top:12px;max-width:20ch}
+.stat .fine{margin-top:10px}
+
+/* How it works */
+.steps{list-style:none;padding:0;margin:0;display:grid;gap:20px;counter-reset:s}
+@media (min-width:800px){.steps{grid-template-columns:repeat(3,1fr);gap:24px}}
+.step{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-lg);padding:32px;counter-increment:s;position:relative}
+.step-icon{width:56px;height:56px;border-radius:16px;background:var(--sun-soft);color:var(--sun-ink);display:grid;place-items:center;margin-bottom:40px}
+.step-icon svg{width:28px;height:28px}
+.step::before{content:counter(s);position:absolute;top:32px;right:32px;font-family:var(--display);font-weight:700;color:var(--muted)}
+.step h3{margin-bottom:8px}
+.step p{color:var(--muted)}
+
+/* Product reveal (sticky, one component per screen) */
+.reveal{background:var(--night);color:#F2F3F5}
+.reveal .head{margin-bottom:0;padding:clamp(80px,11vw,136px) 0 48px}
+.reveal .kicker{color:var(--sun)}
+.reveal .lede{color:#B8C0CC}
+.reveal-track{position:relative;padding-bottom:40px}
+.reveal-item{display:grid;gap:28px;padding:32px 0 56px}
+.reveal-fig{aspect-ratio:4/3;max-width:100%;border-radius:var(--radius-lg);overflow:hidden;background:#E9E8E6}
+.reveal-copy h3{font-size:clamp(1.8rem,3.6vw,2.9rem);letter-spacing:-0.025em;line-height:1.08}
+.reveal-copy p{color:#B8C0CC;margin-top:16px;max-width:38ch;font-size:1.1rem}
+.spec{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+.chip{display:inline-block;font-size:.88rem;font-weight:600;padding:6px 14px;border-radius:999px;border:1px solid rgba(255,255,255,.22);color:#E6E8EC}
+.reveal-dots{display:none}
+@media (min-width:900px){
+  .reveal-track{height:calc(var(--n,5) * 85svh);padding-bottom:0}
+  .reveal-stage{position:sticky;top:0;height:100svh;display:flex;align-items:center}
+  .reveal-stage .wrap{position:relative;height:min(74svh,620px)}
+  .reveal-item{position:absolute;top:0;bottom:0;left:var(--gutter);right:calc(var(--gutter) + 32px);padding:0;grid-template-columns:1.2fr 1fr;align-items:center;gap:64px;opacity:0;visibility:hidden;transition:opacity .6s ease,visibility .6s}
+  .reveal-item .reveal-fig{width:100%;aspect-ratio:4/3;transform:scale(.96);transition:transform .9s cubic-bezier(.2,.7,.2,1)}
+  .reveal-item.is-active{opacity:1;visibility:visible}
+  .reveal-item.is-active .reveal-fig{transform:scale(1)}
+  .reveal-dots{display:flex;flex-direction:column;gap:10px;position:absolute;right:var(--gutter);top:50%;transform:translateY(-50%)}
+  .reveal-dots span{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.28);transition:background .3s,transform .3s}
+  .reveal-dots span.on{background:var(--sun);transform:scale(1.4)}
+}
+@media (prefers-reduced-motion: reduce){.reveal-item,.reveal-item .reveal-fig{transition:none!important}}
+
+/* Image placeholders */
+.ph{width:100%;height:100%;min-height:180px;display:grid;place-items:center;text-align:center;padding:28px;
+  background:repeating-linear-gradient(135deg,transparent 0 14px,rgba(127,127,127,.08) 14px 15px),var(--surface-2);color:var(--muted);font-size:.92rem;font-weight:600}
+.reveal .ph{background:repeating-linear-gradient(135deg,transparent 0 14px,rgba(255,255,255,.05) 14px 15px),#1A2333;color:#8E98A6}
+.ph span{max-width:30ch}
+.ph-img{width:100%;height:100%;object-fit:cover}
+
+/* App phones */
+.phones{display:flex;gap:24px;overflow-x:auto;padding:36px 0 24px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
+.phone{flex:0 0 auto;width:min(268px,72vw);aspect-ratio:9/19;border-radius:44px;background:#0B0D10;padding:11px;box-shadow:0 30px 60px -30px rgba(15,22,36,.45),inset 0 0 0 1.5px #2A3240;scroll-snap-align:start}
+.phone:first-child{margin-left:auto}
+.phone:last-child{margin-right:auto}
+@media (min-width:900px){.phone:nth-child(2){transform:translateY(-24px)}}
+.screen-ui{height:100%;border-radius:34px;background:linear-gradient(180deg,#161C26,#0F141C);color:#EEF0F3;padding:48px 22px 22px;display:flex;flex-direction:column;position:relative;overflow:hidden}
+.screen-ui::before{content:"";position:absolute;top:12px;left:50%;transform:translateX(-50%);width:84px;height:24px;border-radius:14px;background:#000}
+.ui-label{font-size:.82rem;color:#9AA3AF;font-weight:600}
+.ui-big{font-family:var(--display);font-weight:700;font-size:2.4rem;letter-spacing:-0.03em;line-height:1.05;margin-top:6px}
+.ui-big small{font-size:.95rem;font-weight:600;color:#9AA3AF;letter-spacing:0}
+.ui-chart{margin-top:auto;width:100%;height:auto}
+.ui-foot{font-size:.8rem;color:#9AA3AF;margin-top:12px}
+.ring{width:148px;height:148px;margin:22px auto 10px;border-radius:50%;background:conic-gradient(var(--sun) 0 72%,#2A3240 72% 100%);display:grid;place-items:center}
+.ring > div{width:116px;height:116px;border-radius:50%;background:#131922;display:grid;place-items:center;text-align:center}
+.ring b{font-family:var(--display);font-size:1.8rem;display:block;line-height:1}
+.ring span{font-size:.72rem;color:#9AA3AF}
+.ui-row{display:flex;justify-content:space-between;font-size:.85rem;padding:9px 0;border-top:1px solid #242C38}
+.ui-row b{color:var(--sun)}
+
+/* Calculator */
+.calc-grid{display:grid;gap:32px}
+.calc-grid{max-width:1000px;margin:0 auto}
+@media (min-width:960px){.calc-grid{grid-template-columns:1fr 1fr;gap:32px;align-items:stretch}}
+.calc-form{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-lg);padding:clamp(24px,3vw,40px);display:grid;gap:28px;align-content:start}
+.field > label,.field > legend{font-weight:700;display:block;margin-bottom:10px;font-size:1rem}
+.field .fine{margin-top:8px}
+fieldset{border:0;margin:0;padding:0;min-width:0}
+.input{width:100%;min-height:54px;border-radius:var(--radius-sm);border:1.5px solid var(--line);background:var(--bg);padding:0 16px;font-size:1.05rem}
+.input:focus{border-color:var(--sun);outline:none;box-shadow:0 0 0 4px color-mix(in srgb,var(--sun) 25%,transparent)}
+.seg{display:flex;flex-wrap:wrap;gap:8px}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg label{margin:0;min-height:46px;padding:0 18px;border-radius:999px;border:1.5px solid var(--line);display:inline-flex;align-items:center;font-weight:600;cursor:pointer;font-size:.96rem;background:var(--bg);line-height:1.2}
+.seg input:checked + label{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.seg input:focus-visible + label{outline:3px solid var(--sun);outline-offset:2px}
+.switch{display:flex;align-items:center;justify-content:space-between;gap:20px;cursor:pointer}
+.switch input{position:absolute;opacity:0}
+.switch .track{flex:0 0 auto;width:52px;height:30px;border-radius:999px;background:var(--line);position:relative;transition:background .2s}
+.switch .track::after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:transform .2s}
+.switch input:checked + .track{background:var(--sun)}
+.switch input:checked + .track::after{transform:translateX(22px)}
+.switch input:focus-visible + .track{outline:3px solid var(--sun);outline-offset:2px}
+.calc-out{border-radius:var(--radius-lg);padding:clamp(28px,3.4vw,44px);background:var(--night);color:#F2F3F5}
+.calc-out .label{font-size:.95rem;color:#B8C0CC;font-weight:600}
+.calc-out .big .per{font-size:.45em;font-weight:600;letter-spacing:0;color:#D3D8DF}
+.calc-out .big{font-family:var(--display);font-weight:700;font-size:clamp(2rem,4.2vw,3.1rem);letter-spacing:-0.03em;line-height:1.05;margin:10px 0 10px}
+.calc-out .sub{color:#D3D8DF}
+.calc-out .payback{margin-top:18px;padding:14px 16px;border-radius:var(--radius-sm);background:rgba(244,174,58,.14);display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px 16px;align-items:baseline}
+.calc-out .payback b{color:#fff;font-size:1.05rem}
+.calc-out .payback span{color:#D3D8DF;font-size:.92rem}
+.calc-out .note{color:#D3D8DF;margin-top:14px;padding-left:14px;border-left:3px solid var(--sun);font-size:.98rem}
+.calc-out hr{border:0;border-top:1px solid rgba(255,255,255,.14);margin:28px 0}
+.calc-out .rec{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+.calc-out .rec b{font-family:var(--display);font-size:1.4rem;letter-spacing:-0.01em;display:block;margin-top:4px}
+.calc-out .fine{color:#98A2B0;margin-top:24px}
+.calc-msg{font-size:1.1rem;line-height:1.55;color:#D3D8DF}
+.calc-msg strong{font-family:var(--display);font-size:1.6rem;display:block;margin-bottom:12px;letter-spacing:-0.01em;line-height:1.2;color:#fff}
+
+/* Kits */
+.kits-top{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:16px 24px;margin-bottom:clamp(40px,6vw,64px)}
+.kits-top .head{margin-bottom:0}
+.tag{display:inline-block;font-size:.82rem;font-weight:700;padding:5px 12px;border-radius:999px;background:var(--sun-soft);color:var(--sun-ink);white-space:nowrap}
+.kit-grid{display:grid;gap:24px}
+@media (min-width:900px){.kit-grid{grid-template-columns:1fr 1fr;align-items:stretch}}
+.kit{background:var(--surface);border:2px solid var(--line);border-radius:var(--radius-lg);overflow:hidden;display:flex;flex-direction:column;transition:border-color .25s}
+.kit.is-selected{border-color:var(--sun)}
+.kit-fig{aspect-ratio:4/3;max-width:100%;overflow:hidden}
+.kit-img{width:100%;height:100%;object-fit:cover;object-position:50% 55%;display:block}
+.kit-body{padding:clamp(24px,3vw,36px);display:flex;flex-direction:column;gap:22px;flex:1}
+.best{align-self:flex-start;font-size:.88rem;font-weight:700;padding:8px 14px;border-radius:var(--radius-sm);background:var(--sun-soft);color:var(--sun-ink);line-height:1.4}
+.kit h3{font-size:clamp(1.6rem,2.6vw,2rem)}
+.kit .maker{color:var(--muted);font-weight:600;margin-top:6px;font-size:.96rem}
+.kit .pitch{color:var(--muted)}
+.checks{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.checks li{position:relative;padding-left:30px;line-height:1.45}
+.checks li::before{content:"";position:absolute;left:0;top:2px;width:20px;height:20px;border-radius:50%;background:var(--sun-soft) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M5.5 10.5l3 3 6-7' fill='none' stroke='%238A5800' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/20px no-repeat}
+.kit .field > legend{margin-bottom:10px}
+.box{background:var(--bg);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px}
+.box h4{margin:0 0 10px;font-size:.98rem;letter-spacing:0}
+.box ul{margin:0;padding-left:20px;color:var(--muted);font-size:.95rem}
+.box li{margin:4px 0}
+.box p{color:var(--muted);font-size:.95rem}
+.kit-foot{margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding-top:22px;border-top:1px solid var(--line)}
+.price{font-family:var(--display);font-weight:700;font-size:2.1rem;letter-spacing:-0.02em;line-height:1}
+.price-note{font-size:.86rem;color:var(--muted);margin-top:6px}
+.summary{margin-top:28px;background:var(--night);color:#F2F3F5;border-radius:var(--radius-lg);padding:24px clamp(24px,3vw,36px);display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px 24px}
+.summary b{font-family:var(--display);font-size:1.25rem;letter-spacing:-0.01em;display:block}
+.summary .fine{color:#B8C0CC;margin-top:4px}
+.sum-right{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.sum-price{font-family:var(--display);font-weight:700;font-size:1.8rem;letter-spacing:-0.02em}
+
+/* Install */
+.install-grid{display:grid;gap:24px}
+@media (min-width:900px){.install-grid{grid-template-columns:1fr 1fr;align-items:start}}
+.opt{border:1px solid var(--line);border-radius:var(--radius-lg);padding:clamp(24px,3vw,36px);background:var(--surface);display:flex;flex-direction:column;gap:18px}
+.opt .ph,.opt .ph-img{aspect-ratio:16/9;border-radius:var(--radius);min-height:0}
+.opt ul{margin:0;padding-left:20px;color:var(--muted)}
+.opt li{margin:6px 0}
+.opt-top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.opt > p{color:var(--muted)}
+.thanks{color:var(--ok,#1F7A4D);font-weight:600;font-size:.95rem}
+
+/* Trust */
+.trust-grid{display:grid;gap:0 56px}
+@media (min-width:960px){.trust-grid{grid-template-columns:repeat(3,1fr)}}
+.trust{padding:30px 0;border-top:1.5px solid var(--line)}
+.trust h3{margin-bottom:12px}
+.trust p,.trust li{color:var(--muted)}
+.trust ul{margin:10px 0 0;padding-left:20px}
+.trust li{margin:4px 0}
+.trust li b{color:var(--ink)}
+.trust ul ul{margin:4px 0 10px;padding-left:20px;list-style:circle}
+#certList{padding-left:0;list-style:none}
+.badges{display:flex;flex-wrap:wrap;gap:12px;margin-top:40px}
+.badge{display:flex;align-items:center;gap:12px;border:1.5px solid var(--line);border-radius:var(--radius);padding:14px 18px;font-weight:700;background:var(--surface);font-size:.98rem}
+.badge img{height:28px;width:auto}
+.badge i{width:30px;height:30px;border-radius:8px;background:var(--sun-soft);display:grid;place-items:center;color:var(--sun-ink);font-style:normal;font-size:.85rem}
+
+/* New law */
+.law-facts{list-style:none;margin:0 auto;padding:0;display:grid;gap:16px;max-width:980px}
+@media (min-width:800px){.law-facts{grid-template-columns:repeat(3,1fr);gap:24px}}
+.law-facts li{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:24px;text-align:center;display:grid;gap:6px}
+.law-facts b{font-family:var(--display);font-size:1.15rem;letter-spacing:-0.01em}
+.law-facts span{color:var(--muted);font-size:.97rem}
+.law-note{text-align:center;max-width:62ch;margin:28px auto 0;color:var(--muted)}
+.law-note .fine{display:block;margin-top:6px}
+
+/* What it is / who it helps */
+.who-grid{display:grid;gap:20px;max-width:980px;margin:0 auto}
+@media (min-width:800px){.who-grid{grid-template-columns:repeat(3,1fr);gap:24px}}
+.who{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-lg);padding:30px 28px;text-align:center}
+.who-icon{width:56px;height:56px;border-radius:16px;background:var(--sun-soft);color:var(--sun-ink);display:grid;place-items:center;margin:0 auto 20px}
+.who-icon svg{width:28px;height:28px}
+.who h3{margin-bottom:8px}
+.who p{color:var(--muted)}
+.stat-band{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:12px 28px;margin:clamp(40px,6vw,64px) auto 0;max-width:820px;text-align:left}
+.stat-band .stat-num{font-family:var(--display);font-weight:700;font-size:clamp(3.6rem,8vw,5.6rem);line-height:1;letter-spacing:-0.04em;color:var(--ink)}
+.stat-band p{font-size:1.2rem;font-weight:600;max-width:28ch}
+.stat-band .fine{display:block;font-weight:400;margin-top:6px}
+
+/* Bill slider */
+.bill-row{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:8px}
+.bill-val{font-family:var(--display);font-weight:700;font-size:2.4rem;letter-spacing:-0.02em;line-height:1.1}
+.range{width:100%;height:32px;accent-color:var(--sun);cursor:pointer;margin:0}
+.range-scale{display:flex;justify-content:space-between;margin-top:2px}
+
+/* California callout */
+.ca{border-radius:var(--radius-lg);background:var(--sun-soft);padding:clamp(28px,5vw,64px);display:grid;gap:24px}
+@media (min-width:900px){.ca{grid-template-columns:1fr 1.2fr;gap:64px;align-items:center}}
+.ca h2{font-size:clamp(1.9rem,3.8vw,3rem);max-width:14ch}
+.ca p{font-size:1.06rem}
+.ca p + p{margin-top:14px}
+
+/* HOA program */
+.hoa{background:var(--navy);color:#F2F3F5}
+.hoa .kicker{color:var(--sun)}
+.hoa .lede{color:#C9D0DA}
+.hoa-grid{display:grid;gap:48px}
+@media (min-width:960px){.hoa-grid{grid-template-columns:1.35fr 1fr;gap:64px;align-items:start}}
+.hoa-steps{list-style:none;margin:0;padding:0;display:grid;gap:14px;counter-reset:h}
+.hoa-steps li{counter-increment:h;display:grid;grid-template-columns:44px 1fr;gap:20px;padding:24px;border:1px solid rgba(255,255,255,.18);border-radius:var(--radius)}
+.hoa-steps li::before{content:counter(h);width:44px;height:44px;border-radius:12px;background:var(--sun);color:var(--on-sun);display:grid;place-items:center;font-family:var(--display);font-weight:700;font-size:1.15rem}
+.hoa-steps h3{font-size:1.2rem;margin-bottom:6px}
+.hoa-steps p{color:#C9D0DA}
+.hoa-why{border-left:4px solid var(--sun);padding:4px 0 4px 28px}
+.hoa-why h3{margin-bottom:14px}
+.hoa-why ul{margin:0 0 28px;padding-left:20px;color:#C9D0DA}
+.hoa-why li{margin:8px 0}
+
+/* FAQ */
+.faq-grid{display:grid;gap:32px}
+.faq-grid{max-width:820px;margin:0 auto}
+.faq-grid .head{margin-bottom:16px}
+details{border-top:1.5px solid var(--line)}
+details:last-of-type{border-bottom:1.5px solid var(--line)}
+summary{list-style:none;cursor:pointer;padding:22px 48px 22px 0;font-weight:700;font-size:1.08rem;position:relative;line-height:1.4}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"";position:absolute;right:8px;top:50%;width:12px;height:12px;margin-top:-9px;border-right:2.5px solid var(--ink);border-bottom:2.5px solid var(--ink);transform:rotate(45deg);transition:transform .25s}
+details[open] summary::after{transform:rotate(225deg);margin-top:-3px}
+details .ans{padding:0 48px 24px 0;color:var(--muted);max-width:64ch}
+
+/* Final CTA + form */
+.final{background:var(--night);color:#F2F3F5}
+.final .kicker{color:var(--sun)}
+.final .lede{color:#B8C0CC}
+.final-grid{display:grid;gap:48px}
+.final-grid{max-width:980px;margin:0 auto}
+.final-grid > .form{width:100%;max-width:720px;margin:0 auto}
+@media (min-width:800px){.paths{grid-template-columns:repeat(3,1fr)}}
+.final .head{margin-bottom:8px}
+.paths{display:grid;gap:12px}
+.path{display:grid;grid-template-columns:36px 1fr;gap:16px;align-items:start;padding:20px 22px;border:1px solid #2A3547;border-radius:var(--radius)}
+.path i{width:36px;height:36px;border-radius:10px;background:var(--sun);color:var(--on-sun);display:grid;place-items:center;font-style:normal;font-weight:800}
+.path p{color:#B8C0CC;font-size:.97rem;margin-top:2px}
+.path b{color:#fff;display:block;line-height:1.35}
+.form{background:#172030;border:1px solid #2A3547;border-radius:var(--radius-lg);padding:clamp(24px,3vw,40px);display:grid;gap:20px}
+.form .row{display:grid;gap:20px}
+@media (min-width:560px){.form .row{grid-template-columns:1fr 1fr}}
+.form label{display:block;font-weight:600;font-size:.95rem;margin-bottom:8px}
+.form .input{background:#0B111C;border-color:#2A3547;color:#F2F3F5}
+.form .seg label{display:inline-flex;margin:0;background:#0B111C;border-color:#2A3547;color:#F2F3F5}
+.form .seg input:checked + label{background:#F2F3F5;color:#0B111C;border-color:#F2F3F5}
+.form select.input{appearance:none;background-image:linear-gradient(45deg,transparent 50%,#9AA3AF 50%),linear-gradient(135deg,#9AA3AF 50%,transparent 50%);background-position:calc(100% - 22px) 50%,calc(100% - 16px) 50%;background-size:6px 6px;background-repeat:no-repeat;padding-right:40px}
+.form .fine{color:#98A2B0}
+.form .btn{width:100%}
+.form-ok{display:none;text-align:center;padding:40px 10px}
+.form-ok h3{margin-bottom:10px}
+.form.sent > :not(.form-ok){display:none}
+.form.sent .form-ok{display:block}
+.err{color:#FF8E7E;font-size:.92rem;min-height:1.2em}
+
+/* Footer */
+footer{background:var(--night);color:#98A2B0;border-top:1px solid #222C3B;padding:56px 0 128px;font-size:.92rem;--logo-word:#FFFFFF}
+.foot-grid{display:grid;gap:36px}
+@media (min-width:800px){.foot-grid{grid-template-columns:1fr 1.5fr;gap:64px}}
+footer .logo-svg{height:auto;width:min(260px,70vw)}
+footer a{color:#F2F3F5;text-decoration:none}
+footer p + p{margin-top:12px}
+.foot-contact{margin-top:20px}
+@media (min-width:960px){footer{padding-bottom:56px}}
+
+/* Mobile sticky buy bar */
+.buybar{position:fixed;left:0;right:0;bottom:0;z-index:60;background:color-mix(in srgb,var(--surface) 95%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--line);padding:10px 16px calc(10px + env(safe-area-inset-bottom));display:flex;align-items:center;gap:10px;transform:translateY(110%);transition:transform .35s ease}
+.buybar.show{transform:none}
+.bb-info{flex:1;min-width:0;line-height:1.25}
+.bb-name{font-weight:700;font-size:.8rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.bb-total{font-family:var(--display);font-weight:700;font-size:1.1rem}
+.icon-btn{flex:0 0 auto;width:44px;height:44px;border-radius:50%;border:1.5px solid var(--line);display:grid;place-items:center;color:var(--ink);background:var(--bg)}
+.icon-btn svg{width:20px;height:20px}
+.buybar .btn{min-height:44px;padding:0 18px}
+@media (min-width:960px){.buybar{display:none}}
+</style>
 </head>
 <body>
-
 <a class="skip" href="#main">Skip to main content</a>
 
-<!-- Persistent brand logo with collision-aware positioning -->
-<a href="#top" class="logo" data-logo aria-label="Terrace Solar home">
-  <img src="assets/brand/terrace-solar-full.png" alt="Terrace Solar" class="logo__img">
-</a>
+<!-- Sticky top nav -->
+<header class="nav" id="nav">
+  <div class="wrap nav-in">
+    <a class="logo" href="#top" aria-label="Terrace Solar, back to top"><img class="logo-img logo-on-dark" src="assets/brand/terrace-solar-lockup-dark.png" width="640" height="270" alt="Terrace Solar"><img class="logo-img logo-on-light" src="assets/brand/terrace-solar-lockup.png" width="640" height="270" alt="Terrace Solar"></a>
+    <nav class="nav-links" aria-label="Main">
+      <a href="#how">How it works</a>
+      <a href="#savings">Savings</a>
+      <a href="#kits">Kits</a>
+      <a href="#hoa">For HOAs</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <a class="btn btn-sun btn-sm js-reserve" href="#reserve" data-cta="short">Reserve</a>
+  </div>
+</header>
 
 <main id="main">
 
-  <!-- ============================ HERO — autoplay cinematic loop ============================ -->
-  <!-- Full cinematic sequence (1920x1080, 30fps, H.264 High profile, audio
-       stripped, faststart), playing as a normal muted/looping background at
-       1.2x speed - not scroll-driven, no currentTime scrubbing. Dedicated
-       web-optimized production encodes: hero-desktop-web.mp4 and
-       hero-mobile-web.mp4, re-encoded from assets/video/hero-master-ff.mp4
-       (kept as the source master). Autoplay, muted, loop, playsinline, no
-       controls. The poster image is always in the DOM and painted first;
-       the video only crossfades over it once a frame has decoded (site.js),
-       so an autoplay block or slow connection just leaves the poster - the
-       hero is always readable without video or JS.
-
-       Reusable "CinematicSection" pattern: duplicate this markup with new
-       data-hero-src/poster/copy for any future short clip section. -->
-  <section class="film" id="top" aria-labelledby="hero-title"
-           data-hero data-hero-src="assets/video/hero-desktop-web.mp4"
-           data-hero-src-mobile="assets/video/hero-mobile-web.mp4"
-           data-hero-rate="1.2">
-    <div class="film__stage">
-
-      <div class="film__media">
-        <img class="film__poster" src="assets/video/hero-poster.jpg"
-             width="1920" height="1080" fetchpriority="high" decoding="async"
-             alt="Sunrise over an American townhouse neighbourhood, seen from high above through golden haze.">
-        <!-- src is attached by JS only when autoplay is appropriate, so
-             reduced-motion visitors never download any video -->
-        <video class="film__video" data-hero-video
-               muted loop playsinline autoplay preload="auto"
-               disablepictureinpicture disableremoteplayback
-               tabindex="-1" aria-hidden="true"></video>
-        <div class="film__scrim" aria-hidden="true"></div>
-      </div>
-
-      <div class="film__content">
-        <div class="wrap film__copy">
-          <h1 id="hero-title">Solar without<br>the rooftop.</h1>
-          <p class="lede">Lightweight solar panels that plug into a regular outlet.</p>
-          <div class="actions">
-            <a class="btn btn--primary" href="#sizer">Find My System</a>
-            <a class="btn btn--ghost" href="#how">See How It Works</a>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </section>
-
-  <!-- ===================== WHY THIS EXISTS ===================== -->
-  <section class="section" id="why" aria-labelledby="why-title">
+<!-- 1. HERO: full-screen background video -->
+<section class="hero" id="top" aria-label="Introduction">
+  <div class="hero-media">
+    <img id="heroPoster" src="" alt="Townhomes at sunrise with plug-in solar panels on a deck railing" fetchpriority="high" decoding="async">
+    <video id="heroVideo" muted loop playsinline preload="none" disablepictureinpicture disableremoteplayback tabindex="-1" aria-hidden="true"></video>
+  </div>
+  <div class="hero-content">
     <div class="wrap">
-      <div class="section-head" data-reveal>
-        <p class="eyebrow">Why Terrace Solar</p>
-        <h2 id="why-title">Rooftop solar doesn&rsquo;t fit every home.</h2>
-        <p class="lede">A rented unit, a shared roof, a condo board, an unusable roofline &mdash; any of them can end the conversation before it starts. Terrace starts smaller and sizes around the space you actually have.</p>
+      <h1 data-bind="hero.headline">Solar for renters, condos and HOA communities.</h1>
+      <p class="hero-sub" data-bind="hero.subhead">No roof needed. Plug-in solar mounts on a balcony, patio or yard and plugs into a standard outlet.</p>
+      <div class="hero-ctas">
+        <a class="btn btn-sun" href="#kits">Find my kit</a>
+        <a class="btn btn-glass" href="#how">See how it works</a>
       </div>
-      <div class="fact-list" data-reveal>
-        <div class="fact-list__item"><b>Renters &amp; condos</b><span>A solar option that doesn&rsquo;t begin with permanently modifying the roof.</span></div>
-        <div class="fact-list__item"><b>Modular</b><span>Start with one kit, add more when you need it.</span></div>
-        <div class="fact-list__item"><b>Flexible placement</b><span>Sized around a balcony, patio or yard, not a fixed roof plane.</span></div>
+      <a class="hero-hoa" href="#hoa">Run an HOA or manage rentals? See our free community program</a>
+    </div>
+  </div>
+  <button class="vid-toggle" id="vidToggle" type="button" aria-label="Pause background video" hidden>
+    <svg id="icoPause" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><rect x="3" y="2" width="3.5" height="12" rx="1"/><rect x="9.5" y="2" width="3.5" height="12" rx="1"/></svg>
+    <svg id="icoPlay" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" hidden><path d="M4 2.5v11a.6.6 0 0 0 .9.5l9-5.5a.6.6 0 0 0 0-1l-9-5.5a.6.6 0 0 0-.9.5z"/></svg>
+  </button>
+</section>
+
+<!-- 2. NEW CALIFORNIA LAW -->
+<section class="sec alt law" id="law">
+  <div class="wrap">
+    <div class="head">
+      <p class="kicker">New California law</p>
+      <h2>California's plug-in solar law takes effect January 1, 2027.</h2>
+      <p class="lede">Governor Newsom signed <span data-bind="law.name">SB 868</span> on <span data-bind="law.signed">September 30, 2026</span>. It lets homes use small plug-in solar systems without the utility paperwork that rooftop solar needs.</p>
+    </div>
+    <ul class="law-facts">
+      <li><b>Up to 1,200 watts</b><span>per home, plugged into a standard outlet</span></li>
+      <li><b>No utility permission or fees</b><span>no interconnection application to SDG&amp;E</span></li>
+      <li><b>Certified equipment only</b><span>tested by UL or an equivalent lab</span></li>
+    </ul>
+    <p class="law-note">Live in an HOA or a managed community? Our <a href="#hoa">community program</a> helps your board or property manager approve plug-in solar for every resident. <span class="fine">General information, not legal advice.</span></p>
+  </div>
+</section>
+
+<!-- 3. WHAT IT IS AND WHO IT HELPS -->
+<section class="sec" id="what">
+  <div class="wrap">
+    <div class="head">
+      <p class="kicker">What it is</p>
+      <h2>Solar that works where rooftop solar can't.</h2>
+      <p class="lede">Plug-in solar is a small solar system that hangs on a railing or sits on a stand, and plugs into a regular outdoor outlet. No roof, no drilling, and it moves with you.</p>
+    </div>
+    <div class="who-grid">
+      <div class="who">
+        <div class="who-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V8l7-5 7 5v13"/><path d="M9 21v-6h6v6"/></svg></div>
+        <h3>Renters</h3>
+        <p>Nothing is wired into the building. When you move, unplug it and take it with you.</p>
+      </div>
+      <div class="who">
+        <div class="who-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="1"/><path d="M8 7h2M14 7h2M8 11h2M14 11h2M8 15h2M14 15h2"/></svg></div>
+        <h3>Condo and townhome owners</h3>
+        <p>No shared roof needed. A sunny balcony, patio or window ledge is enough.</p>
+      </div>
+      <div class="who">
+        <div class="who-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 21h20M4 21V11l4-3 4 3v10M12 21V7l4-3 4 3v14"/></svg></div>
+        <h3>HOA communities</h3>
+        <p>One approved standard and one vendor, so every system looks and works the same.</p>
       </div>
     </div>
-  </section>
-
-  <!-- ===================== WHERE IT GOES + HOW IT WORKS ===================== -->
-  <!-- Merged placement + connection story: one section, one job. Placement
-       imagery does most of the explaining; the flow diagram is typography
-       only, on purpose - a system diagram, not another photo gallery. -->
-  <section class="section flow-diagram conn" id="how" aria-labelledby="how-title" data-conn>
-    <div class="wrap">
-      <div class="section-head" data-reveal>
-        <p class="eyebrow">Where it goes, how it works</p>
-        <h2 id="how-title">Wherever there&rsquo;s sun<br><em>and an outlet.</em></h2>
-      </div>
-      <div class="placement__grid" data-reveal>
-        <figure class="placement__item">
-          <img src="assets/img/panel-single-stand.jpg" width="480" height="480" loading="lazy" decoding="async"
-               alt="Semi-flexible Terrace Solar panel on its stand.">
-          <b>Balconies &amp; railings</b>
-          <span>Lightweight panels mount without taking over the space.</span>
-        </figure>
-        <figure class="placement__item">
-          <img src="assets/img/panels-outdoor.jpg" width="1782" height="1189" loading="lazy" decoding="async"
-               alt="Semi-flexible Terrace Solar panels on low stands in a yard.">
-          <b>Patios &amp; yards</b>
-          <span>Stands on the ground, sized to the space you have.</span>
-        </figure>
-        <figure class="placement__item">
-          <img src="assets/img/panel-row-stands.jpg" width="800" height="400" loading="lazy" decoding="async"
-               alt="A row of semi-flexible Terrace Solar panels on stands.">
-          <b>More space, more panels</b>
-          <span>Bigger yards support a bigger system.</span>
-        </figure>
-      </div>
+    <div class="stat-band">
+      <span class="stat-num" data-bind="stat.value">44%</span>
+      <p><span data-bind="stat.label">of California households rent their home.</span> <span class="fine">Source: <span data-bind="stat.source"></span></span></p>
     </div>
+  </div>
+</section>
 
-    <div class="conn__stage">
+<!-- 4. THE EQUIPMENT (scroll-driven, one component per screen) -->
+<section class="reveal" id="system" aria-label="What's in the system">
+  <div class="wrap">
+    <div class="head">
+      <p class="kicker">The equipment</p>
+      <h2>Five parts. One simple system.</h2>
+      <p class="lede">Every kit comes as a matched set from one maker, so the parts are built and tested to work together.</p>
+    </div>
+  </div>
+  <div class="reveal-track" id="revealTrack" style="--n:5">
+    <div class="reveal-stage">
       <div class="wrap">
-        <ol class="modstep__list flowline__steps" data-conn-list>
-          <li class="modstep__item" data-conn-step>
-            <b>Panels</b>
-            <span>Make electricity.</span>
-          </li>
-          <li class="modstep__arrow" data-conn-arrow aria-hidden="true"></li>
-          <li class="modstep__item" data-conn-step>
-            <b>Microinverter</b>
-            <span>Makes it usable by the home.</span>
-          </li>
-          <li class="modstep__arrow" data-conn-arrow aria-hidden="true"></li>
-          <li class="modstep__item" data-conn-step>
-            <b>Outlet</b>
-            <span>Connects to a dedicated outdoor outlet.</span>
-          </li>
-        </ol>
-
-        <!-- Power meter is the measurement/control layer, not a fourth link in
-             the electricity chain - shown separately, not chained by an arrow. -->
-        <div class="flowline__storage" data-conn-storage>
-          <p class="flowline__storage-label">Power meter</p>
-          <p class="flowline__storage-sub">Watches what your home is using, so the system knows how much to produce.</p>
-        </div>
+        <article class="reveal-item is-active">
+          <div class="reveal-fig" data-img="reveal-panels" data-label="Photo: two thin CraftStrom bifacial solar panels"></div>
+          <div class="reveal-copy">
+            <p class="kicker">Panels</p>
+            <h3>Light enough to lift with one hand.</h3>
+            <p>Featherweight panels are thin and semi-flexible, with no heavy glass. Patio and Yard uses full-size glass panels on a ground stand.</p>
+            <div class="spec"><span class="chip">About 9 lbs each</span><span class="chip">Under 1/4 inch thick</span><span class="chip">Up to 1,200 W</span></div>
+          </div>
+        </article>
+        <article class="reveal-item">
+          <div class="reveal-fig" data-img="reveal-inverter" data-label="Photo: CraftStrom 400 W smart inverter"></div>
+          <div class="reveal-copy">
+            <p class="kicker">Inverter</p>
+            <h3>Turns sunlight into outlet power.</h3>
+            <p>Panels make one kind of electricity. Your home runs on another. An inverter is the small box that converts it, right at the panel.</p>
+          </div>
+        </article>
+        <article class="reveal-item">
+          <div class="reveal-fig" data-img="reveal-meter" data-label="Photo: CraftStrom PowerMeter with clamp-on sensors"></div>
+          <div class="reveal-copy">
+            <p class="kicker">Zero-export control</p>
+            <h3>Your power stays in your home.</h3>
+            <p>A small smart meter watches what your home is using, and the panels make only that much. Nothing gets pushed back onto the grid. That's what "zero-export" means.</p>
+          </div>
+        </article>
+        <article class="reveal-item">
+          <div class="reveal-fig" data-img="reveal-battery" data-label="Photo: CraftStrom battery towers on their smart base"></div>
+          <div class="reveal-copy">
+            <p class="kicker">Optional battery</p>
+            <h3>Save the afternoon sun for dinner time.</h3>
+            <p>A battery stores extra midday solar for the evening, when SDG&amp;E power costs the most. Its outlets can also run a few small devices in an outage.</p>
+            <div class="spec"><span class="chip">Featherweight kits</span><span class="chip">1 to 4 kWh</span></div>
+          </div>
+        </article>
+        <article class="reveal-item">
+          <div class="reveal-fig" data-img="reveal-app" data-label="Photo: phone showing the Mango Power app next to plug-in panels"></div>
+          <div class="reveal-copy">
+            <p class="kicker">The app</p>
+            <h3>Every watt, in your pocket.</h3>
+            <p>See what your panels make, what your home uses and what you saved, live, all day.</p>
+          </div>
+        </article>
+        <div class="reveal-dots" aria-hidden="true"><span class="on"></span><span></span><span></span><span></span><span></span></div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- ===================== SPOTLIGHT: PANELS ===================== -->
-  <section class="section spot" id="panels" aria-labelledby="sp-panels">
-    <div class="spot__inner">
-      <div class="spot__media">
-        <img src="assets/img/panels-outdoor.jpg" width="1782" height="1189" loading="lazy" decoding="async"
-             alt="Semi-flexible Terrace Solar panel resting on low stands on a lawn.">
-      </div>
-      <div class="spot__text">
-        <p class="eyebrow">Panels</p>
-        <h2 id="sp-panels">Solar that fits<br><em>your space.</em></h2>
-        <p class="spot__sub">Thin, semi-flexible panels &mdash; not the thick glass modules built for a roof. Light enough to carry and position by hand, on stands rather than bolted down.</p>
-        <div class="specrow">
-          <div><b>200&nbsp;W / 400&nbsp;W</b><i>panel options</i></div>
-        </div>
-      </div>
+<!-- 5. HOW IT WORKS -->
+<section class="sec alt" id="how">
+  <div class="wrap">
+    <div class="head">
+      <p class="kicker">How it works</p>
+      <h2>Three steps. No roof required.</h2>
     </div>
-  </section>
+    <ol class="steps">
+      <li class="step">
+        <div class="step-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="11" rx="1.5"/><path d="M9 4v11M15 4v11M3 9.5h18M8 21l2-6M16 21l-2-6"/></svg></div>
+        <h3>Mount it</h3>
+        <p>Hang the panels on a railing or set them on stands. No drilling into the building.</p>
+      </li>
+      <li class="step">
+        <div class="step-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2v5M15 2v5M6 7h12v4a6 6 0 0 1-12 0V7zM12 17v5"/></svg></div>
+        <h3>Plug it in</h3>
+        <p>Connect to a standard outdoor outlet and pair the app on your phone.</p>
+      </li>
+      <li class="step">
+        <div class="step-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></div>
+        <h3>Watch it save</h3>
+        <p>Your home uses the sun's power first, so you buy less from SDG&amp;E.</p>
+      </li>
+    </ol>
+  </div>
+</section>
 
-  <!-- ===================== BUILT AROUND SAN DIEGO ===================== -->
-  <!-- Rate/provider facts sourced in assets/products/rates-san-diego.json -
-       last_verified date kept in sync with the copy below by hand (static
-       site, no build step to inject JSON at compile time). -->
-  <section class="section section--ink" id="san-diego" aria-labelledby="sd-title">
-    <div class="wrap">
-      <div class="section-head" data-reveal>
-        <p class="eyebrow">San Diego County</p>
-        <h2 id="sd-title">Built around San Diego<br><em>homes and power bills.</em></h2>
-        <p class="lede">In San Diego, when you use electricity can matter almost as much as how much you use. SDG&amp;E&rsquo;s most expensive hours are typically late afternoon into evening; solar production peaks closer to midday. &ldquo;Find My System&rdquo; below uses your ZIP, your bill and San Diego&rsquo;s own rate structure &mdash; not a national average.</p>
-      </div>
-      <div class="fact-list" data-reveal>
-        <div class="fact-list__item"><b>SDG&amp;E delivers</b><span>Power countywide; San Diego, Chula Vista, La Mesa, Encinitas, National City and Imperial Beach also get generation through San Diego Community Power.</span></div>
-        <div class="fact-list__item"><b>Coastal vs. inland</b><span>Sun exposure changes what a system can realistically produce.</span></div>
-        <div class="fact-list__item"><b>Renters, condos and townhomes</b><span>Common across the county &mdash; sizing here often starts smaller than a typical rooftop quote.</span></div>
-      </div>
-      <p class="muted" style="font-size:0.82rem;margin-top:1.5rem;">Rate data last verified 2026-08-24 &middot; <a href="https://www.sdge.com/residential/pricing-plans/about-our-pricing-plans/whenmatters">SDG&amp;E</a> &middot; <a href="https://sdcommunitypower.org/residential-rates/2021v/">San Diego Community Power</a></p>
+<!-- 6. EASY TO INSTALL -->
+<section class="sec" id="install">
+  <div class="wrap">
+    <div class="head">
+      <p class="kicker">Installation</p>
+      <h2>Easy enough to set up yourself.</h2>
+      <p class="lede">No roof work, no rewiring, no crew. Mount the panels, plug in and pair the app.</p>
     </div>
-  </section>
-
-  <!-- ===================== FIND MY SYSTEM — SDG&E SOLAR SAVINGS CALCULATOR ===================== -->
-  <section class="section calc" id="sizer" aria-labelledby="calc-title" data-calc>
-    <div class="calc__card">
-      <div class="calc__head">
-        <h2 id="calc-title">Find my system.</h2>
-        <p class="calc__subhead">Tell us your ZIP and a little about your electric use. We&rsquo;ll show you a starting point.</p>
-      </div>
-
-      <div class="calc__body">
-
-        <!-- LEFT — inputs -->
-        <div class="calc__inputs">
-
-          <div class="calc__field">
-            <label class="calc__field-label" for="calc-zip">ZIP code</label>
-            <input class="calc__select" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="5"
-                   id="calc-zip" placeholder="92101" data-calc-input="zip" aria-describedby="calc-zip-hint">
-            <p class="calc__hint" id="calc-zip-hint" data-calc-out="zipHint" hidden>We&rsquo;re focused on San Diego County right now &mdash; this estimate uses San Diego assumptions regardless, so treat it as less precise outside the county.</p>
-          </div>
-
-          <div class="calc__field">
-            <div class="calc__field-head">
-              <span class="calc__field-label">Monthly electricity</span>
-              <div class="calc__mode-toggle" role="tablist" aria-label="Enter your electricity as">
-                <button type="button" class="calc__mode-btn is-active" data-calc-mode-btn="bill" role="tab" aria-selected="true">Bill</button>
-                <button type="button" class="calc__mode-btn" data-calc-mode-btn="usage" role="tab" aria-selected="false">Usage</button>
-              </div>
-            </div>
-
-            <div class="calc__mode-panel" data-calc-mode-panel="bill">
-              <output class="calc__bignum" data-calc-out="billDisplay">$175</output>
-              <input class="calc__range" type="range" id="calc-bill"
-                     min="50" max="600" step="5" value="175"
-                     data-calc-input="bill" aria-label="Monthly electric bill in dollars">
-            </div>
-
-            <div class="calc__mode-panel" data-calc-mode-panel="usage" hidden>
-              <output class="calc__bignum" data-calc-out="usageDisplay">600&nbsp;kWh</output>
-              <input class="calc__range" type="range" id="calc-usage"
-                     min="300" max="1500" step="10" value="600"
-                     data-calc-input="usage" aria-label="Monthly usage in kilowatt hours">
-            </div>
-          </div>
-
-          <div class="calc__field">
-            <label class="calc__field-label" for="calc-rate">Rate plan</label>
-            <select class="calc__select" id="calc-rate" data-calc-input="rate">
-              <option value="touDr1" selected>TOU-DR1</option>
-              <option value="touElec">TOU-ELEC</option>
-              <option value="flat">Flat / tiered</option>
-              <option value="other">Other</option>
-            </select>
-            <p class="calc__hint" data-calc-out="rateHint" hidden>Estimate will be less precise.</p>
-          </div>
-
-          <div class="calc__field">
-            <span class="calc__field-label">Where do you live?</span>
-            <div class="calc__segmented" role="tablist" aria-label="Where do you live">
-              <button type="button" class="calc__seg-btn is-active" data-calc-input="location" data-value="inland" role="tab" aria-selected="true">Inland SDG&amp;E</button>
-              <button type="button" class="calc__seg-btn" data-calc-input="location" data-value="coastal" role="tab" aria-selected="false">Coastal SDG&amp;E</button>
-            </div>
-          </div>
-
-          <div class="calc__field">
-            <span class="calc__field-label">System size</span>
-            <div class="calc__segmented calc__segmented--system" role="tablist" aria-label="System size">
-              <button type="button" class="calc__seg-btn" data-calc-input="system" data-value="balcony" role="tab" aria-selected="false">
-                <b>Balcony</b><i>800&nbsp;W</i>
-              </button>
-              <button type="button" class="calc__seg-btn is-active" data-calc-input="system" data-value="patio" role="tab" aria-selected="true">
-                <b>Patio / Townhome</b><i>1,200&nbsp;W</i>
-              </button>
-              <button type="button" class="calc__seg-btn" data-calc-input="system" data-value="custom" role="tab" aria-selected="false">
-                <b>Custom</b><i data-calc-out="customLabel">400&ndash;1,200&nbsp;W</i>
-              </button>
-            </div>
-            <input class="calc__range calc__range--custom" type="range" id="calc-custom-size"
-                   min="400" max="1200" step="50" value="800"
-                   data-calc-input="customSize" aria-label="Custom system size in watts" hidden>
-          </div>
-
-          <div class="calc__field calc__field--row">
-            <div>
-              <span class="calc__field-label">Add battery storage</span>
-              <p class="calc__field-sub">Store solar power to use after the sun goes down.</p>
-            </div>
-            <button type="button" class="calc__switch" data-calc-input="battery" aria-pressed="false" aria-label="Add battery storage">
-              <span class="calc__switch-track"><span class="calc__switch-thumb"></span></span>
-            </button>
-          </div>
-
-          <div class="calc__field">
-            <span class="calc__field-label">When is someone usually home?</span>
-            <div class="calc__segmented calc__segmented--three" role="tablist" aria-label="When is someone usually home">
-              <button type="button" class="calc__seg-btn" data-calc-input="occupancy" data-value="usuallyHome" role="tab" aria-selected="false">Usually home</button>
-              <button type="button" class="calc__seg-btn is-active" data-calc-input="occupancy" data-value="mixed" role="tab" aria-selected="true">Mixed</button>
-              <button type="button" class="calc__seg-btn" data-calc-input="occupancy" data-value="mostlyAway" role="tab" aria-selected="false">Mostly away</button>
-            </div>
-          </div>
-
-        </div>
-
-        <!-- RIGHT — results -->
-        <div class="calc__results" aria-live="polite">
-
-          <div class="calc__result-main">
-            <span class="calc__result-eyebrow">Your estimated avoided electricity cost</span>
-            <b class="calc__result-hero"><span data-calc-out="monthlyRange">$75&ndash;$90</span><i>/mo</i></b>
-            <span class="calc__result-annual" data-calc-out="annualRange">About $900&ndash;$1,050/year</span>
-          </div>
-
-          <div class="calc__compare" data-calc-compare hidden aria-hidden="true">
-            <div class="calc__compare-item">
-              <span>With storage</span>
-              <b data-calc-out="compareWith">&mdash;</b>
-            </div>
-            <span class="calc__compare-vs">vs.</span>
-            <div class="calc__compare-item">
-              <span>Without storage</span>
-              <b data-calc-out="compareWithout">&mdash;</b>
-            </div>
-          </div>
-
-          <div class="calc__grid">
-            <div class="calc__stat">
-              <span>Summer estimate</span>
-              <b data-calc-out="summerRange">&mdash;</b>
-            </div>
-            <div class="calc__stat">
-              <span>Winter / shoulder estimate</span>
-              <b data-calc-out="winterRange">&mdash;</b>
-            </div>
-            <div class="calc__stat">
-              <span>Your starting system</span>
-              <b data-calc-out="systemSize">&mdash;</b>
-            </div>
-            <div class="calc__stat">
-              <span>Battery</span>
-              <b data-calc-out="batteryStatus">Not included</b>
-            </div>
-            <div class="calc__stat">
-              <span>Estimated system cost</span>
-              <b data-calc-out="costRange">&mdash;</b>
-            </div>
-            <div class="calc__stat">
-              <span>Simple estimated payback</span>
-              <b data-calc-out="paybackRange">&mdash;</b>
-            </div>
-          </div>
-
-          <p class="calc__disclaimer">
-            Estimate only, based on SDG&amp;E's published TOU-DR1 rate structure (rates updated 2026-08-24). Actual savings depend on sunlight, shading, system placement, electricity use, rate plan and future utility rates. Solar mainly offsets electricity used while it's being produced, not SDG&amp;E's evening peak window - storage can shift some of that, not all of it.
-          </p>
-          <details class="calc__assumptions">
-            <summary>See assumptions</summary>
-            <ul>
-              <li>5.75 average peak sun hours per day, a regional average - not your actual sunlight.</li>
-              <li data-calc-out="assumeRate">Rate assumptions for the selected plan and location.</li>
-              <li>Production estimates include approximate system losses.</li>
-              <li data-calc-out="assumeOccupancy">Daytime usage share is an approximation, not a measurement of your home.</li>
-              <li data-calc-out="assumeBattery">Battery and self-consumption capture are approximated, not guaranteed.</li>
-              <li>Summer (Jun&ndash;Sep) and winter/shoulder (Oct&ndash;May) are calculated separately and blended, not averaged evenly.</li>
-              <li>This does not model future utility rate changes, incentives, financing or maintenance. No federal solar tax credit currently applies to a 2026 purchase (the 30% residential credit expired 2025-12-31).</li>
-            </ul>
-          </details>
-
-          <div class="calc__cta">
-            <p class="calc__cta-head">Refine your estimate</p>
-            <a class="btn btn--primary" href="mailto:hello@terracesolar.com?subject=Terrace%20Solar%20bill%20review">Review my bill</a>
-            <p class="calc__cta-sub">Use your actual electricity usage and available solar space.</p>
-          </div>
-
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===================== SPOTLIGHT: BATTERY ===================== -->
-  <!-- Outage behaviour: grid-connected solar must stop exporting when the grid
-       goes down (anti-islanding, for lineworker safety) - only the battery's
-       own backup outlets keep working, and only for directly connected
-       devices, never the whole home. Do not imply whole-home backup. -->
-  <section class="section spot" id="storage" aria-labelledby="sp-batt">
-    <div class="spot__inner">
-      <div class="spot__media">
-        <img src="assets/img/battery-home.jpg" width="1920" height="1080" loading="lazy" decoding="async"
-             alt="Terrace Solar battery storage unit standing on a wooden floor in a living room.">
-      </div>
-      <div class="spot__text">
-        <p class="eyebrow">Storage &mdash; optional</p>
-        <h2 id="sp-batt">What battery<br><em>adds.</em></h2>
-        <p class="spot__sub">Solar works on its own. A battery adds three things.</p>
-        <div class="fact-list">
-          <div class="fact-list__item"><b>Use now</b><span>Solar offsets what your home is using while it&rsquo;s being produced.</span></div>
-          <div class="fact-list__item"><b>Save for later</b><span>Stored energy can be used after the sun goes down.</span></div>
-          <div class="fact-list__item"><b>Backup</b><span>The battery&rsquo;s own outlets can power select devices during an outage. Solar itself shuts off during an outage, for safety.</span></div>
-        </div>
-        <div class="specrow">
-          <div><b>1&nbsp;kWh</b><i>capacity per unit</i></div>
-          <div><b>400&nbsp;W</b><i>grid-connected output per unit</i></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="wrap" data-reveal>
-      <div class="useit__storage useit__storage--standalone">
-        <p class="useit__storage-label">What can storage help power?</p>
-
-        <fieldset class="useit__sizes">
-          <legend class="sr-only">Storage size</legend>
-          <div class="steps-chips">
-            <label class="step-chip"><input type="radio" name="useit-size" value="1" checked><span>1&nbsp;kWh</span></label>
-            <label class="step-chip"><input type="radio" name="useit-size" value="2"><span>2&nbsp;kWh</span></label>
-            <label class="step-chip"><input type="radio" name="useit-size" value="4"><span>4&nbsp;kWh</span></label>
-          </div>
-        </fieldset>
-
-        <p class="useit__tier-label" data-useit-tier-label>Everyday essentials</p>
-
-        <ul class="useit__loads" data-useit-loads>
-          <li data-load="router">
-            <svg class="useit__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8.5a15 15 0 0 1 18 0"/><path d="M6.5 12.5a10 10 0 0 1 11 0"/><path d="M10 16.5a5 5 0 0 1 4 0"/><circle cx="12" cy="20" r="1"/></svg>
-            <span class="useit__load-label">Wi-Fi + router</span>
-            <b class="useit__load-runtime" data-runtime></b>
-          </li>
-          <li data-load="lighting">
-            <svg class="useit__icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="10" r="6"/><line x1="9" y1="21" x2="15" y2="21"/><line x1="12" y1="16" x2="12" y2="21"/></svg>
-            <span class="useit__load-label">LED lighting</span>
-            <b class="useit__load-runtime" data-runtime></b>
-          </li>
-          <li data-load="laptop">
-            <svg class="useit__icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="1.5"/><line x1="2" y1="20" x2="22" y2="20"/></svg>
-            <span class="useit__load-label">Laptop</span>
-            <b class="useit__load-runtime" data-runtime></b>
-          </li>
-          <li data-load="security">
-            <svg class="useit__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 5 5v6c0 5 3 8.5 7 9 4-.5 7-4 7-9V5z"/></svg>
-            <span class="useit__load-label">Security system</span>
-            <b class="useit__load-runtime" data-runtime></b>
-          </li>
-          <li data-load="tv">
-            <svg class="useit__icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4" width="20" height="13" rx="1.5"/><line x1="8" y1="20" x2="16" y2="20"/><line x1="12" y1="17" x2="12" y2="20"/></svg>
-            <span class="useit__load-label">TV</span>
-            <b class="useit__load-runtime" data-runtime></b>
-          </li>
-          <li data-load="desktop">
-            <svg class="useit__icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="3" width="12" height="18" rx="1.5"/><line x1="9" y1="7" x2="15" y2="7"/><circle cx="12" cy="16" r="1.5"/></svg>
-            <span class="useit__load-label">Desktop / electronics</span>
-            <b class="useit__load-runtime" data-runtime></b>
-          </li>
+    <div class="install-grid">
+      <div class="opt">
+        <div data-img="install-video" data-label="Photo: plug-in solar panel on a stand, plugged into an outdoor outlet"></div>
+        <div class="opt-top"><h3>Do it yourself</h3><span class="tag">Included</span></div>
+        <ul>
+          <li>Step-by-step instructions in the box</li>
+          <li>How-to videos from the manufacturer</li>
+          <li>Phone and text help from our local team</li>
         </ul>
-        <p class="useit__loads-caption">Illustrative estimates. Actual runtime depends on the device, battery charge, system losses and how equipment is used.</p>
+        <div class="box"><h4>What you'll need</h4><ul><li>A spot that gets several hours of direct sun</li><li>An outdoor outlet nearby</li><li>2.4 GHz Wi-Fi for the app</li></ul></div>
+      </div>
+      <div class="opt" id="installInterest">
+        <div class="opt-top"><h3>Professional installation</h3><span class="tag">Help us decide</span></div>
+        <p>Would you like someone to set it up for you? Tell us below. If enough people ask, we'll add it.</p>
+        <fieldset class="field">
+          <legend>Would you want professional installation?</legend>
+          <div class="seg">
+            <input type="radio" name="ii" id="ii-yes" value="yes"><label for="ii-yes">Yes</label>
+            <input type="radio" name="ii" id="ii-maybe" value="maybe"><label for="ii-maybe">Maybe</label>
+            <input type="radio" name="ii" id="ii-no" value="no"><label for="ii-no">No thanks</label>
+          </div>
+        </fieldset>
+        <fieldset class="field" id="ipWrap" hidden>
+          <legend>What would feel like a fair price?</legend>
+          <div class="seg" id="ipSeg"></div>
+        </fieldset>
+        <p class="thanks" id="ipThanks" role="status" hidden>Thanks, we counted your answer. It doesn't change your order or price.</p>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- ===================== SHOP / CONFIGURATOR ===================== -->
-  <!-- Panel/microinverter counts per size are the documented 400&nbsp;W kit ratio
-       (2 panels + 1 microinverter per 400&nbsp;W - brochure p.8) applied across
-       the documented size ladder (400-2000&nbsp;W, p.2/p.6). This ladder has NOT
-       been reconciled against CraftStrom's current public kit names (see
-       products.json market_research_2026.craftstrom_current_public_kit_lineup -
-       flagged as an unresolved conflict, not silently fixed.
-       Battery unit count = kWh selected 1:1, per products.json
-       (capacity_per_unit_kwh: 1) - not a fabricated relationship. -->
-  <section class="section shop" id="shop" aria-labelledby="shop-title">
-    <div class="wrap">
-      <div class="section-head">
-        <p class="eyebrow">Shop</p>
-        <h2 id="shop-title">Configure your system.</h2>
-        <p class="lede">Choose your solar. Add storage if you want it.</p>
-      </div>
-
-      <div class="ready-check" data-reveal>
-        <p class="ready-check__label">Before you choose a system</p>
-        <div class="fact-list">
-          <div class="fact-list__item"><b>Sunny space</b><span>Room for the panels.</span></div>
-          <div class="fact-list__item"><b>Compatible outlet</b><span>Circuit requirements depend on the setup.</span></div>
-          <div class="fact-list__item"><b>Breaker-panel access</b><span>Needed for the Power Meter.</span></div>
-          <div class="fact-list__item"><b>2.4&nbsp;GHz Wi-Fi</b><span>Used for setup and monitoring.</span></div>
+<!-- 7. SAVINGS CALCULATOR -->
+<section class="sec alt" id="savings">
+  <div class="wrap">
+    <div class="head">
+      <p class="kicker">Savings calculator</p>
+      <h2>How much could you save?</h2>
+      <p class="lede">Slide to your usual SDG&amp;E bill and see what you could save, starting the day you plug in.</p>
+    </div>
+    <div class="calc-grid">
+      <form class="calc-form" id="calcForm" onsubmit="return false">
+        <div class="field">
+          <label for="bill">About how much is your monthly SDG&amp;E bill?</label>
+          <div class="bill-row"><output class="bill-val" id="billVal" for="bill">$350</output><span class="fine" id="billKwh"></span></div>
+          <input class="range" type="range" id="bill" min="50" max="600" step="10" value="350">
+          <div class="range-scale fine"><span>$50</span><span>$600+</span></div>
         </div>
-        <p class="muted" style="font-size:0.85rem;margin-top:1rem;">Adding storage may require an additional compatible circuit.</p>
-      </div>
-
-      <ol class="shop__progress" data-shop-progress aria-label="Configuration steps">
-        <li class="shop__progress-step is-active" data-progress-step="1"><span class="shop__progress-n">1</span>Solar</li>
-        <li class="shop__progress-arrow" aria-hidden="true"></li>
-        <li class="shop__progress-step" data-progress-step="2"><span class="shop__progress-n">2</span>Storage</li>
-        <li class="shop__progress-arrow" aria-hidden="true"></li>
-        <li class="shop__progress-step" data-progress-step="3"><span class="shop__progress-n">3</span>Review</li>
-      </ol>
-
-      <form class="shop__form" data-shop novalidate>
-
-        <fieldset class="shop__step" data-shop-fieldset="1">
-          <legend>Choose your solar size</legend>
-          <div class="shop__options shop__options--solar">
-            <label class="shop__option">
-              <input type="radio" name="shop-size" value="400" data-panels="2" data-inverters="1">
-              <span class="shop__option-card"><b class="shop__option-size">400&nbsp;W</b><span class="shop__option-spec">2 panels &middot; 1 microinverter</span></span>
-            </label>
-            <label class="shop__option">
-              <input type="radio" name="shop-size" value="800" data-panels="4" data-inverters="2" checked>
-              <span class="shop__option-card"><b class="shop__option-size">800&nbsp;W</b><span class="shop__option-spec">4 panels &middot; 2 microinverters</span></span>
-            </label>
-            <label class="shop__option">
-              <input type="radio" name="shop-size" value="1200" data-panels="6" data-inverters="3">
-              <span class="shop__option-card"><b class="shop__option-size">1,200&nbsp;W</b><span class="shop__option-spec">6 panels &middot; 3 microinverters</span></span>
-            </label>
-            <label class="shop__option">
-              <input type="radio" name="shop-size" value="1600" data-panels="8" data-inverters="4">
-              <span class="shop__option-card"><b class="shop__option-size">1,600&nbsp;W</b><span class="shop__option-spec">8 panels &middot; 4 microinverters</span></span>
-            </label>
-            <label class="shop__option">
-              <input type="radio" name="shop-size" value="2000" data-panels="10" data-inverters="5">
-              <span class="shop__option-card"><b class="shop__option-size">2,000&nbsp;W</b><span class="shop__option-spec">10 panels &middot; 5 microinverters</span></span>
-            </label>
+        <fieldset class="field">
+          <legend>Where would the panels go?</legend>
+          <div class="seg">
+            <input type="radio" name="space" id="sp-bal" value="balcony" checked><label for="sp-bal">Balcony</label>
+            <input type="radio" name="space" id="sp-win" value="window"><label for="sp-win">Window ledge</label>
+            <input type="radio" name="space" id="sp-pat" value="patio"><label for="sp-pat">Patio or yard</label>
           </div>
         </fieldset>
-
-        <fieldset class="shop__step" data-shop-fieldset="2">
-          <legend>Add storage <span class="step__badge">Optional</span></legend>
-          <div class="shop__options shop__options--storage">
-            <label class="shop__option">
-              <input type="radio" name="shop-batt" value="0" checked>
-              <span class="shop__option-card"><b>None</b></span>
-            </label>
-            <label class="shop__option">
-              <input type="radio" name="shop-batt" value="1">
-              <span class="shop__option-card"><b>1&nbsp;kWh</b><span class="shop__option-spec">1 battery unit</span></span>
-            </label>
-            <label class="shop__option">
-              <input type="radio" name="shop-batt" value="2">
-              <span class="shop__option-card"><b>2&nbsp;kWh</b><span class="shop__option-spec">2 battery units</span></span>
-            </label>
-            <label class="shop__option">
-              <input type="radio" name="shop-batt" value="3">
-              <span class="shop__option-card"><b>3&nbsp;kWh</b><span class="shop__option-spec">3 battery units</span></span>
-            </label>
-            <label class="shop__option">
-              <input type="radio" name="shop-batt" value="4">
-              <span class="shop__option-card"><b>4&nbsp;kWh</b><span class="shop__option-spec">4 battery units</span></span>
-            </label>
-          </div>
-        </fieldset>
-
-        <div class="shop__summary" aria-live="polite">
-          <p class="shop__summary-eyebrow">Your system</p>
-          <p class="shop__summary-headline">
-            <b data-shop-out="size">800&nbsp;W</b> Solar
-            <span class="shop__summary-sep">&middot;</span>
-            <b data-shop-out="storage">None</b> Storage
-          </p>
-
-          <div class="shop__includes">
-            <p class="shop__includes-label">Includes</p>
-            <ul class="shop__includes-list">
-              <li data-shop-out="panelsLabel">4 &times; 200&nbsp;W panels</li>
-              <li data-shop-out="invertersLabel">2 &times; microinverters</li>
-              <li>Connection hardware</li>
-              <li>Power meter</li>
-              <li data-battery-line hidden data-shop-out="batteryLabel">1 battery unit</li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="shop__cta-block">
-          <p class="shop__pricing-line">Pricing coming soon</p>
-          <a class="btn btn--primary shop__cta" href="mailto:hello@terracesolar.com?subject=Terrace%20Solar%20availability">Check availability</a>
-          <a class="shop__help" href="#faq">Need help choosing?</a>
-        </div>
+        <label class="switch" for="calcBattery">
+          <span><b>Add a 1 kWh battery</b><br><span class="fine">Store midday sun for the evening.</span></span>
+          <input type="checkbox" id="calcBattery"><span class="track" aria-hidden="true"></span>
+        </label>
+        <label class="switch" for="care">
+          <span><b>I get a CARE or FERA discount</b><br><span class="fine">It's listed on your SDG&amp;E bill if you have one.</span></span>
+          <input type="checkbox" id="care"><span class="track" aria-hidden="true"></span>
+        </label>
       </form>
+      <div class="calc-out" id="calcOut" aria-live="polite"></div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- ===================== QUESTIONS ===================== -->
-  <section class="section" id="faq" aria-labelledby="faq-title">
-    <div class="wrap">
-      <div class="section-head">
-        <p class="eyebrow">Questions</p>
-        <h2 id="faq-title">What to know before you order.</h2>
+<!-- 8. CHOOSE YOUR KIT -->
+<section class="sec" id="kits">
+  <div class="wrap">
+    <div class="head">
+      <p class="kicker">Choose your kit</p>
+      <h2>Two lines. Pick the one that fits your space.</h2>
+      <p style="margin-top:18px"><span class="tag" id="sampleTag" hidden>Estimated pricing</span></p>
+    </div>
+    <div class="kit-grid" id="kitGrid"></div>
+    <div class="summary">
+      <div>
+        <b id="sumName">Featherweight 1,200 W</b>
+        <p class="fine" id="sumNote"></p>
       </div>
-      <div class="faq">
-        <details><summary>Can I start with a smaller system?</summary>
-          <div><p>Yes. The smallest system is 400&nbsp;W: two panels and one microinverter.</p></div></details>
-        <details><summary>Can I add more later?</summary>
-          <div><p>Yes. Systems grow in 400&nbsp;W steps. Storage grows by adding units, up to 4&nbsp;kWh per set. Expansion is limited by your circuit and by local rules - confirm before assuming unlimited growth.</p></div></details>
-        <details><summary>Do I need a battery?</summary>
-          <div><p>No. Solar works on its own. A battery lets you use more of what you make, after the sun goes down, and adds limited backup for select devices during an outage.</p></div></details>
-        <details><summary>Where can the panels go?</summary>
-          <div><p>Balconies, patios, yards and railings. The panels are semi-flexible and sit on stands rather than being bolted to a roof.</p></div></details>
-        <details><summary>How does it connect to my home?</summary>
-          <div><p>Panels connect to a microinverter, which connects to a dedicated outdoor outlet. A power meter watches what your home is using so the system can match its output. Some setups need a Smart Breaker instead of a dedicated outlet - we'll help confirm which applies to you.</p></div></details>
-        <details><summary>What happens during a power outage?</summary>
-          <div><p>Grid-connected solar shuts off during an outage, for safety. If you have battery storage, its own backup outlets can keep select directly-connected devices running - this is not whole-home backup.</p></div></details>
-        <details><summary>Is this legal to install without a permit in California?</summary>
-          <div><p>Not guaranteed yet. A bill that would streamline small plug-in solar systems (SB&nbsp;868) has passed the State Senate and is moving through the Assembly, but it is not law as of this writing. Permit, HOA and utility requirements currently still depend on your address - confirm locally before ordering.</p></div></details>
-        <details><summary>Can I move the system?</summary>
-          <div><p>The panels sit on stands and the battery plugs into an outlet, so components are not permanently fixed to the building. Moving a system is a question for your installer and your local rules.</p></div></details>
-        <details><summary>What rules or approvals may apply?</summary>
-          <div><p>Requirements depend on your address: your local electrical and building rules, your utility, and your building, landlord or HOA policy. Confirm these locally, and use a licensed electrician where required, before ordering.</p></div></details>
+      <div class="sum-right"><span class="sum-price" id="sumPrice"></span>
+      <a class="btn btn-sun js-reserve" href="#reserve" data-cta="long">Reserve my kit</a></div>
+    </div>
+  </div>
+</section>
+
+<!-- 9. FOR HOAs AND PROPERTY MANAGERS -->
+<section class="sec hoa" id="hoa">
+  <div class="wrap">
+    <div class="head">
+      <p class="kicker">For HOAs and property managers</p>
+      <h2>Plug-in solar is coming to your community in January.</h2>
+      <p class="lede">Set the rules now and let one vendor handle it. Our community standards program costs your association nothing.</p>
+    </div>
+    <div class="hoa-grid">
+      <ol class="hoa-steps">
+        <li><div><h3>We draft your standard</h3><p>A ready-to-adopt policy that covers where panels can go, how they mount, weight limits, certified equipment and zero-export control.</p></div></li>
+        <li><div><h3>Your board adopts it</h3><p>We present to your board or management team and answer every question, before residents start buying systems on their own.</p></div></li>
+        <li><div><h3>We handle the residents</h3><p>Residents who qualify buy approved systems from us. We confirm each setup fits your standard before it ships.</p></div></li>
+      </ol>
+      <div class="hoa-why">
+        <h3>Why boards say yes</h3>
+        <ul>
+          <li>Free to the association</li>
+          <li>One vendor to call, not dozens of online products</li>
+          <li>Lightweight railing panels with no heavy glass</li>
+          <li>A consistent look across the community</li>
+          <li>Certified components with zero-export control</li>
+        </ul>
+        <a class="btn btn-sun js-hoa" href="#reserve">Book a free HOA briefing</a>
       </div>
     </div>
-  </section>
+  </div>
+</section>
+
+<!-- 10. SAFETY AND TRUST -->
+<section class="sec" id="trust">
+  <div class="wrap">
+    <div class="head">
+      <p class="kicker">Safety and trust</p>
+      <h2>Safe on day one, and year ten.</h2>
+    </div>
+    <div class="trust-grid">
+      <div class="trust">
+        <h3>Certified components</h3>
+        <p>Every kit is sold as a complete, matched system from one maker. We never mix panels and inverters from different brands.</p>
+        <ul id="certList"></ul>
+      </div>
+      <div class="trust">
+        <h3>Zero-export protection</h3>
+        <p>Your system makes just the power your home is using and keeps it all inside your home. It also shuts off automatically if the grid goes down, so line workers stay safe.</p>
+      </div>
+      <div class="trust">
+        <h3>Real warranties</h3>
+        <ul id="warrantyList"></ul>
+      </div>
+    </div>
+    <div class="badges" id="badges">
+      <div class="badge"><span data-img="badge-craftstrom" data-badge="1"><i aria-hidden="true">&#10003;</i></span>Authorized CraftStrom Distributor</div>
+      <div class="badge"><span data-img="badge-mango" data-badge="1"><i aria-hidden="true">&#10003;</i></span>Authorized Mango Power Distributor</div>
+      <div class="badge"><i aria-hidden="true">SD</i>Local San Diego business</div>
+    </div>
+  </div>
+</section>
+
+<!-- 11. FAQ -->
+<section class="sec alt" id="faq">
+  <div class="wrap faq-grid">
+    <div class="head">
+      <p class="kicker">FAQ</p>
+      <h2>Good questions.</h2>
+      <p class="lede">Still curious? Text us at <a class="js-sms" href="#">(619) 961-7234</a>.</p>
+    </div>
+    <div>
+      <details><summary>Is plug-in solar legal in California?</summary>
+        <div class="ans">Yes, starting January 1, 2027. SB 868 lets homes use certified plug-in systems up to 1,200 watts with no utility permission or fees. The current law runs through January 1, 2030, and lawmakers can extend it. Lease and HOA rules still apply, and our community program helps HOAs and property managers set simple rules residents can follow.</div></details>
+      <details><summary>Will it work in my apartment?</summary>
+        <div class="ans">If you have a balcony, patio, yard or window ledge that gets several hours of direct sun and an outdoor outlet nearby, likely yes. South and west facing spots work best. Our free bill review will tell you for sure.</div></details>
+      <details><summary>Do I need my landlord's or HOA's permission?</summary>
+        <div class="ans">Usually it's a quick OK. Your lease and HOA rules still apply, so we make it easy. If your community has adopted a Terrace Solar standard, our systems already meet it. If not, point your board or property manager to our community program and we'll work with them directly.</div></details>
+      <details><summary>I'm on an HOA board. How does the community program work?</summary>
+        <div class="ans">We write a plug-in solar standard for your community, present it to your board, and become the vendor residents buy approved systems from. There is no cost to the association. Book a free briefing below.</div></details>
+      <details><summary>Does it send power to the grid?</summary>
+        <div class="ans">No. Every kit includes zero-export control. A smart meter watches your home's use, and the system only makes what your home can use right then. With Featherweight, extra midday power can go into an optional battery.</div></details>
+      <details><summary>What if I move?</summary>
+        <div class="ans">Unplug it and take it with you. Nothing is wired into the building, so it goes where you go.</div></details>
+      <details><summary>How much will I save?</summary>
+        <div class="ans">Every kilowatt-hour your panels make is one you don't buy from SDG&amp;E, and San Diego pays some of the highest electricity prices in the country. Slide the calculator above to your bill for an estimate, or book a free bill review for a personal number.</div></details>
+      <details><summary>Is it safe?</summary>
+        <div class="ans">Kits use certified components, plug into a standard outdoor outlet, and shut off automatically if the grid goes down. Featherweight panels have no heavy glass, which matters on a railing.</div></details>
+      <details><summary>What is the warranty?</summary>
+        <div class="ans" id="faqWarranty"></div></details>
+      <details><summary>Do I need an electrician?</summary>
+        <div class="ans">Usually not. Most homes simply plug into an outdoor outlet. If yours needs a dedicated outlet added, any licensed electrician can do it, and we'll tell you exactly what to ask for.</div></details>
+    </div>
+  </div>
+</section>
+
+<!-- 12. FINAL CTA + LEAD FORM -->
+<section class="sec final" id="reserve">
+  <div class="wrap final-grid">
+      <div class="head">
+        <p class="kicker">Get started</p>
+        <h2>Reserve your kit today.</h2>
+        <p class="lede">Three ways in. No pressure either way.</p>
+      </div>
+      <div class="paths">
+        <div class="path"><i>1</i><div><b>Reserve with a <span class="js-deposit">$100</span> refundable deposit</b><p>Hold your kit at today's price. Fully refundable until it ships.</p></div></div>
+        <div class="path"><i>2</i><div><b>Book a free 10-minute bill review</b><p>Send us your SDG&amp;E usage. We'll tell you honestly if plug-in solar makes sense.</p></div></div>
+        <div class="path"><i>3</i><div><b>HOA or property manager?</b><p>Book a free briefing on the community standards program for your board or team.</p></div></div>
+      </div>
+    <form class="form" id="leadForm" name="lead" method="POST" data-netlify="true" netlify-honeypot="bot-field" novalidate>
+      <input type="hidden" name="form-name" value="lead">
+      <p hidden><label>Leave this empty <input name="bot-field"></label></p>
+      <fieldset>
+        <legend class="sr">What would you like to do?</legend>
+        <div class="seg">
+          <input type="radio" name="intent" id="in-res" value="reserve" checked><label for="in-res">Reserve a kit</label>
+          <input type="radio" name="intent" id="in-rev" value="bill-review"><label for="in-rev">Free bill review</label>
+          <input type="radio" name="intent" id="in-hoa" value="hoa-briefing"><label for="in-hoa">HOA briefing</label>
+        </div>
+      </fieldset>
+      <div class="row">
+        <div><label for="f-name">Name</label><input class="input" id="f-name" name="name" autocomplete="name" required></div>
+        <div><label for="f-email">Email</label><input class="input" id="f-email" name="email" type="email" autocomplete="email" required></div>
+      </div>
+      <div class="row">
+        <div><label for="f-phone">Phone</label><input class="input" id="f-phone" name="phone" type="tel" autocomplete="tel" required></div>
+        <div><label for="f-zip">ZIP code</label><input class="input" id="f-zip" name="zip" inputmode="numeric" autocomplete="postal-code" maxlength="5" required></div>
+      </div>
+      <div class="row" id="rowResident">
+        <div><label for="f-bill">Monthly SDG&amp;E bill, $ <span style="opacity:.6">(optional)</span></label><input class="input" id="f-bill" name="monthly_bill" type="number" inputmode="numeric" min="0"></div>
+        <div><label for="f-space">Space type</label>
+          <select class="input" id="f-space" name="space">
+            <option value="balcony">Balcony</option><option value="window">Window ledge</option><option value="patio">Patio or yard</option><option value="not-sure">Not sure</option>
+          </select></div>
+      </div>
+      <div class="row" id="rowHoa" hidden>
+        <div><label for="f-community">Community or company</label><input class="input" id="f-community" name="community" autocomplete="organization"></div>
+        <div><label for="f-units">Number of units</label><input class="input" id="f-units" name="units" type="number" inputmode="numeric" min="1"></div>
+      </div>
+      <input type="hidden" name="kit" id="f-kit">
+      <input type="hidden" name="kit_total" id="f-total">
+      <input type="hidden" name="install_interest" id="f-install">
+      <p class="err" id="formErr" role="alert"></p>
+      <button class="btn btn-sun" type="submit" id="formBtn">Reserve my kit</button>
+      <p class="fine">Prefer to text? Send us a message at <a class="js-sms" href="#">(619) 961-7234</a>. We'll only use your info to contact you about your request. No spam, ever.</p>
+      <div class="form-ok" role="status">
+        <h3>You're on the list.</h3>
+        <p style="color:#B8C0CC">We'll reach out within one business day.</p>
+      </div>
+    </form>
+  </div>
+</section>
 
 </main>
 
-<footer class="site-footer">
-  <div class="wrap">
-    <div class="grid">
-      <div>
-        <a class="brand" href="#top" style="margin-bottom:1rem">
-          <!-- always the cream lockup: the page is dark in every scheme now -->
-          <img src="assets/brand/terrace-solar-lockup-dark.png" width="640" height="270" alt="Terrace Solar">
-        </a>
-        <p style="max-width:34ch">
-          Plug-in solar for San Diego County homes, built around ultra-thin, semi-flexible panels.
-        </p>
-      </div>
-      <div>
-        <h3>Product</h3>
-        <ul>
-          <li><a href="#panels">The panel</a></li>
-          <li><a href="#shop">Configure a system</a></li>
-          <li><a href="#how">How it works</a></li>
-          <li><a href="#storage">Storage</a></li>
-        </ul>
-      </div>
-      <div>
-        <h3>Support</h3>
-        <ul>
-          <li><a href="#san-diego">San Diego County</a></li>
-          <li><a href="#faq">FAQ</a></li>
-          <li><a href="#sources">Sources and attribution</a></li>
-        </ul>
-      </div>
-      <div>
-        <h3>Contact</h3>
-        <ul>
-          <li><a href="#shop">Request availability</a></li>
-        </ul>
-      </div>
+<footer>
+  <div class="wrap foot-grid">
+    <div>
+      <a class="logo" href="#top" aria-label="Terrace Solar, back to top" id="footLogo"><img class="foot-logo" src="assets/brand/terrace-solar-full-dark.png" width="900" height="443" alt="Terrace Solar. Resident friendly, HOA compliant, energy smart." loading="lazy"></a>
+      <p class="foot-contact">Text us: <a class="js-sms" href="#">(619) 961-7234</a><br><a class="js-mail" href="#">hello@terracesolar.com</a></p>
     </div>
-
-    <div class="colophon" id="sources">
-      <p>
-        Product information sourced from CraftStrom Solar, the manufacturer, and independently
-        verified market/regulatory research where noted. This is not an offer of sale, and no
-        price shown is final. Whether this equipment may be installed and connected at a given
-        address depends on local electrical and building codes, utility interconnection rules,
-        and landlord, HOA or building policy &mdash; confirm those locally and use a licensed
-        electrician where required. California&rsquo;s SB&nbsp;868 (small plug-in solar) is not
-        yet law; no permit-free or no-approval claim is made for any jurisdiction.
-      </p>
-      <p style="margin-top:0.75rem">Terrace Solar &mdash; retailer. CraftStrom &mdash; equipment source. Terrace Solar is not represented as an authorized CraftStrom dealer or partner unless and until that relationship is confirmed.</p>
+    <div>
+      <p>Plug-in solar and HOA community standards for <span data-bind="brand.serviceArea">San Diego County</span>.</p>
+      <p>Savings shown are estimates. Actual results vary with sunlight, placement, your electricity use and your rate plan.</p>
+      <p>Whether a plug-in solar system may be used at a given address depends on state law, local electrical and building codes, your utility, and your lease or HOA rules. Customers install their own systems. Nothing here is legal advice.</p>
+      <p>CraftStrom and Mango Power are trademarks of their respective owners. Product specs are from each manufacturer and may change.</p>
+      <p>&copy; <span id="yr"></span> Terrace Solar</p>
     </div>
   </div>
 </footer>
 
-<script src="assets/js/site.js" defer></script>
+<!-- Mobile sticky buy bar -->
+<div class="buybar" id="buybar" aria-label="Your selected kit">
+  <a class="icon-btn js-sms" href="#" aria-label="Text us at (619) 961-7234"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></a>
+  <div class="bb-info"><div class="bb-name" id="bbName">Featherweight 1,200 W</div><div class="bb-total" id="bbTotal">$0</div></div>
+  <a class="btn btn-sun js-reserve" href="#reserve" data-cta="short">Reserve</a>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var C = window.SITE_CONFIG;
+  var $ = function(s, el){ return (el || document).querySelector(s); };
+  var $$ = function(s, el){ return Array.prototype.slice.call((el || document).querySelectorAll(s)); };
+  var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var isSet = function(v){ return typeof v === "string" && v.trim() !== "" && !/^\[.*\]$/.test(v.trim()); };
+  var money = function(n){ return "$" + Math.round(n).toLocaleString("en-US"); };
+  var get = function(path){ return path.split(".").reduce(function(o, k){ return o == null ? o : o[k]; }, C); };
+  var digits = function(s){ return String(s || "").replace(/[^\d+]/g, ""); };
+  var esc = function(s){ return String(s).replace(/[&<>"]/g, function(c){ return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); };
+
+  /* ---------- Text bindings and contact links ---------- */
+  $$("[data-bind]").forEach(function(el){ var v = get(el.dataset.bind); if (v != null && v !== "") el.textContent = v; });
+  $$(".js-tel").forEach(function(a){ a.href = "tel:" + digits(C.brand.phone); if (!a.classList.contains("icon-btn")) a.textContent = C.brand.phone; });
+  $$(".js-sms").forEach(function(a){ a.href = "sms:" + digits(C.brand.smsPhone); if (!a.classList.contains("icon-btn")) a.textContent = C.brand.smsPhone; });
+  $$(".js-mail").forEach(function(a){ a.href = "mailto:" + C.brand.email; a.textContent = C.brand.email; });
+  $$("[data-cta]").forEach(function(el){ el.textContent = el.dataset.cta === "long" ? C.purchase.ctaTextLong : C.purchase.ctaText; });
+  $$(".js-deposit").forEach(function(el){ el.textContent = money(C.purchase.depositAmount); });
+  $("#yr").textContent = new Date().getFullYear();
+  if (C.pricesAreSamples) $("#sampleTag").hidden = false;
+
+  /* ---------- Images: real image if set, labeled placeholder if not ---------- */
+  function fillImg(el){
+    var url = C.images[el.dataset.img];
+    if (el.dataset.badge) { if (isSet(url)) el.innerHTML = '<img src="' + esc(url) + '" alt="" loading="lazy">'; return; }
+    if (isSet(url)) {
+      if (/\.(mp4|webm)(\?|$)/i.test(url)) el.innerHTML = '<video class="ph-img" src="' + esc(url) + '" controls preload="none" playsinline></video>';
+      else el.innerHTML = '<img class="ph-img" src="' + esc(url) + '" alt="' + esc((el.dataset.label || "").replace(/^(Photo|Video): /, "")) + '" loading="lazy" decoding="async">';
+    } else {
+      el.innerHTML = '<div class="ph" role="img" aria-label="' + esc(el.dataset.label) + '"><span>' + esc(el.dataset.label) + '</span></div>';
+    }
+  }
+  $$("[data-img]").forEach(fillImg);
+  if (!C.showAuthorizedBadges) $$("#badges .badge").slice(0, 2).forEach(function(b){ b.remove(); });
+
+  /* ---------- Hero video (poster first; video only if motion is OK) ---------- */
+  var poster = $("#heroPoster"), video = $("#heroVideo"), vt = $("#vidToggle");
+  poster.addEventListener("error", function(){ poster.remove(); });
+  if (isSet(C.hero.poster)) poster.src = C.hero.poster; else poster.remove();
+  var vsrc = (window.innerWidth < 720 && isSet(C.hero.videoMobile)) ? C.hero.videoMobile : C.hero.videoDesktop;
+  // The hero video always plays (muted, looping). The pause button lets anyone stop it.
+  if (isSet(vsrc)) {
+    if (isSet(C.hero.poster)) video.poster = C.hero.poster;
+    video.src = vsrc;
+    video.addEventListener("playing", function(){ video.classList.add("is-playing"); vt.hidden = false; }, { once: true });
+    var pp = video.play(); if (pp && pp.catch) pp.catch(function(){});
+    vt.addEventListener("click", function(){
+      var paused = video.paused;
+      if (paused) video.play(); else video.pause();
+      $("#icoPause").hidden = !paused; $("#icoPlay").hidden = paused;
+      vt.setAttribute("aria-label", paused ? "Pause background video" : "Play background video");
+    });
+  }
+
+  /* ---------- Nav turns solid after the hero ---------- */
+  var nav = $("#nav"), hero = $("#top");
+  var onScrollNav = function(){ nav.classList.toggle("solid", window.scrollY > hero.offsetHeight - 90); };
+  window.addEventListener("scroll", onScrollNav, { passive: true }); onScrollNav();
+
+  /* ---------- Product reveal: sticky stage, one item per screen ---------- */
+  var revealTrack = $("#revealTrack"), items = $$(".reveal-item"), dots = $$(".reveal-dots span"), current = 0, ticking = false;
+  function updateReveal(){
+    ticking = false;
+    if (window.innerWidth < 900) return;
+    var r = revealTrack.getBoundingClientRect(), span = revealTrack.offsetHeight - window.innerHeight;
+    var prog = Math.min(Math.max(-r.top / Math.max(span, 1), 0), 0.9999);
+    var idx = Math.floor(prog * items.length);
+    if (idx !== current) {
+      items[current].classList.remove("is-active"); dots[current].classList.remove("on");
+      items[idx].classList.add("is-active"); dots[idx].classList.add("on"); current = idx;
+    }
+  }
+  window.addEventListener("scroll", function(){ if (!ticking) { ticking = true; requestAnimationFrame(updateReveal); } }, { passive: true });
+  window.addEventListener("resize", updateReveal);
+
+  /* ---------- Analytics helper ---------- */
+  function trackEvent(name, data){
+    var standard = { Lead: 1, InitiateCheckout: 1 };
+    try { if (window.fbq) { if (standard[name]) fbq("track", name, data || {}); else fbq("trackCustom", name, data || {}); } } catch (e) {}
+    try { if (window.gtag) gtag("event", name === "Lead" ? "generate_lead" : name === "InitiateCheckout" ? "begin_checkout" : name.replace(/([a-z])([A-Z])/g, "$1_$2").toLowerCase(), data || {}); } catch (e) {}
+  }
+
+  /* ---------- Kit state ---------- */
+  var lineById = {}; C.lines.forEach(function(l){ lineById[l.id] = l; });
+  var state = { line: C.lines[0].id, size: {}, battery: {}, install: "" };
+  C.lines.forEach(function(l){ state.size[l.id] = l.sizes[l.sizes.length - 1].id; state.battery[l.id] = 0; });
+  function sizeOf(lineId){ var l = lineById[lineId]; return l.sizes.filter(function(s){ return s.id === state.size[lineId]; })[0]; }
+  function batteryOpt(l, kwh){ return l.battery ? l.battery.options.filter(function(o){ return o.kwh === kwh; })[0] : null; }
+  function batteryPrice(lineId){ var o = batteryOpt(lineById[lineId], state.battery[lineId]); return o ? o.price : 0; }
+  function totalFor(lineId){ return sizeOf(lineId).price + batteryPrice(lineId); }
+  function kitName(lineId){
+    var l = lineById[lineId], s = sizeOf(lineId), k = state.battery[lineId];
+    return l.name + " " + s.label + (k ? " + " + k + " kWh battery" : "");
+  }
+
+  function renderKits(){
+    var grid = $("#kitGrid"); grid.innerHTML = "";
+    C.lines.forEach(function(l){
+      var s = sizeOf(l.id), sel = state.line === l.id;
+      var card = document.createElement("article");
+      card.className = "kit" + (sel ? " is-selected" : "");
+      card.setAttribute("aria-label", l.name + " kit by " + l.maker);
+
+      var sizesHtml = l.sizes.length > 1
+        ? '<fieldset class="field"><legend>Size</legend><div class="seg">' + l.sizes.map(function(z){
+            var id = "sz-" + z.id;
+            return '<input type="radio" name="size-' + l.id + '" id="' + id + '" value="' + z.id + '"' + (z.id === s.id ? " checked" : "") + '><label for="' + id + '">' + z.label + '</label>';
+          }).join("") + '</div></fieldset>'
+        : '<fieldset class="field"><legend>Size</legend><div class="seg"><input type="radio" id="sz-' + s.id + '" checked disabled><label for="sz-' + s.id + '">' + s.label + '</label></div></fieldset>';
+
+      var battHtml;
+      if (l.battery) {
+        var k = state.battery[l.id], opt = batteryOpt(l, k);
+        battHtml = '<fieldset class="field"><legend>Add a battery</legend><div class="seg">' +
+          '<input type="radio" name="bt-' + l.id + '" id="bt-' + l.id + '-0" value="0"' + (k === 0 ? " checked" : "") + '><label for="bt-' + l.id + '-0">None</label>' +
+          l.battery.options.map(function(o){
+            var id = "bt-" + l.id + "-" + o.kwh;
+            return '<input type="radio" name="bt-' + l.id + '" id="' + id + '" value="' + o.kwh + '"' + (k === o.kwh ? " checked" : "") + '><label for="' + id + '">' + o.kwh + ' kWh</label>';
+          }).join("") + '</div><p class="fine">' + esc(l.battery.note) + (opt ? " Adds " + money(opt.price) + "." : "") + '</p></fieldset>';
+      } else {
+        battHtml = '<div class="box"><h4>Battery</h4><p>' + esc(l.batteryNote) + '</p></div>';
+      }
+
+      card.innerHTML =
+        '<div class="kit-fig" style="background:' + (l.imageBg || "var(--surface-2)") + '">' + (s.image ? '<img class="kit-img" src="' + esc(s.image) + '" alt="' + esc(l.name + " " + s.label + " kit contents: " + s.contents.slice(0, 3).join(", ")) + '" loading="lazy" decoding="async">' : '<div class="ph"><span>Photo: ' + esc(l.name) + ' kit</span></div>') + '</div>' +
+        '<div class="kit-body">' +
+          '<p class="best">Best for: ' + esc(l.bestFor) + '</p>' +
+          '<div><h3>' + esc(l.name) + '</h3><p class="maker">' + esc(l.series) + '</p></div>' +
+          '<p class="pitch">' + esc(l.pitch) + '</p>' +
+          '<ul class="checks">' + l.highlights.map(function(h){ return "<li>" + esc(h) + "</li>"; }).join("") + '</ul>' +
+          sizesHtml +
+          '<div class="box"><h4>What\'s in the box</h4><ul>' + s.contents.map(function(c){ return "<li>" + esc(c) + "</li>"; }).join("") + '</ul></div>' +
+          battHtml +
+          '<div class="kit-foot"><div><div class="price">' + money(totalFor(l.id)) + '</div><p class="price-note">Self-install, with local phone and text help</p></div>' +
+            '<button class="btn ' + (sel ? "btn-sun" : "btn-ghost") + '" type="button" data-select="' + l.id + '" aria-pressed="' + sel + '">' + (sel ? "Selected" : "Select this kit") + '</button></div>' +
+        '</div>';
+      grid.appendChild(card);
+    });
+    C.lines.forEach(function(l){
+      $$('input[name="size-' + l.id + '"]').forEach(function(r){ r.addEventListener("change", function(){ state.size[l.id] = r.value; state.line = l.id; refresh(r.id); }); });
+      $$('input[name="bt-' + l.id + '"]').forEach(function(r){ r.addEventListener("change", function(){ state.battery[l.id] = +r.value; state.line = l.id; refresh(r.id); }); });
+    });
+    $$("[data-select]").forEach(function(btn){ btn.addEventListener("click", function(){ state.line = btn.dataset.select; refresh(null); }); });
+  }
+
+  function refresh(focusId){
+    renderKits();
+    if (focusId) { var f = document.getElementById(focusId); if (f) f.focus({ preventScroll: true }); }
+    var name = kitName(state.line), total = totalFor(state.line);
+    $("#sumName").textContent = name;
+    $("#sumPrice").textContent = money(total);
+    $("#sumNote").textContent = C.purchase.mode === "reserve"
+      ? "Reserve with a " + money(C.purchase.depositAmount) + " refundable deposit. Pay the balance when your kit ships."
+      : "Ships to homes in " + C.brand.serviceArea + ".";
+    $("#bbName").textContent = name;
+    $("#bbTotal").textContent = money(total);
+    $("#f-kit").value = name;
+    $("#f-total").value = total;
+    calc();
+  }
+
+  /* ---------- Certifications and warranty lists ---------- */
+  $("#certList").innerHTML = C.lines.map(function(l){ return "<li><b>" + esc(l.name) + "</b><ul>" + l.certifications.map(function(c){ return "<li>" + esc(c) + "</li>"; }).join("") + "</ul></li>"; }).join("");
+  $("#warrantyList").innerHTML = C.lines.map(function(l){ return "<li><b>" + esc(l.name) + ":</b> " + esc(l.warranty) + "</li>"; }).join("");
+  $("#faqWarranty").textContent = C.lines.map(function(l){ return l.name + ": " + l.warranty; }).join(" ");
+
+  /* ---------- Install interest (not a service, just a vote) ---------- */
+  var ipSeg = $("#ipSeg");
+  ipSeg.innerHTML = C.install.pricePoints.map(function(p, i){
+    return '<input type="radio" name="ip" id="ip-' + i + '" value="' + esc(p) + '"><label for="ip-' + i + '">' + esc(p) + '</label>';
+  }).join("");
+  function syncInstall(){
+    var a = ($('input[name="ii"]:checked') || {}).value || "";
+    var p = ($('input[name="ip"]:checked') || {}).value || "";
+    $("#ipWrap").hidden = !(a === "yes" || a === "maybe");
+    if (a === "no") p = "";
+    state.install = a ? a + (p ? " (" + p + ")" : "") : "";
+    $("#f-install").value = state.install;
+    $("#ipThanks").hidden = !a;
+    if (a) trackEvent("InstallInterest", { answer: a, price: p });
+  }
+  $$('input[name="ii"]').forEach(function(r){ r.addEventListener("change", syncInstall); });
+  ipSeg.addEventListener("change", syncInstall);
+
+  /* ---------- Savings calculator ---------- */
+  var K = C.calculator;
+  var billEl = $("#bill");
+  billEl.min = K.billMin; billEl.max = K.billMax; billEl.value = K.billDefault;
+  var fBill = $("#f-bill");
+  var sliderMoved = false;
+  billEl.addEventListener("input", function(){ sliderMoved = true; });
+  fBill.addEventListener("input", function(){ fBill.dataset.touched = "1"; });
+  function calc(){
+    var out = $("#calcOut");
+    var bill = +billEl.value;
+    var kwh = bill / K.ratePerKwh;
+    $("#billVal").textContent = money(bill) + (bill >= K.billMax ? "+" : "");
+    $("#billKwh").textContent = "About " + (Math.round(kwh / 10) * 10).toLocaleString("en-US") + " kWh a month";
+    if (sliderMoved && !fBill.dataset.touched) fBill.value = bill;
+    var care = $("#care").checked;
+    var factor = care ? 1 - K.careDiscount : 1;
+    var effRate = K.ratePerKwh * factor, effPeak = K.peakRatePerKwh * factor;
+    var space = ($('input[name="space"]:checked') || {}).value;
+    var wantsBatt = $("#calcBattery").checked;
+    var recId = (K.spaceToLine || {})[space] || C.lines[0].id;
+    var swapped = false;
+    if (wantsBatt && !lineById[recId].battery) { recId = C.lines.filter(function(l){ return l.battery; })[0].id; swapped = true; }
+    var rec = lineById[recId];
+    var recSize = space === "window" ? rec.sizes[0] : rec.sizes[rec.sizes.length - 1];
+    var batt = wantsBatt && !!rec.battery;
+    var share = batt ? K.maxShareWithBattery : K.maxShareNoBattery;
+    var usageKwh = bill / effRate;
+    var usableKwh = usageKwh * 12 * share;
+    var capture = K.captureMin + (K.captureMax - K.captureMin) * Math.min(1, Math.max(0, (usageKwh - K.captureStartKwh) / (K.captureFullKwh - K.captureStartKwh)));
+    var production = recSize.annualKwh;
+    var battYear = batt ? rec.battery.options[0].kwh * 365 * K.batteryDailyUse : 0;   // stored each day, used each evening
+    var totalKwh = Math.min(production, production * capture + battYear, usableKwh);
+    var shiftKwh = Math.min(battYear, totalKwh);                                     // evening power, worth the peak price
+    var cap = bill * 12 * share;
+    var lo = Math.min((totalKwh - shiftKwh) * effRate + shiftKwh * effPeak, cap);
+    var hi = Math.min(totalKwh * effPeak, cap);
+    var cost = recSize.price + (batt ? rec.battery.options[0].price : 0);
+    var pbFast = cost / hi, pbSlow = cost / lo;
+    var yrs = function(n){ return n.toFixed(1); };
+    var payback = yrs(pbFast) === yrs(pbSlow) ? "about " + yrs(pbFast) + " years" : "about " + yrs(pbFast) + " to " + yrs(pbSlow) + " years";
+    var pct = Math.round(hi / (bill * 12) * 100);
+    var spaceLabel = { balcony: "balcony", window: "window ledge", patio: "patio or yard" }[space] || space;
+    var monthly = Math.round(lo / 12) === Math.round(hi / 12) ? "about " + money(hi / 12) + " a month" : money(lo / 12) + " to " + money(hi / 12) + " a month";
+    var notes = "";
+    var maxedOut = totalKwh >= production - 1 && hi < cap - 1;   // every watt the kit makes is being used
+    if (maxedOut) notes += '<p class="note">Every watt this kit makes is put to work, so you\'re getting its full savings. ' + (recSize.watts >= 1200 ? 'That\'s the largest plug-in size California allows per home.' : 'Want even more? The 1,200 W kit is the largest plug-in size California allows.') + '</p>';
+    if (batt) notes += '<p class="note">With a battery, today\'s sunshine powers your evening, when SDG&amp;E prices are highest.</p>';
+    if (swapped) notes += '<p class="note">Want a battery on your patio or yard? Featherweight adds plug-in storage and works great on patios too.</p>';
+    if (space === "window") notes += '<p class="note">Window ledge: the panels mount securely outside your window for full sun. We\'ll help you pick the right size, free.</p>';
+    if (care) notes += '<p class="note">You keep your CARE or FERA discount. Solar savings stack right on top of it.</p>';
+    out.innerHTML =
+      '<p class="label">Your estimated savings</p>' +
+      '<p class="big">Up to ' + money(hi) + '<span class="per"> a year</span></p>' +
+      '<p class="sub">That\'s ' + monthly + ', and up to ' + pct + '% off your SDG&amp;E bill.</p>' +
+      '<p class="payback"><b>Pays for itself in ' + payback + '</b><span>' + money(cost) + ' kit' + (batt ? ' with ' + rec.battery.options[0].kwh + ' kWh battery' : '') + '</span></p>' +
+      notes + '<hr>' +
+      '<div class="rec"><div><p class="label">Your best match for a ' + spaceLabel + '</p><b>' + esc(rec.name) + " " + recSize.label + (batt ? " + " + rec.battery.options[0].kwh + " kWh battery" : "") + '</b></div>' +
+      '<button type="button" class="btn btn-sun" id="pickRec">See this kit</button></div>' +
+      '<p class="fine">Estimate based on SDG&amp;E prices from ' + Math.round(K.ratePerKwh * 100) + '&cent; (average) to ' + Math.round(K.peakRatePerKwh * 100) + '&cent; (peak) per kilowatt-hour and a typical year of San Diego sun. Your savings depend on sun and placement.</p>';
+    var pr = $("#pickRec");
+    if (pr) pr.addEventListener("click", function(){
+      state.line = recId; state.size[recId] = recSize.id; state.battery[recId] = batt ? rec.battery.options[0].kwh : 0; refresh(null);
+      $("#kits").scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" });
+    });
+  }
+  ["input", "change"].forEach(function(ev){ $("#calcForm").addEventListener(ev, calc); });
+
+  /* ---------- Reserve / checkout / HOA buttons ---------- */
+  function goReserve(e){
+    trackEvent("InitiateCheckout", { kit: kitName(state.line), value: totalFor(state.line) });
+    var link = C.purchase.mode === "checkout" ? C.purchase.checkoutLinks[state.size[state.line]] : null;
+    if (isSet(link)) { e.preventDefault(); window.location.href = link; return; }
+    $("#in-res").checked = true; syncIntent();
+  }
+  $$(".js-reserve").forEach(function(a){ a.addEventListener("click", goReserve); });
+  $$(".js-hoa").forEach(function(a){ a.addEventListener("click", function(e){
+    if (isSet(C.hoa.briefingLink)) { e.preventDefault(); window.open(C.hoa.briefingLink, "_blank", "noopener"); return; }
+    $("#in-hoa").checked = true; syncIntent();
+  }); });
+
+  /* ---------- Lead form ---------- */
+  var form = $("#leadForm");
+  function syncIntent(){
+    var rev = $("#in-rev").checked, hoa = $("#in-hoa").checked;
+    $("#formBtn").textContent = hoa ? "Book my HOA briefing" : rev ? "Book my free bill review" : C.purchase.ctaTextLong;
+    $("#rowHoa").hidden = !hoa; $("#rowResident").hidden = hoa;
+    $("#f-community").required = hoa; $("#f-units").required = hoa;
+  }
+  $$('input[name="intent"]').forEach(function(r){ r.addEventListener("change", syncIntent); });
+  if (isSet(C.purchase.billReviewLink)) {
+    $("#in-rev").addEventListener("change", function(){ window.open(C.purchase.billReviewLink, "_blank", "noopener"); });
+  }
+  form.addEventListener("submit", function(e){
+    e.preventDefault();
+    var err = $("#formErr"); err.textContent = "";
+    var bad = $$("[required]", form).filter(function(f){ return !f.value.trim() || (f.type === "email" && !/^\S+@\S+\.\S+$/.test(f.value)); });
+    if ($("#f-zip").value && !/^\d{5}$/.test($("#f-zip").value) && bad.indexOf($("#f-zip")) < 0) bad.push($("#f-zip"));
+    if (bad.length) { err.textContent = "Please check: " + bad.map(function(f){ return form.querySelector('label[for="' + f.id + '"]').textContent.replace(/\s*\(optional\)/, ""); }).join(", ") + "."; bad[0].focus(); return; }
+    var data = new FormData(form);
+    var intent = data.get("intent");
+    var done = function(){
+      form.classList.add("sent");
+      trackEvent("Lead", { intent: intent });
+      if (intent === "reserve" && C.purchase.mode === "reserve" && isSet(C.purchase.depositLink)) {
+        setTimeout(function(){ window.location.href = C.purchase.depositLink + (C.purchase.depositLink.indexOf("?") > -1 ? "&" : "?") + "client_reference_id=" + encodeURIComponent(state.size[state.line]); }, 900);
+      }
+    };
+    var onNetlify = /terracesolar\.com$|netlify\.app$/.test(location.hostname);
+    if (C.leadForm.netlify && onNetlify) {
+      $("#formBtn").disabled = true;
+      fetch("/", { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: new URLSearchParams(data).toString() })
+        .then(function(r){ if (!r.ok) throw new Error(r.status); done(); })
+        .catch(function(){ $("#formBtn").disabled = false; err.textContent = "That didn't go through. Please try again, or text us at " + C.brand.smsPhone + "."; });
+    } else if (isSet(C.leadForm.endpoint)) {
+      $("#formBtn").disabled = true;
+      fetch(C.leadForm.endpoint, { method: "POST", body: data, headers: { Accept: "application/json" } })
+        .then(function(r){ if (!r.ok) throw new Error(r.status); done(); })
+        .catch(function(){ $("#formBtn").disabled = false; err.textContent = "That didn't go through. Please try again, or text us at " + C.brand.smsPhone + "."; });
+    } else {
+      console.warn("Preview mode: leads are saved only on the live Netlify site.");
+      done();
+    }
+  });
+
+  /* ---------- Mobile buy bar: show after hero, hide at final CTA ---------- */
+  var bar = $("#buybar"), heroGone = false, atEnd = false;
+  var setBar = function(){ bar.classList.toggle("show", heroGone && !atEnd); };
+  new IntersectionObserver(function(en){ heroGone = !en[0].isIntersecting; setBar(); }, { threshold: 0.05 }).observe(hero);
+  new IntersectionObserver(function(en){ atEnd = en[0].isIntersecting; setBar(); }, { threshold: 0.15 }).observe($("#reserve"));
+
+  /* ---------- Analytics: Meta Pixel + GA4 (load only if IDs are set) ---------- */
+  if (isSet(C.analytics.metaPixelId)) {
+    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version="2.0";n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,"script","https://connect.facebook.net/en_US/fbevents.js");
+    fbq("init", C.analytics.metaPixelId); fbq("track", "PageView");
+  }
+  if (isSet(C.analytics.ga4Id)) {
+    var g = document.createElement("script"); g.async = true; g.src = "https://www.googletagmanager.com/gtag/js?id=" + C.analytics.ga4Id; document.head.appendChild(g);
+    window.dataLayer = window.dataLayer || []; window.gtag = function(){ dataLayer.push(arguments); };
+    gtag("js", new Date()); gtag("config", C.analytics.ga4Id);
+  }
+
+  /* ---------- LocalBusiness schema ---------- */
+  var ld = {
+    "@context": "https://schema.org", "@type": "LocalBusiness",
+    name: C.brand.name, url: C.brand.siteUrl, telephone: C.brand.phone, email: C.brand.email,
+    description: "Plug-in solar sales and a free HOA community standards program for condos, townhomes and renters in San Diego County.",
+    founder: { "@type": "Person", name: C.founder.name },
+    address: { "@type": "PostalAddress", addressLocality: C.brand.city, addressRegion: C.brand.region, addressCountry: "US" },
+    areaServed: { "@type": "AdministrativeArea", name: "San Diego County, California" },
+    priceRange: "$$"
+  };
+  var sc = document.createElement("script"); sc.type = "application/ld+json"; sc.textContent = JSON.stringify(ld); document.head.appendChild(sc);
+
+  refresh(null);
+  syncIntent();
+})();
+</script>
 </body>
 </html>

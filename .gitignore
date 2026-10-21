@@ -10,6 +10,8 @@ assets/video/*.mp4
 !assets/video/hero-master-ff.mp4
 !assets/video/hero.mp4
 !assets/video/hero-scrub-mobile.mp4
+!assets/video/terrace-hero-1080.mp4
+!assets/video/terrace-hero-mobile.mp4
 assets/video/*.webm
 assets/video/*.mov
 assets/video/*.tmp
