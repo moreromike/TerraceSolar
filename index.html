@@ -462,6 +462,11 @@ fieldset{border:0;margin:0;padding:0;min-width:0}
 .opt > p{color:var(--muted)}
 .thanks{color:var(--ok,#1F7A4D);font-weight:600;font-size:.95rem}
 
+.install-cta{margin:clamp(32px,5vw,48px) auto 0;max-width:720px;display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center}
+.install-cta p{display:grid;gap:4px}
+.install-cta b{font-family:var(--display);font-size:1.3rem;letter-spacing:-0.01em}
+.install-cta span{color:var(--muted);font-size:.95rem}
+
 /* Trust */
 .trust-grid{display:grid;gap:0 56px}
 @media (min-width:960px){.trust-grid{grid-template-columns:repeat(3,1fr)}}
@@ -772,45 +777,8 @@ footer p + p{margin-top:12px}
   </div>
 </section>
 
-<!-- 6. EASY TO INSTALL -->
-<section class="sec" id="install">
-  <div class="wrap">
-    <div class="head">
-      <p class="kicker">Installation</p>
-      <h2>Easy enough to set up yourself.</h2>
-      <p class="lede">No roof work and no rewiring. Mount the panels, plug in and pair the app. Or let us set it up for you.</p>
-    </div>
-    <div class="install-grid">
-      <div class="opt">
-        <div data-img="install-video" data-label="Photo: plug-in solar panel on a stand, plugged into an outdoor outlet"></div>
-        <div class="opt-top"><h3>Do it yourself</h3><span class="tag">Included</span></div>
-        <ul>
-          <li>Step-by-step instructions in the box</li>
-          <li>How-to videos from the manufacturer</li>
-          <li>Phone and text help from our local team</li>
-        </ul>
-        <div class="box"><h4>What you'll need</h4><ul><li>A spot that gets several hours of direct sun</li><li>An outdoor outlet nearby</li><li>2.4 GHz Wi-Fi for the app</li></ul></div>
-      </div>
-      <div class="opt" id="installInterest">
-        <div class="opt-top"><h3>Professional installation</h3><span class="tag">Starting at <span class="js-install-price">$99</span></span></div>
-        <p>Prefer a hand? Installation is available on request. We'll mount the panels, plug everything in and set up the app with you.</p>
-        <ul>
-          <li>Available on request, starting at <span class="js-install-price">$99</span></li>
-          <li>Final price depends on your space and mounting</li>
-          <li>Scheduled after your kit arrives</li>
-        </ul>
-        <label class="switch" for="installReq" style="margin-top:6px;padding-top:18px;border-top:1px solid var(--line)">
-          <span><b>Add installation to my request</b><br><span class="fine">We'll include installation details when we reach out.</span></span>
-          <input type="checkbox" id="installReq"><span class="track" aria-hidden="true"></span>
-        </label>
-        <p class="thanks" id="ipThanks" role="status" hidden>Installation added to your request.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- 7. SAVINGS CALCULATOR -->
-<section class="sec alt" id="savings">
+<!-- 6. SAVINGS CALCULATOR -->
+<section class="sec" id="savings">
   <div class="wrap">
     <div class="head">
       <p class="kicker">Savings calculator</p>
@@ -847,8 +815,8 @@ footer p + p{margin-top:12px}
   </div>
 </section>
 
-<!-- 8. CHOOSE YOUR KIT -->
-<section class="sec" id="kits">
+<!-- 7. CHOOSE YOUR KIT -->
+<section class="sec alt" id="kits">
   <div class="wrap">
     <div class="head">
       <p class="kicker">Choose your kit</p>
@@ -862,7 +830,48 @@ footer p + p{margin-top:12px}
         <p class="fine" id="sumNote"></p>
       </div>
       <div class="sum-right"><span class="sum-price" id="sumPrice"></span>
-      <a class="btn btn-sun js-reserve" href="#reserve" data-cta="long">Reserve my kit</a></div>
+      <a class="btn btn-sun" href="#install">Next: installation</a></div>
+    </div>
+  </div>
+</section>
+
+<!-- 8. INSTALLATION -->
+<section class="sec" id="install">
+  <div class="wrap">
+    <div class="head">
+      <p class="kicker">Installation</p>
+      <h2>Easy enough to set up yourself.</h2>
+      <p class="lede">No roof work and no rewiring. Mount the panels, plug in and pair the app. Or let us set it up for you.</p>
+    </div>
+    <div class="install-grid">
+      <div class="opt">
+        <div data-img="install-video" data-label="Photo: plug-in solar panel on a stand, plugged into an outdoor outlet"></div>
+        <div class="opt-top"><h3>Do it yourself</h3><span class="tag">Included</span></div>
+        <ul>
+          <li>Step-by-step instructions in the box</li>
+          <li>How-to videos from the manufacturer</li>
+          <li>Phone and text help from our local team</li>
+        </ul>
+        <div class="box"><h4>What you'll need</h4><ul><li>A spot that gets several hours of direct sun</li><li>An outdoor outlet nearby</li><li>2.4 GHz Wi-Fi for the app</li></ul></div>
+      </div>
+      <div class="opt" id="installInterest">
+        <div class="opt-top"><h3>Professional installation</h3><span class="tag">Starting at <span class="js-install-price">$99</span></span></div>
+        <p>Prefer a hand? Installation is available on request. We'll mount the panels, plug everything in and set up the app with you.</p>
+        <ul>
+          <li>Available on request, starting at <span class="js-install-price">$99</span></li>
+          <li>Final price depends on your space and mounting</li>
+          <li>Scheduled after your kit arrives</li>
+        </ul>
+        <label class="switch" for="installReq" style="margin-top:6px;padding-top:18px;border-top:1px solid var(--line)">
+          <span><b>Add installation to my request</b><br><span class="fine">We'll include installation details when we reach out.</span></span>
+          <input type="checkbox" id="installReq"><span class="track" aria-hidden="true"></span>
+        </label>
+        <p class="thanks" id="ipThanks" role="status" hidden>Installation added to your request.</p>
+      </div>
+    </div>
+    <div class="install-cta">
+      <p><b id="instKit">Featherweight 1,200 W</b><span id="instNote"></span></p>
+      <a class="btn btn-sun js-reserve" href="#reserve" data-cta="long">Reserve my kit</a>
     </div>
   </div>
 </section>
@@ -1198,6 +1207,8 @@ footer p + p{margin-top:12px}
       ? "Reserve with a " + money(C.purchase.depositAmount) + " refundable deposit. Pay the balance when your kit ships."
       : "Ships to homes in " + C.brand.serviceArea + ".";
     $("#bbName").textContent = name;
+    $("#instKit").textContent = name + ": " + money(total);
+    $("#instNote").textContent = state.install ? "Professional installation added. We'll confirm the price with you." : "Reserve with a " + money(C.purchase.depositAmount) + " refundable deposit.";
     $("#bbTotal").textContent = money(total);
     $("#f-kit").value = name;
     $("#f-total").value = total;
@@ -1216,6 +1227,7 @@ footer p + p{margin-top:12px}
     state.install = on ? "requested (from " + money(C.install.startingPrice) + ")" : "";
     $("#f-install").value = state.install;
     $("#ipThanks").hidden = !on;
+    refresh(null);
     if (on) trackEvent("InstallRequest", { startingPrice: C.install.startingPrice });
   });
 
