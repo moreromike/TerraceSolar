@@ -1086,7 +1086,8 @@ footer p + p{margin-top:12px}
   poster.addEventListener("error", function(){ poster.remove(); });
   if (isSet(C.hero.poster)) poster.src = C.hero.poster; else poster.remove();
   var vsrc = (window.innerWidth < 720 && isSet(C.hero.videoMobile)) ? C.hero.videoMobile : C.hero.videoDesktop;
-  if (!reduceMotion && isSet(vsrc)) {
+  // The hero video always plays (muted, looping). The pause button lets anyone stop it.
+  if (isSet(vsrc)) {
     if (isSet(C.hero.poster)) video.poster = C.hero.poster;
     video.src = vsrc;
     video.addEventListener("playing", function(){ video.classList.add("is-playing"); vt.hidden = false; }, { once: true });
