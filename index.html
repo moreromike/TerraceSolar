@@ -51,9 +51,9 @@ window.SITE_CONFIG = {
 
   hoa: { briefingLink: "" },             // optional booking link for HOA briefings. Empty = use the form
 
-  // Installation is NOT offered. This only measures interest.
+  // Professional installation, available on request
   install: {
-    pricePoints: ["Under $150", "$150 to $300", "Over $300"]
+    startingPrice: 99
   },
 
   pricesAreSamples: true,                // shows an "Estimated pricing" tag until you set false
@@ -462,6 +462,11 @@ fieldset{border:0;margin:0;padding:0;min-width:0}
 .opt > p{color:var(--muted)}
 .thanks{color:var(--ok,#1F7A4D);font-weight:600;font-size:.95rem}
 
+.install-cta{margin:clamp(32px,5vw,48px) auto 0;max-width:720px;display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center}
+.install-cta p{display:grid;gap:4px}
+.install-cta b{font-family:var(--display);font-size:1.3rem;letter-spacing:-0.01em}
+.install-cta span{color:var(--muted);font-size:.95rem}
+
 /* Trust */
 .trust-grid{display:grid;gap:0 56px}
 @media (min-width:960px){.trust-grid{grid-template-columns:repeat(3,1fr)}}
@@ -772,48 +777,8 @@ footer p + p{margin-top:12px}
   </div>
 </section>
 
-<!-- 6. EASY TO INSTALL -->
-<section class="sec" id="install">
-  <div class="wrap">
-    <div class="head">
-      <p class="kicker">Installation</p>
-      <h2>Easy enough to set up yourself.</h2>
-      <p class="lede">No roof work, no rewiring, no crew. Mount the panels, plug in and pair the app.</p>
-    </div>
-    <div class="install-grid">
-      <div class="opt">
-        <div data-img="install-video" data-label="Photo: plug-in solar panel on a stand, plugged into an outdoor outlet"></div>
-        <div class="opt-top"><h3>Do it yourself</h3><span class="tag">Included</span></div>
-        <ul>
-          <li>Step-by-step instructions in the box</li>
-          <li>How-to videos from the manufacturer</li>
-          <li>Phone and text help from our local team</li>
-        </ul>
-        <div class="box"><h4>What you'll need</h4><ul><li>A spot that gets several hours of direct sun</li><li>An outdoor outlet nearby</li><li>2.4 GHz Wi-Fi for the app</li></ul></div>
-      </div>
-      <div class="opt" id="installInterest">
-        <div class="opt-top"><h3>Professional installation</h3><span class="tag">Help us decide</span></div>
-        <p>Would you like someone to set it up for you? Tell us below. If enough people ask, we'll add it.</p>
-        <fieldset class="field">
-          <legend>Would you want professional installation?</legend>
-          <div class="seg">
-            <input type="radio" name="ii" id="ii-yes" value="yes"><label for="ii-yes">Yes</label>
-            <input type="radio" name="ii" id="ii-maybe" value="maybe"><label for="ii-maybe">Maybe</label>
-            <input type="radio" name="ii" id="ii-no" value="no"><label for="ii-no">No thanks</label>
-          </div>
-        </fieldset>
-        <fieldset class="field" id="ipWrap" hidden>
-          <legend>What would feel like a fair price?</legend>
-          <div class="seg" id="ipSeg"></div>
-        </fieldset>
-        <p class="thanks" id="ipThanks" role="status" hidden>Thanks, we counted your answer. It doesn't change your order or price.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- 7. SAVINGS CALCULATOR -->
-<section class="sec alt" id="savings">
+<!-- 6. SAVINGS CALCULATOR -->
+<section class="sec" id="savings">
   <div class="wrap">
     <div class="head">
       <p class="kicker">Savings calculator</p>
@@ -850,8 +815,8 @@ footer p + p{margin-top:12px}
   </div>
 </section>
 
-<!-- 8. CHOOSE YOUR KIT -->
-<section class="sec" id="kits">
+<!-- 7. CHOOSE YOUR KIT -->
+<section class="sec alt" id="kits">
   <div class="wrap">
     <div class="head">
       <p class="kicker">Choose your kit</p>
@@ -865,7 +830,48 @@ footer p + p{margin-top:12px}
         <p class="fine" id="sumNote"></p>
       </div>
       <div class="sum-right"><span class="sum-price" id="sumPrice"></span>
-      <a class="btn btn-sun js-reserve" href="#reserve" data-cta="long">Reserve my kit</a></div>
+      <a class="btn btn-sun" href="#install">Next: installation</a></div>
+    </div>
+  </div>
+</section>
+
+<!-- 8. INSTALLATION -->
+<section class="sec" id="install">
+  <div class="wrap">
+    <div class="head">
+      <p class="kicker">Installation</p>
+      <h2>Easy enough to set up yourself.</h2>
+      <p class="lede">No roof work and no rewiring. Mount the panels, plug in and pair the app. Or let us set it up for you.</p>
+    </div>
+    <div class="install-grid">
+      <div class="opt">
+        <div data-img="install-video" data-label="Photo: plug-in solar panel on a stand, plugged into an outdoor outlet"></div>
+        <div class="opt-top"><h3>Do it yourself</h3><span class="tag">Included</span></div>
+        <ul>
+          <li>Step-by-step instructions in the box</li>
+          <li>How-to videos from the manufacturer</li>
+          <li>Phone and text help from our local team</li>
+        </ul>
+        <div class="box"><h4>What you'll need</h4><ul><li>A spot that gets several hours of direct sun</li><li>An outdoor outlet nearby</li><li>2.4 GHz Wi-Fi for the app</li></ul></div>
+      </div>
+      <div class="opt" id="installInterest">
+        <div class="opt-top"><h3>Professional installation</h3><span class="tag">Starting at <span class="js-install-price">$99</span></span></div>
+        <p>Prefer a hand? Installation is available on request. We'll mount the panels, plug everything in and set up the app with you.</p>
+        <ul>
+          <li>Available on request, starting at <span class="js-install-price">$99</span></li>
+          <li>Final price depends on your space and mounting</li>
+          <li>Scheduled after your kit arrives</li>
+        </ul>
+        <label class="switch" for="installReq" style="margin-top:6px;padding-top:18px;border-top:1px solid var(--line)">
+          <span><b>Add installation to my request</b><br><span class="fine">We'll include installation details when we reach out.</span></span>
+          <input type="checkbox" id="installReq"><span class="track" aria-hidden="true"></span>
+        </label>
+        <p class="thanks" id="ipThanks" role="status" hidden>Installation added to your request.</p>
+      </div>
+    </div>
+    <div class="install-cta">
+      <p><b id="instKit">Featherweight 1,200 W</b><span id="instNote"></span></p>
+      <a class="btn btn-sun js-reserve" href="#reserve" data-cta="long">Reserve my kit</a>
     </div>
   </div>
 </section>
@@ -957,7 +963,7 @@ footer p + p{margin-top:12px}
       <details><summary>What is the warranty?</summary>
         <div class="ans" id="faqWarranty"></div></details>
       <details><summary>Do I need an electrician?</summary>
-        <div class="ans">Usually not. Most homes simply plug into an outdoor outlet. If yours needs a dedicated outlet added, any licensed electrician can do it, and we'll tell you exactly what to ask for.</div></details>
+        <div class="ans">Usually not. Most homes simply plug into an outdoor outlet. If yours needs a dedicated outlet added, any licensed electrician can do it, and we'll tell you exactly what to ask for. Prefer a hand with setup? Professional installation is available on request, starting at $99.</div></details>
     </div>
   </div>
 </section>
@@ -1030,7 +1036,7 @@ footer p + p{margin-top:12px}
     <div>
       <p>Plug-in solar and HOA community standards for <span data-bind="brand.serviceArea">San Diego County</span>.</p>
       <p>Savings shown are estimates. Actual results vary with sunlight, placement, your electricity use and your rate plan.</p>
-      <p>Whether a plug-in solar system may be used at a given address depends on state law, local electrical and building codes, your utility, and your lease or HOA rules. Customers install their own systems. Nothing here is legal advice.</p>
+      <p>Whether a plug-in solar system may be used at a given address depends on state law, local electrical and building codes, your utility, and your lease or HOA rules. Installation is available on request. Nothing here is legal advice.</p>
       <p>CraftStrom and Mango Power are trademarks of their respective owners. Product specs are from each manufacturer and may change.</p>
       <p>&copy; <span id="yr"></span> Terrace Solar</p>
     </div>
@@ -1179,7 +1185,7 @@ footer p + p{margin-top:12px}
           sizesHtml +
           '<div class="box"><h4>What\'s in the box</h4><ul>' + s.contents.map(function(c){ return "<li>" + esc(c) + "</li>"; }).join("") + '</ul></div>' +
           battHtml +
-          '<div class="kit-foot"><div><div class="price">' + money(totalFor(l.id)) + '</div><p class="price-note">Self-install, with local phone and text help</p></div>' +
+          '<div class="kit-foot"><div><div class="price">' + money(totalFor(l.id)) + '</div><p class="price-note">Easy self-install, or professional installation from ' + money(C.install.startingPrice) + '</p></div>' +
             '<button class="btn ' + (sel ? "btn-sun" : "btn-ghost") + '" type="button" data-select="' + l.id + '" aria-pressed="' + sel + '">' + (sel ? "Selected" : "Select this kit") + '</button></div>' +
         '</div>';
       grid.appendChild(card);
@@ -1201,6 +1207,8 @@ footer p + p{margin-top:12px}
       ? "Reserve with a " + money(C.purchase.depositAmount) + " refundable deposit. Pay the balance when your kit ships."
       : "Ships to homes in " + C.brand.serviceArea + ".";
     $("#bbName").textContent = name;
+    $("#instKit").textContent = name + ": " + money(total);
+    $("#instNote").textContent = state.install ? "Professional installation added. We'll confirm the price with you." : "Reserve with a " + money(C.purchase.depositAmount) + " refundable deposit.";
     $("#bbTotal").textContent = money(total);
     $("#f-kit").value = name;
     $("#f-total").value = total;
@@ -1212,23 +1220,16 @@ footer p + p{margin-top:12px}
   $("#warrantyList").innerHTML = C.lines.map(function(l){ return "<li><b>" + esc(l.name) + ":</b> " + esc(l.warranty) + "</li>"; }).join("");
   $("#faqWarranty").textContent = C.lines.map(function(l){ return l.name + ": " + l.warranty; }).join(" ");
 
-  /* ---------- Install interest (not a service, just a vote) ---------- */
-  var ipSeg = $("#ipSeg");
-  ipSeg.innerHTML = C.install.pricePoints.map(function(p, i){
-    return '<input type="radio" name="ip" id="ip-' + i + '" value="' + esc(p) + '"><label for="ip-' + i + '">' + esc(p) + '</label>';
-  }).join("");
-  function syncInstall(){
-    var a = ($('input[name="ii"]:checked') || {}).value || "";
-    var p = ($('input[name="ip"]:checked') || {}).value || "";
-    $("#ipWrap").hidden = !(a === "yes" || a === "maybe");
-    if (a === "no") p = "";
-    state.install = a ? a + (p ? " (" + p + ")" : "") : "";
+  /* ---------- Installation on request ---------- */
+  $$(".js-install-price").forEach(function(el){ el.textContent = money(C.install.startingPrice); });
+  $("#installReq").addEventListener("change", function(e){
+    var on = e.target.checked;
+    state.install = on ? "requested (from " + money(C.install.startingPrice) + ")" : "";
     $("#f-install").value = state.install;
-    $("#ipThanks").hidden = !a;
-    if (a) trackEvent("InstallInterest", { answer: a, price: p });
-  }
-  $$('input[name="ii"]').forEach(function(r){ r.addEventListener("change", syncInstall); });
-  ipSeg.addEventListener("change", syncInstall);
+    $("#ipThanks").hidden = !on;
+    refresh(null);
+    if (on) trackEvent("InstallRequest", { startingPrice: C.install.startingPrice });
+  });
 
   /* ---------- Savings calculator ---------- */
   var K = C.calculator;
