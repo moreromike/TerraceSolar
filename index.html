@@ -596,6 +596,101 @@ footer p + p{margin-top:12px}
 .icon-btn svg{width:20px;height:20px}
 .buybar .btn{min-height:44px;padding:0 18px}
 @media (min-width:960px){.buybar{display:none}}
+
+/* ===== Phone layout: tighter spacing, side-by-side icons, swipeable parts ===== */
+.swipe-hint{display:none}
+.box-fold summary{padding:0 32px 0 0;font-family:var(--display);font-weight:700;font-size:.98rem;letter-spacing:0;line-height:1.4}
+.box-fold summary::after{right:4px;width:9px;height:9px;margin-top:-7px;border-width:2px}
+.box-fold[open] summary{margin-bottom:10px}
+.kit details.box-fold{border:1px solid var(--line)}
+@media (max-width:899px){
+  .reveal .head{padding:56px 0 24px}
+  .reveal-track{padding-bottom:0}
+  .reveal-stage .wrap{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding-inline:var(--gutter);padding-bottom:6px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .reveal-stage .wrap::-webkit-scrollbar{display:none}
+  .reveal-item{flex:0 0 84%;scroll-snap-align:start;padding:0;gap:16px;align-content:start}
+  .reveal-copy h3{font-size:1.45rem}
+  .reveal-copy p{font-size:1rem;margin-top:10px}
+  .reveal-copy .kicker{margin-bottom:8px}
+  .spec{margin-top:14px}
+  .swipe-hint{display:block;text-align:center;color:#8E98A6;font-size:.9rem;font-weight:600;padding:16px 0 56px}
+}
+@media (max-width:640px){
+  body{font-size:17px}
+  .sec{padding:56px 0}
+  .head{margin-bottom:28px}
+  h2{font-size:1.85rem}
+  .kicker{margin-bottom:10px}
+  .lede{margin-top:12px}
+  .hero-sub{margin-top:16px}
+  .hero-ctas{margin-top:22px}
+  .hero-hoa{margin-top:18px}
+  /* New law: compact fact rows */
+  .law-facts{gap:10px}
+  .law-facts li{padding:14px 16px;text-align:left;gap:2px}
+  .law-note{margin-top:20px;text-align:left}
+  /* Who it helps: icon beside the text */
+  .who-grid{gap:12px}
+  .who{display:grid;grid-template-columns:44px 1fr;column-gap:16px;padding:18px;text-align:left;align-items:start}
+  .who-icon{grid-row:span 2;width:44px;height:44px;border-radius:12px;margin:0}
+  .who-icon svg{width:22px;height:22px}
+  .who h3{margin:2px 0 4px}
+  .stat-band{margin-top:32px;gap:4px 18px;flex-wrap:nowrap;justify-content:flex-start}
+  .stat-band .stat-num{font-size:3.2rem}
+  .stat-band p{font-size:1.02rem}
+  /* How it works: icon beside the text */
+  .steps{gap:12px}
+  .step{display:grid;grid-template-columns:44px 1fr;column-gap:16px;padding:18px 44px 18px 18px}
+  .step-icon{grid-row:span 2;width:44px;height:44px;border-radius:12px;margin:0}
+  .step-icon svg{width:22px;height:22px}
+  .step::before{top:18px;right:18px}
+  .step h3{margin:2px 0 4px}
+  /* Calculator */
+  .calc-grid{gap:16px}
+  .calc-form{padding:20px;gap:22px}
+  .calc-out{padding:22px}
+  .calc-out hr{margin:20px 0}
+  .calc-out .fine{margin-top:16px}
+  /* Kits */
+  .kits-top{margin-bottom:28px}
+  .kit-grid{gap:16px}
+  .kit-fig{aspect-ratio:16/10}
+  .kit-body{padding:20px;gap:16px}
+  .checks{gap:6px}
+  .box{padding:14px 16px}
+  .kit-foot{padding-top:16px}
+  .price{font-size:1.8rem}
+  .summary{margin-top:16px;padding:18px 20px}
+  /* Installation */
+  .install-grid{gap:16px}
+  .opt{padding:20px;gap:14px}
+  .install-cta{margin-top:24px}
+  /* HOA */
+  .hoa-grid{gap:32px}
+  .hoa-steps{gap:10px}
+  .hoa-steps li{grid-template-columns:36px 1fr;gap:14px;padding:16px}
+  .hoa-steps li::before{width:36px;height:36px;border-radius:10px;font-size:1rem}
+  .hoa-why{padding-left:20px}
+  /* Trust */
+  .trust{padding:20px 0}
+  .badges{margin-top:24px;gap:8px}
+  .badge{padding:10px 14px;font-size:.92rem}
+  /* FAQ */
+  .faq-grid{gap:20px}
+  summary{padding:16px 40px 16px 0;font-size:1rem}
+  details .ans{padding:0 8px 18px 0}
+  /* Order: the form's tabs already offer all three choices */
+  .final-grid{gap:20px}
+  .paths{display:none}
+  .form{padding:20px;gap:14px}
+  .form .row{grid-template-columns:1fr 1fr;gap:12px;align-items:end}
+  .form .input{min-height:50px;font-size:16px;padding:0 12px}
+  .form label{margin-bottom:6px;font-size:.9rem}
+  .form .seg label{min-height:40px;padding:0 14px;font-size:.9rem}
+  /* Footer */
+  footer{padding:40px 0 112px}
+  .foot-grid{gap:24px}
+}
 </style>
 </head>
 <body>
@@ -747,6 +842,7 @@ footer p + p{margin-top:12px}
         <div class="reveal-dots" aria-hidden="true"><span class="on"></span><span></span><span></span><span></span><span></span></div>
       </div>
     </div>
+    <p class="swipe-hint" aria-hidden="true">Swipe to see all five parts &rarr;</p>
   </div>
 </section>
 
@@ -1183,7 +1279,7 @@ footer p + p{margin-top:12px}
           '<p class="pitch">' + esc(l.pitch) + '</p>' +
           '<ul class="checks">' + l.highlights.map(function(h){ return "<li>" + esc(h) + "</li>"; }).join("") + '</ul>' +
           sizesHtml +
-          '<div class="box"><h4>What\'s in the box</h4><ul>' + s.contents.map(function(c){ return "<li>" + esc(c) + "</li>"; }).join("") + '</ul></div>' +
+          '<details class="box box-fold"' + (window.innerWidth >= 900 ? " open" : "") + '><summary>What\'s in the box</summary><ul>' + s.contents.map(function(c){ return "<li>" + esc(c) + "</li>"; }).join("") + '</ul></details>' +
           battHtml +
           '<div class="kit-foot"><div><div class="price">' + money(totalFor(l.id)) + '</div><p class="price-note">Easy self-install, or professional installation from ' + money(C.install.startingPrice) + '</p></div>' +
             '<button class="btn ' + (sel ? "btn-sun" : "btn-ghost") + '" type="button" data-select="' + l.id + '" aria-pressed="' + sel + '">' + (sel ? "Selected" : "Select this kit") + '</button></div>' +
