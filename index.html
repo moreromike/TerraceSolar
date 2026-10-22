@@ -8,8 +8,9 @@
 /* =====================================================================
    TERRACE SOLAR SITE CONFIG
    Edit prices, kits, links and button text here. Nothing else needs to change.
-   Phase 2: set purchase.mode to "checkout", change ctaText to "Buy",
-   and fill purchase.checkoutLinks with one link per kit size id.
+   Payments: once STRIPE_SECRET_KEY is added in Netlify (Project configuration >
+   Environment variables) and prices are final, set purchase.onlineCheckout to true
+   and pricesAreSamples to false. See CHECKOUT.md.
    ===================================================================== */
 window.SITE_CONFIG = {
   brand: {
@@ -40,12 +41,11 @@ window.SITE_CONFIG = {
   },
 
   purchase: {
-    mode: "reserve",                     // "reserve" now, "checkout" in phase 2
-    ctaText: "Reserve",
-    ctaTextLong: "Reserve my kit",
-    depositAmount: 100,                  // refundable deposit
-    depositLink: "[STRIPE PAYMENT LINK]",// Stripe Payment Link or Shopify Buy Button URL
-    checkoutLinks: { "fw-800": "", "fw-1200": "", "mp-1200": "" },
+    ctaText: "Order",
+    ctaTextLong: "Order my kit",
+    // false: orders come in through the form and you text the customer a payment link.
+    // true: after the form, customers pay by card on a secure Stripe checkout page.
+    onlineCheckout: false,
     billReviewLink: ""                   // optional booking link. Empty = use the form
   },
 
@@ -160,7 +160,7 @@ window.SITE_CONFIG = {
 </script>
 
 <title>Terrace Solar | Plug-in Solar for San Diego Condos, Renters and HOAs</title>
-<meta name="description" content="Plug-in solar for San Diego County condos, townhomes and renters, plus a free plug-in solar standards program for HOAs and property managers. Reserve your kit today.">
+<meta name="description" content="Plug-in solar for San Diego County condos, townhomes and renters, plus a free plug-in solar standards program for HOAs and property managers. Order your kit today.">
 <link rel="canonical" href="https://www.terracesolar.com/">
 <link rel="icon" type="image/png" href="assets/brand/favicon-128.png">
 <link rel="preload" as="image" href="assets/video/terrace-hero-poster.jpg">
@@ -612,7 +612,7 @@ footer p + p{margin-top:12px}
       <a href="#hoa">For HOAs</a>
       <a href="#faq">FAQ</a>
     </nav>
-    <a class="btn btn-sun btn-sm js-reserve" href="#reserve" data-cta="short">Reserve</a>
+    <a class="btn btn-sun btn-sm js-order" href="#order" data-cta="short">Order</a>
   </div>
 </header>
 
@@ -871,7 +871,7 @@ footer p + p{margin-top:12px}
     </div>
     <div class="install-cta">
       <p><b id="instKit">Featherweight 1,200 W</b><span id="instNote"></span></p>
-      <a class="btn btn-sun js-reserve" href="#reserve" data-cta="long">Reserve my kit</a>
+      <a class="btn btn-sun js-order" href="#order" data-cta="long">Order my kit</a>
     </div>
   </div>
 </section>
@@ -899,7 +899,7 @@ footer p + p{margin-top:12px}
           <li>A consistent look across the community</li>
           <li>Certified components with zero-export control</li>
         </ul>
-        <a class="btn btn-sun js-hoa" href="#reserve">Book a free HOA briefing</a>
+        <a class="btn btn-sun js-hoa" href="#order">Book a free HOA briefing</a>
       </div>
     </div>
   </div>
@@ -969,15 +969,15 @@ footer p + p{margin-top:12px}
 </section>
 
 <!-- 12. FINAL CTA + LEAD FORM -->
-<section class="sec final" id="reserve">
+<section class="sec final" id="order">
   <div class="wrap final-grid">
       <div class="head">
         <p class="kicker">Get started</p>
-        <h2>Reserve your kit today.</h2>
+        <h2>Order your kit today.</h2>
         <p class="lede">Three ways in. No pressure either way.</p>
       </div>
       <div class="paths">
-        <div class="path"><i>1</i><div><b>Reserve with a <span class="js-deposit">$100</span> refundable deposit</b><p>Hold your kit at today's price. Fully refundable until it ships.</p></div></div>
+        <div class="path"><i>1</i><div><b>Place your order</b><p id="orderPathNote">Send your order below. We'll confirm your kit and delivery, then text you a secure payment link.</p></div></div>
         <div class="path"><i>2</i><div><b>Book a free 10-minute bill review</b><p>Send us your SDG&amp;E usage. We'll tell you honestly if plug-in solar makes sense.</p></div></div>
         <div class="path"><i>3</i><div><b>HOA or property manager?</b><p>Book a free briefing on the community standards program for your board or team.</p></div></div>
       </div>
@@ -987,7 +987,7 @@ footer p + p{margin-top:12px}
       <fieldset>
         <legend class="sr">What would you like to do?</legend>
         <div class="seg">
-          <input type="radio" name="intent" id="in-res" value="reserve" checked><label for="in-res">Reserve a kit</label>
+          <input type="radio" name="intent" id="in-ord" value="order" checked><label for="in-ord">Place an order</label>
           <input type="radio" name="intent" id="in-rev" value="bill-review"><label for="in-rev">Free bill review</label>
           <input type="radio" name="intent" id="in-hoa" value="hoa-briefing"><label for="in-hoa">HOA briefing</label>
         </div>
@@ -1015,11 +1015,11 @@ footer p + p{margin-top:12px}
       <input type="hidden" name="kit_total" id="f-total">
       <input type="hidden" name="install_interest" id="f-install">
       <p class="err" id="formErr" role="alert"></p>
-      <button class="btn btn-sun" type="submit" id="formBtn">Reserve my kit</button>
+      <button class="btn btn-sun" type="submit" id="formBtn">Place my order</button>
       <p class="fine">Prefer to text? Send us a message at <a class="js-sms" href="#">(619) 961-7234</a>. We'll only use your info to contact you about your request. No spam, ever.</p>
       <div class="form-ok" role="status">
-        <h3>You're on the list.</h3>
-        <p style="color:#B8C0CC">We'll reach out within one business day.</p>
+        <h3 id="okTitle">Order received.</h3>
+        <p style="color:#B8C0CC" id="okText">We'll text you within one business day to confirm your kit, delivery and payment.</p>
       </div>
     </form>
   </div>
@@ -1047,7 +1047,7 @@ footer p + p{margin-top:12px}
 <div class="buybar" id="buybar" aria-label="Your selected kit">
   <a class="icon-btn js-sms" href="#" aria-label="Text us at (619) 961-7234"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></a>
   <div class="bb-info"><div class="bb-name" id="bbName">Featherweight 1,200 W</div><div class="bb-total" id="bbTotal">$0</div></div>
-  <a class="btn btn-sun js-reserve" href="#reserve" data-cta="short">Reserve</a>
+  <a class="btn btn-sun js-order" href="#order" data-cta="short">Order</a>
 </div>
 
 <script>
@@ -1069,7 +1069,7 @@ footer p + p{margin-top:12px}
   $$(".js-sms").forEach(function(a){ a.href = "sms:" + digits(C.brand.smsPhone); if (!a.classList.contains("icon-btn")) a.textContent = C.brand.smsPhone; });
   $$(".js-mail").forEach(function(a){ a.href = "mailto:" + C.brand.email; a.textContent = C.brand.email; });
   $$("[data-cta]").forEach(function(el){ el.textContent = el.dataset.cta === "long" ? C.purchase.ctaTextLong : C.purchase.ctaText; });
-  $$(".js-deposit").forEach(function(el){ el.textContent = money(C.purchase.depositAmount); });
+  if (C.purchase.onlineCheckout) $("#orderPathNote").textContent = "Check out securely by card. We'll text you to confirm delivery.";
   $("#yr").textContent = new Date().getFullYear();
   if (C.pricesAreSamples) $("#sampleTag").hidden = false;
 
@@ -1129,9 +1129,9 @@ footer p + p{margin-top:12px}
 
   /* ---------- Analytics helper ---------- */
   function trackEvent(name, data){
-    var standard = { Lead: 1, InitiateCheckout: 1 };
+    var standard = { Lead: 1, InitiateCheckout: 1, Purchase: 1 };
     try { if (window.fbq) { if (standard[name]) fbq("track", name, data || {}); else fbq("trackCustom", name, data || {}); } } catch (e) {}
-    try { if (window.gtag) gtag("event", name === "Lead" ? "generate_lead" : name === "InitiateCheckout" ? "begin_checkout" : name.replace(/([a-z])([A-Z])/g, "$1_$2").toLowerCase(), data || {}); } catch (e) {}
+    try { if (window.gtag) gtag("event", name === "Lead" ? "generate_lead" : name === "InitiateCheckout" ? "begin_checkout" : name === "Purchase" ? "purchase" : name.replace(/([a-z])([A-Z])/g, "$1_$2").toLowerCase(), data || {}); } catch (e) {}
   }
 
   /* ---------- Kit state ---------- */
@@ -1203,12 +1203,12 @@ footer p + p{margin-top:12px}
     var name = kitName(state.line), total = totalFor(state.line);
     $("#sumName").textContent = name;
     $("#sumPrice").textContent = money(total);
-    $("#sumNote").textContent = C.purchase.mode === "reserve"
-      ? "Reserve with a " + money(C.purchase.depositAmount) + " refundable deposit. Pay the balance when your kit ships."
-      : "Ships to homes in " + C.brand.serviceArea + ".";
+    $("#sumNote").textContent = C.purchase.onlineCheckout
+      ? "Order online and pay securely by card. Delivered to homes in " + C.brand.serviceArea + "."
+      : "Order today. We'll confirm delivery to your home in " + C.brand.serviceArea + ".";
     $("#bbName").textContent = name;
     $("#instKit").textContent = name + ": " + money(total);
-    $("#instNote").textContent = state.install ? "Professional installation added. We'll confirm the price with you." : "Reserve with a " + money(C.purchase.depositAmount) + " refundable deposit.";
+    $("#instNote").textContent = state.install ? "Professional installation added. We'll confirm the price with you." : "Order today. Installation is optional.";
     $("#bbTotal").textContent = money(total);
     $("#f-kit").value = name;
     $("#f-total").value = total;
@@ -1299,14 +1299,12 @@ footer p + p{margin-top:12px}
   }
   ["input", "change"].forEach(function(ev){ $("#calcForm").addEventListener(ev, calc); });
 
-  /* ---------- Reserve / checkout / HOA buttons ---------- */
-  function goReserve(e){
+  /* ---------- Order / HOA buttons ---------- */
+  function goOrder(){
     trackEvent("InitiateCheckout", { kit: kitName(state.line), value: totalFor(state.line) });
-    var link = C.purchase.mode === "checkout" ? C.purchase.checkoutLinks[state.size[state.line]] : null;
-    if (isSet(link)) { e.preventDefault(); window.location.href = link; return; }
-    $("#in-res").checked = true; syncIntent();
+    $("#in-ord").checked = true; syncIntent();
   }
-  $$(".js-reserve").forEach(function(a){ a.addEventListener("click", goReserve); });
+  $$(".js-order").forEach(function(a){ a.addEventListener("click", goOrder); });
   $$(".js-hoa").forEach(function(a){ a.addEventListener("click", function(e){
     if (isSet(C.hoa.briefingLink)) { e.preventDefault(); window.open(C.hoa.briefingLink, "_blank", "noopener"); return; }
     $("#in-hoa").checked = true; syncIntent();
@@ -1316,7 +1314,7 @@ footer p + p{margin-top:12px}
   var form = $("#leadForm");
   function syncIntent(){
     var rev = $("#in-rev").checked, hoa = $("#in-hoa").checked;
-    $("#formBtn").textContent = hoa ? "Book my HOA briefing" : rev ? "Book my free bill review" : C.purchase.ctaTextLong;
+    $("#formBtn").textContent = hoa ? "Book my HOA briefing" : rev ? "Book my free bill review" : C.purchase.onlineCheckout ? "Continue to secure checkout" : "Place my order";
     $("#rowHoa").hidden = !hoa; $("#rowResident").hidden = hoa;
     $("#f-community").required = hoa; $("#f-units").required = hoa;
   }
@@ -1333,11 +1331,11 @@ footer p + p{margin-top:12px}
     var data = new FormData(form);
     var intent = data.get("intent");
     var done = function(){
-      form.classList.add("sent");
       trackEvent("Lead", { intent: intent });
-      if (intent === "reserve" && C.purchase.mode === "reserve" && isSet(C.purchase.depositLink)) {
-        setTimeout(function(){ window.location.href = C.purchase.depositLink + (C.purchase.depositLink.indexOf("?") > -1 ? "&" : "?") + "client_reference_id=" + encodeURIComponent(state.size[state.line]); }, 900);
-      }
+      if (intent === "order" && C.purchase.onlineCheckout) { startCheckout(data); return; }
+      if (intent === "bill-review") { $("#okTitle").textContent = "Request received."; $("#okText").textContent = "We'll reach out within one business day."; }
+      if (intent === "hoa-briefing") { $("#okTitle").textContent = "Request received."; $("#okText").textContent = "We'll reach out within one business day to set up your briefing."; }
+      form.classList.add("sent");
     };
     var onNetlify = /terracesolar\.com$|netlify\.app$/.test(location.hostname);
     if (C.leadForm.netlify && onNetlify) {
@@ -1356,11 +1354,41 @@ footer p + p{margin-top:12px}
     }
   });
 
+  /* ---------- Online checkout (Stripe, through the Netlify function in netlify/functions/checkout.mjs) ---------- */
+  function startCheckout(data){
+    var btn = $("#formBtn"), err = $("#formErr");
+    btn.disabled = true; btn.textContent = "Opening secure checkout...";
+    var size = state.size[state.line];
+    fetch("/.netlify/functions/checkout", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ size: size, battery: state.battery[state.line] || 0, install: !!state.install,
+        expectedTotal: totalFor(state.line), name: data.get("name"), email: data.get("email"), phone: data.get("phone"), zip: data.get("zip") })
+    }).then(function(r){ return r.json().then(function(j){ if (!r.ok || !j.url) throw new Error(j.error || r.status); return j; }); })
+      .then(function(j){ window.location.href = j.url; })
+      .catch(function(){
+        $("#okTitle").textContent = "Order received.";
+        $("#okText").textContent = "Online checkout isn't available right now. We'll text you a secure payment link within one business day.";
+        form.classList.add("sent");
+      });
+  }
+  (function(){
+    var q = new URLSearchParams(location.search).get("order");
+    if (q === "success") {
+      $("#okTitle").textContent = "Thank you for your order!";
+      $("#okText").textContent = "Payment received. We'll text you within one business day to schedule delivery.";
+      form.classList.add("sent");
+      trackEvent("Purchase", { currency: "USD" });
+      setTimeout(function(){ $("#order").scrollIntoView(); }, 300);
+    } else if (q === "canceled") {
+      setTimeout(function(){ $("#order").scrollIntoView(); }, 300);
+    }
+  })();
+
   /* ---------- Mobile buy bar: show after hero, hide at final CTA ---------- */
   var bar = $("#buybar"), heroGone = false, atEnd = false;
   var setBar = function(){ bar.classList.toggle("show", heroGone && !atEnd); };
   new IntersectionObserver(function(en){ heroGone = !en[0].isIntersecting; setBar(); }, { threshold: 0.05 }).observe(hero);
-  new IntersectionObserver(function(en){ atEnd = en[0].isIntersecting; setBar(); }, { threshold: 0.15 }).observe($("#reserve"));
+  new IntersectionObserver(function(en){ atEnd = en[0].isIntersecting; setBar(); }, { threshold: 0.15 }).observe($("#order"));
 
   /* ---------- Analytics: Meta Pixel + GA4 (load only if IDs are set) ---------- */
   if (isSet(C.analytics.metaPixelId)) {
