@@ -16,3 +16,6 @@ assets/video/*.webm
 assets/video/*.mov
 assets/video/*.tmp
 
+
+__pycache__/
+*.pyc
