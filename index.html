@@ -1489,14 +1489,15 @@ footer p + p{margin-top:12px}
       grid.appendChild(card);
     });
     C.lines.forEach(function(l){
-      $$('input[name="size-' + l.id + '"]').forEach(function(r){ r.addEventListener("change", function(){ state.size[l.id] = r.value; state.line = l.id; refresh(); }); });
-      $$('input[name="bt-' + l.id + '"]').forEach(function(r){ r.addEventListener("change", function(){ state.battery[l.id] = +r.value; state.line = l.id; refresh(); }); });
+      $$('input[name="size-' + l.id + '"]').forEach(function(r){ r.addEventListener("change", function(){ state.size[l.id] = r.value; state.line = l.id; kitPicked = true; refresh(); }); });
+      $$('input[name="bt-' + l.id + '"]').forEach(function(r){ r.addEventListener("change", function(){ state.battery[l.id] = +r.value; state.line = l.id; kitPicked = true; refresh(); }); });
     });
-    $$("[data-select]").forEach(function(btn){ btn.addEventListener("click", function(){ state.line = btn.dataset.select; refresh(); }); });
+    $$("[data-select]").forEach(function(btn){ btn.addEventListener("click", function(){ state.line = btn.dataset.select; kitPicked = true; refresh(); }); });
     $$(".kit-verify").forEach(function(a){ a.addEventListener("click", goCheck); });
     $$(".kit-thumb").forEach(function(b){ b.addEventListener("click", function(){ showPhoto(b.closest(".kit"), +b.dataset.i); }); });
   }
 
+  var kitPicked = false, syncBar = function(){};
   function updateCard(id){
     var l = lineById[id], s = sizeOf(id), card = document.querySelector('[data-card="' + id + '"]');
     if (!card) return;
@@ -1535,6 +1536,7 @@ footer p + p{margin-top:12px}
     $("#sumNote").textContent = C.purchase.onlineCheckout
       ? "Order online and pay securely by card. Delivered to homes in " + C.brand.serviceArea + "."
       : "Next: a free compatibility review. We'll verify this kit works for your home before you buy.";
+    syncBar();
     $("#bbName").textContent = name;
     $("#kitPickName").textContent = name;
     $("#instKit").textContent = name + ": " + money(total);
@@ -1649,7 +1651,7 @@ footer p + p{margin-top:12px}
       '<button type="button" class="btn btn-sun" id="pickRec">See this kit</button></div>' +
       '<p class="fine">Estimate only, not actual savings. Based on a typical San Diego year of sun, SDG&amp;E ' + esc(plan.label) + ' prices effective ' + esc(K.ratesEffective) + ', and a typical daily usage pattern for your bill. Your results depend on sun, shade, placement, when you use power and your plan. Price before tax and delivery.</p>';
     $("#pickRec").addEventListener("click", function(){
-      state.line = "featherweight"; state.size.featherweight = sizeId; state.battery.featherweight = batt; refresh();
+      state.line = "featherweight"; state.size.featherweight = sizeId; state.battery.featherweight = batt; kitPicked = true; refresh();
       $("#kits").scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" });
     });
   }
@@ -1764,7 +1766,8 @@ footer p + p{margin-top:12px}
 
   /* ---------- Mobile buy bar: show after hero, hide at final CTA ---------- */
   var bar = $("#buybar"), heroGone = false, atEnd = false;
-  var setBar = function(){ bar.classList.toggle("show", heroGone && !atEnd); };
+  var setBar = function(){ bar.classList.toggle("show", kitPicked && heroGone && !atEnd); };
+  syncBar = setBar;
   new IntersectionObserver(function(en){ heroGone = !en[0].isIntersecting; setBar(); }, { threshold: 0.05 }).observe(hero);
   new IntersectionObserver(function(en){ atEnd = en[0].isIntersecting; setBar(); }, { threshold: 0.15 }).observe($("#check"));
 
