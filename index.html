@@ -37,7 +37,7 @@ window.SITE_CONFIG = {
     videoMobile: "assets/video/terrace-hero-mobile.mp4",  // 540x960 vertical crop, ~2 MB, used on screens under 720px wide
     poster: "assets/video/terrace-hero-poster.jpg",       // shown while the video loads, and to visitors who turn off motion
     headline: "Solar for renters, condos and HOA communities.",
-    subhead: "No roof needed. Plug-in solar mounts on a balcony, patio or yard and plugs into a standard outlet."
+    subhead: "No roof needed. Lightweight, semi-flexible panels hang on a balcony railing or window ledge and plug into a standard outlet."
   },
 
   purchase: {
@@ -92,36 +92,21 @@ window.SITE_CONFIG = {
         "PowerMeter: CE, FCC",
         "Battery: UL, VDE"
       ]
-    },
-    {
-      id: "patio",
-      name: "Patio and Yard",
-      maker: "Mango Power",
-      series: "Mango Power S 1200W Plug-In Solar Kit",
-      imageBg: "#FFFFFF",
-      bestFor: "Patios, backyards, flat roofs and carports",
-      pitch: "Four full-size glass panels on a ground stand, for homes with a little more space.",
-      highlights: [
-        "Four 300 W N-type TOPCon panels, up to 24.8% efficient",
-        "A microinverter on every panel, so shade on one doesn't slow the others",
-        "Smart Gateway Lite with zero-export control",
-        "IP68 waterproof microinverters",
-        "Live tracking in the Mango Power app"
-      ],
-      sizes: [
-        { id: "mp-1200", label: "1,200 W", watts: 1200, price: 2698, image: "assets/img/patio-yard-kit.jpg",   // Mango MAP: kit $2,399 + Smart Gateway Lite $299
-          contents: ["4 x 300 W solar panels with brackets", "4 x Mango Power S microinverters, one per panel", "Smart Gateway Lite with CT sensor", "4-in-1 PIPV cable", "Stand"] }
-      ],
-      battery: null,
-      batteryNote: "Mango Power says this kit is compatible with UL-certified home batteries, including Tesla Powerwall, Enphase and FranklinWH. Want plug-in storage you can carry? Featherweight offers 1 to 4 kWh batteries.",
-      warranty: "25-year warranty.",
-      certifications: [
-        "CEC listed",
-        "UL 1741-SA (California Rule 21) and UL 1741-SB",
-        "IEEE 1547-2018",
-        "CSA C22.2"
-      ]
     }
+  ],
+
+  // Individual CraftStrom products, sold on their own. price: null shows "Ask for pricing" (don't guess).
+  products: [
+    { id: "panel", name: "Featherweight 200 W panel", img: "assets/img/reveal-panels.jpg", price: null,
+      desc: "Bifacial and semi-flexible, about 9 lbs and under a quarter inch thick. Add panels or replace one." },
+    { id: "inverter", name: "400 W smart inverter", img: "assets/img/reveal-inverter.jpg", price: null,
+      desc: "Runs two panels. ETL listed to UL 1741 and IEEE 1547." },
+    { id: "powermeter", name: "PowerMeter", img: "assets/img/reveal-meter.jpg", price: null,
+      desc: "Keeps your solar power inside your home and tracks what you use." },
+    { id: "battery", name: "Plug&Play battery", img: "assets/img/reveal-battery.jpg", price: "From $1,199",
+      desc: "Stackable 1 kWh LiFePO4 towers, up to 4 kWh, with two backup outlets." },
+    { id: "mounts", name: "Mounts and cables", img: "assets/img/graphics/icon-removable.webp", price: null,
+      desc: "Railing and ledge mounting hardware, connector and power cables." }
   ],
 
   calculator: {
@@ -138,8 +123,13 @@ window.SITE_CONFIG = {
     baseServicesChargePerDay: 0.79343, // fixed daily charge; solar does not reduce it
     salesTax: [0.0775, 0.0825, 0.085, 0.0875], // San Diego County city rates range; confirm for the delivery address
     shadeLoss: { none: 0, some: 0.20, heavy: 0.45 },
-    paybackMaxYears: 25,             // beyond this, show "not a good financial fit" instead of a number
-    minSavingsForPayback: 25         // $/year
+    paybackMaxYears: 25,             // beyond this, say payback is long instead of showing a number
+    minSavingsForPayback: 25,        // $/year
+    // Simple slider: the bill only picks a typical daytime-use pattern; it never sets production.
+    billMin: 50, billMax: 600, billDefault: 350,
+    billLowUse: 175,                 // below this: "low" daytime use pattern
+    billHighUse: 325,                // at or above this: "high" daytime use pattern
+    billAboveBaseline: 300           // at or above this: assume usage is above 130% of baseline (no baseline credit)
   },
 
   stat: { value: "44%", label: "of California households rent their home.", source: "pv magazine USA, January 2026" },
@@ -148,10 +138,10 @@ window.SITE_CONFIG = {
   images: {
     // Paste image URLs here. Empty = a labeled placeholder shows instead.
     "reveal-panels": "assets/img/reveal-panels.jpg", "reveal-inverter": "assets/img/reveal-inverter.jpg",
-    "reveal-meter": "assets/img/reveal-meter.jpg", "reveal-battery": "assets/img/reveal-battery.jpg", "reveal-app": "assets/img/reveal-app.jpg",
+    "reveal-meter": "assets/img/reveal-meter.jpg", "reveal-battery": "assets/img/reveal-battery.jpg",
     "install-video": "assets/img/diy-plug-in.jpg",     // swap for a short install video (.mp4) when you have one
     // kit card photos are set on each kit size below (image) with a matching background color (imageBg)
-    "badge-craftstrom": "", "badge-mango": ""
+    "badge-craftstrom": ""
   },
 
   showAuthorizedBadges: true,     // keep true only once both authorizations are confirmed in writing
@@ -356,6 +346,44 @@ ul,ol{text-wrap:pretty}
 }
 @media (prefers-reduced-motion: reduce){.reveal-item,.reveal-item .reveal-fig{transition:none!important}}
 
+/* Graphics: off-white artwork blended into the page (multiply) with softly faded edges */
+.art{margin:0 auto clamp(36px,5vw,60px);max-width:1040px}
+.art img{display:block;width:100%;height:auto;mix-blend-mode:multiply;
+  -webkit-mask-image:linear-gradient(to right,transparent 0,#000 3%,#000 97%,transparent 100%),linear-gradient(to bottom,transparent 0,#000 7%,#000 93%,transparent 100%);
+  -webkit-mask-composite:source-in;
+  mask-image:linear-gradient(to right,transparent 0,#000 3%,#000 97%,transparent 100%),linear-gradient(to bottom,transparent 0,#000 7%,#000 93%,transparent 100%);
+  mask-composite:intersect}
+.art figcaption{text-align:center;color:var(--muted);font-size:.86rem;line-height:1.5;max-width:62ch;margin:10px auto 0}
+.art-daytime{max-width:980px}
+.art-labels{display:grid;grid-template-columns:648fr 472fr 416fr;text-align:center;font-family:var(--display);font-weight:600;letter-spacing:-0.015em;font-size:clamp(.82rem,1.7vw,1.15rem);line-height:1.25;margin-top:-4px;gap:8px}
+.art-monitor{max-width:980px;margin-bottom:clamp(20px,3vw,32px)}
+.art-monitor figcaption{max-width:70ch}
+.perks{list-style:none;margin:clamp(40px,6vw,64px) auto 0;padding:0;max-width:1040px;display:flex;flex-wrap:wrap;justify-content:center;gap:28px 12px}
+.perks li{flex:0 1 calc(20% - 12px);min-width:150px;text-align:center}
+.perks img{display:block;width:min(170px,100%);height:auto;margin:0 auto 6px;mix-blend-mode:multiply}
+.perks h3{font-size:1.05rem;letter-spacing:-0.015em}
+.perks p{color:var(--muted);font-size:.92rem;margin-top:4px;line-height:1.4}
+.batt-band{margin:clamp(44px,6vw,72px) auto 0;max-width:1040px}
+.batt-copy{text-align:center;max-width:620px;margin:0 auto 18px}
+.batt-copy h3{font-size:clamp(1.5rem,3vw,2.1rem);letter-spacing:-0.03em}
+.batt-copy p:not(.kicker){color:var(--muted);margin-top:12px}
+.art-batt{margin-bottom:0}
+@media (max-width:640px){
+  .perks{gap:22px 10px}
+  .perks li{flex-basis:calc(50% - 10px);min-width:0}
+  .perks img{width:130px}
+  .perks h3{font-size:.98rem}
+  .perks p{font-size:.86rem}
+  .art figcaption{font-size:.8rem}
+}
+/* Dark mode: multiply would darken the art, so show it as a soft card instead */
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]) .art img{mix-blend-mode:normal;border-radius:var(--radius-lg);-webkit-mask-image:none;mask-image:none}
+  :root:not([data-theme="light"]) .perks img{mix-blend-mode:screen;filter:invert(1) hue-rotate(180deg)}
+}
+:root[data-theme="dark"] .art img{mix-blend-mode:normal;border-radius:var(--radius-lg);-webkit-mask-image:none;mask-image:none}
+:root[data-theme="dark"] .perks img{mix-blend-mode:screen;filter:invert(1) hue-rotate(180deg)}
+
 /* Image placeholders */
 .ph{width:100%;height:100%;min-height:180px;display:grid;place-items:center;text-align:center;padding:28px;
   background:repeating-linear-gradient(135deg,transparent 0 14px,rgba(127,127,127,.08) 14px 15px),var(--surface-2);color:var(--muted);font-size:.92rem;font-weight:600}
@@ -472,6 +500,35 @@ fieldset{border:0;margin:0;padding:0;min-width:0}
 .summary .fine{color:#B8C0CC;margin-top:4px}
 .sum-right{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
 .sum-price{font-family:var(--display);font-weight:700;font-size:1.8rem;letter-spacing:-0.02em}
+
+/* Single-line kit card: image beside details on wide screens */
+@media (min-width:900px){
+  .kit-grid{grid-template-columns:1fr}
+  .kit-grid .kit:only-child{display:grid;grid-template-columns:1fr 1.05fr;max-width:1040px;margin:0 auto;width:100%}
+  .kit-grid .kit:only-child .kit-fig{aspect-ratio:auto;height:100%;min-height:420px}
+}
+.kit-verify{white-space:normal;text-align:center}
+.cert-card:only-child{grid-column:1/-1}
+/* Individual parts */
+.parts{max-width:1040px;margin:clamp(40px,6vw,64px) auto 0}
+.parts-head{text-align:center;max-width:640px;margin:0 auto 22px}
+.parts-head h3{font-size:clamp(1.4rem,2.6vw,1.8rem);letter-spacing:-0.03em}
+.parts-head p{color:var(--muted);margin-top:10px}
+.parts-grid{list-style:none;margin:0;padding:0;display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(190px,1fr))}
+@media (min-width:1000px){.parts-grid{grid-template-columns:repeat(5,1fr)}}
+.part{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column;transition:border-color .2s}
+.part.added{border-color:var(--sun)}
+.part-fig{aspect-ratio:4/3;background:#fff;display:grid;place-items:center;overflow:hidden}
+.part-fig img{width:100%;height:100%;object-fit:cover}
+.part-fig img.contain{object-fit:contain;width:70%;height:auto;mix-blend-mode:multiply}
+.part-body{padding:14px 16px 16px;display:flex;flex-direction:column;gap:6px;flex:1}
+.part-body h4{font-family:var(--display);font-size:1.02rem;letter-spacing:-0.015em;margin:0}
+.part-body p{color:var(--muted);font-size:.88rem;line-height:1.45}
+.part-price{font-weight:600;font-size:.9rem;color:var(--ink);margin-top:auto;padding-top:6px}
+.part .btn{min-height:40px;font-size:.9rem;padding:0 14px;margin-top:6px}
+.part.added .btn{background:var(--sun);color:var(--on-sun);border-color:var(--sun)}
+#partsPick{color:#D3D8DF;flex-basis:100%;order:3;font-size:.9rem}
+@media (max-width:640px){.parts-grid{grid-template-columns:1fr 1fr;gap:10px}.part-body{padding:12px}.part-body p{font-size:.84rem}}
 
 /* Install */
 .install-grid{display:grid;gap:24px}
@@ -794,7 +851,7 @@ footer p + p{margin-top:12px}
     <div class="head">
       <p class="kicker">What it is</p>
       <h2>Solar that works <em class="em">where rooftop solar can't</em>.</h2>
-      <p class="lede">Plug-in solar is a small solar system that hangs on a railing or sits on a stand, and plugs into a regular outdoor outlet. No roof, no drilling, and it moves with you.</p>
+      <p class="lede">Plug-in solar is a small solar system that hangs on a railing or window ledge and plugs into a regular outdoor outlet. No roof work, and it moves with you.</p>
     </div>
     <div class="who-grid">
       <div class="who">
@@ -813,6 +870,7 @@ footer p + p{margin-top:12px}
         <p>One approved standard and one vendor, so every system looks and works the same.</p>
       </div>
     </div>
+    <ul class="perks"><li><img src="assets/img/graphics/icon-lightweight.webp" width="300" height="244" alt="" loading="lazy" decoding="async"><h3>Lightweight panels</h3><p>About 9 lbs per Featherweight panel</p></li><li><img src="assets/img/graphics/icon-no-roof.webp" width="300" height="244" alt="" loading="lazy" decoding="async"><h3>No shared roof</h3><p>Use a suitable sunny space</p></li><li><img src="assets/img/graphics/icon-removable.webp" width="300" height="244" alt="" loading="lazy" decoding="async"><h3>Removable options</h3><p>Mounting depends on your site</p></li><li><img src="assets/img/graphics/icon-monitoring.webp" width="300" height="244" alt="" loading="lazy" decoding="async"><h3>Energy monitoring</h3><p>See production and home use</p></li><li><img src="assets/img/graphics/icon-guidance.webp" width="300" height="244" alt="" loading="lazy" decoding="async"><h3>Local guidance</h3><p>Compatibility review before you buy</p></li></ul>
     <div class="stat-band">
       <span class="stat-num" data-bind="stat.value">44%</span>
       <p><span data-bind="stat.label">of California households rent their home.</span> <span class="fine">Source: <span data-bind="stat.source"></span></span></p>
@@ -825,11 +883,11 @@ footer p + p{margin-top:12px}
   <div class="wrap">
     <div class="head">
       <p class="kicker">The equipment</p>
-      <h2>Five parts. One simple system.</h2>
+      <h2>Four parts. One simple system.</h2>
       <p class="lede">Every kit comes as a matched set from one maker, so the parts are built and tested to work together.</p>
     </div>
   </div>
-  <div class="reveal-track" id="revealTrack" style="--n:5">
+  <div class="reveal-track" id="revealTrack" style="--n:4">
     <div class="reveal-stage">
       <div class="wrap">
         <article class="reveal-item is-active">
@@ -837,7 +895,7 @@ footer p + p{margin-top:12px}
           <div class="reveal-copy">
             <p class="kicker">Panels</p>
             <h3>Light enough to lift with one hand.</h3>
-            <p>Featherweight panels are thin and semi-flexible, with no heavy glass. Patio and Yard uses full-size glass panels on a ground stand.</p>
+            <p>CraftStrom Featherweight panels are thin and semi-flexible, with no heavy glass, so they&#39;re easy to carry and easy on a railing.</p>
             <div class="spec"><span class="chip">About 9 lbs each</span><span class="chip">Under 1/4 inch thick</span><span class="chip">Up to 1,200 W</span></div>
           </div>
         </article>
@@ -866,18 +924,10 @@ footer p + p{margin-top:12px}
             <div class="spec"><span class="chip">Featherweight kits</span><span class="chip">1 to 4 kWh</span></div>
           </div>
         </article>
-        <article class="reveal-item">
-          <div class="reveal-fig" data-img="reveal-app" data-label="Photo: phone showing the Mango Power app next to plug-in panels"></div>
-          <div class="reveal-copy">
-            <p class="kicker">The app</p>
-            <h3>Every watt, in your pocket.</h3>
-            <p>See what your panels make, what your home uses and what you saved, live, all day.</p>
-          </div>
-        </article>
-        <div class="reveal-dots" aria-hidden="true"><span class="on"></span><span></span><span></span><span></span><span></span></div>
+        <div class="reveal-dots" aria-hidden="true"><span class="on"></span><span></span><span></span><span></span></div>
       </div>
     </div>
-    <p class="swipe-hint" aria-hidden="true">Swipe to see all five parts &rarr;</p>
+    <p class="swipe-hint" aria-hidden="true">Swipe to see all four parts &rarr;</p>
   </div>
 </section>
 
@@ -888,11 +938,12 @@ footer p + p{margin-top:12px}
       <p class="kicker">How it works</p>
       <h2>Three steps. No roof required.</h2>
     </div>
+    <figure class="art art-how"><img src="assets/img/graphics/how-it-works-1536.webp" srcset="assets/img/graphics/how-it-works-900.webp 900w, assets/img/graphics/how-it-works-1536.webp 1536w" sizes="(min-width:1120px) 1000px, 100vw" width="1536" height="740" alt="Illustration of solar panels on a balcony railing capturing sunlight, supplying power to the home, with energy monitoring at the electrical panel." loading="lazy" decoding="async"><figcaption>Illustration only. Equipment and electrical setup depend on your home.</figcaption></figure>
     <ol class="steps">
       <li class="step">
         <div class="step-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="11" rx="1.5"/><path d="M9 4v11M15 4v11M3 9.5h18M8 21l2-6M16 21l-2-6"/></svg></div>
         <h3>Mount it</h3>
-        <p>Hang the panels on a railing or set them on stands. No drilling into the building.</p>
+        <p>Hang the lightweight panels on a balcony railing or window ledge. Mounting depends on your space.</p>
       </li>
       <li class="step">
         <div class="step-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2v5M15 2v5M6 7h12v4a6 6 0 0 1-12 0V7zM12 17v5"/></svg></div>
@@ -912,59 +963,35 @@ footer p + p{margin-top:12px}
 <section class="sec" id="savings">
   <div class="wrap">
     <div class="head">
-      <p class="kicker">Savings estimator</p>
+      <p class="kicker">Savings calculator</p>
       <h2>How much could you <em class="em">save</em>?</h2>
-      <p class="lede">Describe your space. We'll estimate how much solar it makes, how much of it your home actually uses, and what that's worth at SDG&amp;E's current prices.</p>
+      <p class="lede">Slide to your usual SDG&amp;E bill and pick where the panels would go.</p>
     </div>
+    <figure class="art art-daytime"><img src="assets/img/graphics/daytime-solar-1536.webp" srcset="assets/img/graphics/daytime-solar-900.webp 900w, assets/img/graphics/daytime-solar-1536.webp 1536w" sizes="(min-width:1120px) 1000px, 100vw" width="1536" height="554" alt="Sunlight on balcony solar panels, a home using electricity during the day, and a smaller electricity bill." loading="lazy" decoding="async"><div class="art-labels" aria-hidden="true"><span>Sunlight</span><span>Everyday electricity use</span><span>Less electricity purchased</span></div><figcaption>Solar saves the most when your home uses it as it&#39;s made. Savings depend on sunlight, placement, usage and your electricity rate.</figcaption></figure>
     <div class="calc-grid">
       <form class="calc-form" id="calcForm" onsubmit="return false">
-        <div class="calc-row">
-          <div class="field"><label for="cKit">Kit</label><select class="input" id="cKit"></select></div>
-          <div class="field" id="cBattWrap"><label for="cBatt">Battery</label><select class="input" id="cBatt"></select></div>
+        <div class="field">
+          <label for="bill">About how much is your monthly SDG&amp;E bill?</label>
+          <div class="bill-row"><output class="bill-val" id="billVal" for="bill">$350</output></div>
+          <input class="range" type="range" id="bill" min="50" max="600" step="10" value="350">
+          <div class="range-scale fine"><span>$50</span><span>$600+</span></div>
         </div>
-        <div class="calc-row">
-          <div class="field"><label for="cArea">Where you live</label>
-            <select class="input" id="cArea"><option value="coastal">Coastal or central San Diego</option><option value="inland">Inland (El Cajon, Santee, Lakeside and east)</option></select></div>
-          <div class="field"><label for="cTilt">How it's mounted</label>
-            <select class="input" id="cTilt"><option value="upright">Upright on a railing or wall</option><option value="steep">Steep angle (about 60&deg;)</option><option value="stand">Angled stand (about 30&deg;)</option></select></div>
-        </div>
-        <fieldset class="field"><legend>Which way it faces</legend>
+        <fieldset class="field">
+          <legend>Where would the panels go?</legend>
           <div class="seg">
-            <input type="radio" name="cFace" id="cf-s" value="south" checked><label for="cf-s">South</label>
-            <input type="radio" name="cFace" id="cf-w" value="west"><label for="cf-w">West</label>
-            <input type="radio" name="cFace" id="cf-e" value="east"><label for="cf-e">East</label>
-            <input type="radio" name="cFace" id="cf-n" value="north"><label for="cf-n">North</label>
-          </div></fieldset>
-        <fieldset class="field"><legend>Shade on the panels</legend>
-          <div class="seg">
-            <input type="radio" name="cShade" id="cs-0" value="none" checked><label for="cs-0">None</label>
-            <input type="radio" name="cShade" id="cs-1" value="some"><label for="cs-1">Some</label>
-            <input type="radio" name="cShade" id="cs-2" value="heavy"><label for="cs-2">A lot</label>
-          </div></fieldset>
-        <fieldset class="field"><legend>Electricity use during sunny hours</legend>
-          <div class="seg">
-            <input type="radio" name="cLoad" id="cl-0" value="low"><label for="cl-0">Low</label>
-            <input type="radio" name="cLoad" id="cl-1" value="medium" checked><label for="cl-1">Medium</label>
-            <input type="radio" name="cLoad" id="cl-2" value="high"><label for="cl-2">High</label>
+            <input type="radio" name="space" id="sp-bal" value="balcony" checked><label for="sp-bal">Balcony</label>
+            <input type="radio" name="space" id="sp-win" value="window"><label for="sp-win">Window ledge</label>
+            <input type="radio" name="space" id="sp-pat" value="patio"><label for="sp-pat">Patio or yard</label>
           </div>
-          <p class="fine" id="cLoadNote"></p></fieldset>
-        <fieldset class="field"><legend>Your SDG&amp;E pricing</legend>
-          <div class="seg">
-            <input type="radio" name="cRate" id="cr-0" value="standard" checked><label for="cr-0">Standard</label>
-            <input type="radio" name="cRate" id="cr-1" value="care"><label for="cr-1">CARE</label>
-            <input type="radio" name="cRate" id="cr-2" value="fera"><label for="cr-2">FERA</label>
-          </div></fieldset>
-        <label class="switch" for="cAbove">
-          <span><b>My usage is usually above 130% of baseline</b><br><span class="fine">Your SDG&amp;E bill shows this. Not sure? Leave it off for a more conservative estimate.</span></span>
-          <input type="checkbox" id="cAbove"><span class="track" aria-hidden="true"></span>
+        </fieldset>
+        <label class="switch" for="calcBattery">
+          <span><b>Add a 1 kWh battery</b><br><span class="fine">Save midday sun for the evening.</span></span>
+          <input type="checkbox" id="calcBattery"><span class="track" aria-hidden="true"></span>
         </label>
-        <div class="calc-row pair">
-          <div class="field"><label for="cTax">Sales tax for your city</label><select class="input" id="cTax"></select></div>
-          <label class="switch calc-inst" for="cInstall">
-            <span><b>Add installation</b><br><span class="fine">Starting at <span class="js-install-price">$99</span></span></span>
-            <input type="checkbox" id="cInstall"><span class="track" aria-hidden="true"></span>
-          </label>
-        </div>
+        <label class="switch" for="care">
+          <span><b>I get a CARE or FERA discount</b><br><span class="fine">It's listed on your SDG&amp;E bill if you have one.</span></span>
+          <input type="checkbox" id="care"><span class="track" aria-hidden="true"></span>
+        </label>
       </form>
       <div class="calc-out" id="calcOut" aria-live="polite"><p class="calc-msg">Loading the estimate&hellip;</p></div>
     </div>
@@ -976,11 +1003,26 @@ footer p + p{margin-top:12px}
   <div class="wrap">
     <div class="head">
       <p class="kicker">Choose your kit</p>
-      <h2>Two lines. Pick the one that <em class="em">fits your space</em>.</h2>
-      <p class="lede">Choose a kit, then request a free compatibility review. We'll verify it works with your space, outlet and HOA or landlord rules before you buy.</p>
+      <h2>Featherweight. Solar light enough for a <em class="em">railing</em>.</h2>
+      <p class="lede">CraftStrom's semi-flexible panels weigh about 9 lbs each, with no heavy glass. Choose a complete kit or just the parts you need, then request a free compatibility review before you buy.</p>
       <p style="margin-top:18px"><span class="tag" id="sampleTag" hidden>Estimated pricing</span></p>
     </div>
     <div class="kit-grid" id="kitGrid"></div>
+    <div class="parts">
+      <div class="parts-head">
+        <h3>Or choose individual parts</h3>
+        <p>Adding panels, replacing a part, or adding a battery to a system you already have? Add what you need and we'll confirm compatibility and pricing.</p>
+      </div>
+      <ul class="parts-grid" id="partsGrid"></ul>
+    </div>
+    <div class="batt-band">
+      <div class="batt-copy">
+        <p class="kicker">Optional battery</p>
+        <h3>Save midday solar for the evening.</h3>
+        <p>Featherweight kits can add 1 to 4 kWh of stackable storage. It holds solar your home can&#39;t use right away for the evening, and its outlets can power a few compatible devices in an outage.</p>
+      </div>
+      <figure class="art art-batt"><img src="assets/img/graphics/battery-1536.webp" srcset="assets/img/graphics/battery-900.webp 900w, assets/img/graphics/battery-1536.webp 1536w" sizes="(min-width:1120px) 1000px, 100vw" width="1536" height="618" alt="Optional battery storing solar for later use, and its backup outlets powering a lamp and a laptop." loading="lazy" decoding="async"><figcaption>Optional equipment. Capacity, power limits and runtime vary by configuration.</figcaption></figure>
+    </div>
     <div class="summary">
       <div>
         <b id="sumName">Featherweight 1,200 W</b>
@@ -1069,6 +1111,7 @@ footer p + p{margin-top:12px}
       <p class="kicker">Safety and trust</p>
       <h2>Safe on day one, and year ten.</h2>
     </div>
+    <figure class="art art-monitor"><img src="assets/img/graphics/monitoring-1536.webp" srcset="assets/img/graphics/monitoring-900.webp 900w, assets/img/graphics/monitoring-1536.webp 1536w" sizes="(min-width:1120px) 1000px, 100vw" width="1536" height="298" alt="Diagram of a solar panel, a home, a PowerMeter and a dashboard showing solar production, home consumption and grid use." loading="lazy" decoding="async"><figcaption>The PowerMeter helps the system match solar output to what your home is using. Depending on your home, its sensors may need a qualified electrician to install. We&#39;ll confirm this during your compatibility review.</figcaption></figure>
     <div class="trust-grid">
       <div class="trust">
         <h3>Certified components</h3>
@@ -1084,12 +1127,11 @@ footer p + p{margin-top:12px}
       </div>
     </div>
     <div class="cert-block">
-      <h3>Certifications by kit</h3>
+      <h3>Certifications</h3>
       <div class="cert-grid" id="certList"></div>
     </div>
     <div class="badges" id="badges">
       <div class="badge"><span data-img="badge-craftstrom" data-badge="1"><i aria-hidden="true">&#10003;</i></span>Authorized CraftStrom Distributor</div>
-      <div class="badge"><span data-img="badge-mango" data-badge="1"><i aria-hidden="true">&#10003;</i></span>Authorized Mango Power Distributor</div>
       <div class="badge"><i aria-hidden="true">SD</i>Local San Diego business</div>
     </div>
   </div>
@@ -1117,7 +1159,7 @@ footer p + p{margin-top:12px}
       <details><summary>What if I move?</summary>
         <div class="ans">Unplug it and take it with you. Nothing is wired into the building, so it goes where you go.</div></details>
       <details><summary>How much will I save?</summary>
-        <div class="ans">Every kilowatt-hour your home uses from your panels is one you don't buy from SDG&amp;E. Solar your home can't use at that moment isn't sent to the grid and earns nothing, so savings depend on your sun, your shade and how much power you use during the day. Try the estimator above, or request a compatibility review for an estimate based on your actual usage.</div></details>
+        <div class="ans">Every kilowatt-hour your home uses from your panels is one you don't buy from SDG&amp;E. Solar your home can't use at that moment isn't sent to the grid and earns nothing, so savings depend on your sun, your shade and how much power you use during the day. Try the calculator above, or request a compatibility review for an estimate based on your actual usage.</div></details>
       <details><summary>Is it safe?</summary>
         <div class="ans">Kits use certified components, plug into a standard outdoor outlet, and shut off automatically if the grid goes down. Featherweight panels have no heavy glass, which matters on a railing.</div></details>
       <details><summary>What is the warranty?</summary>
@@ -1152,7 +1194,7 @@ footer p + p{margin-top:12px}
           <input type="radio" name="intent" id="in-ord" value="order"><label for="in-ord">Ready to order</label>
         </div>
       </fieldset>
-      <p class="kit-pick" id="kitPick">Kit: <b id="kitPickName">Featherweight 1,200 W</b><a href="#kits">Change</a></p>
+      <p class="kit-pick" id="kitPick">Kit: <b id="kitPickName">Featherweight 1,200 W</b><span id="partsPick" hidden></span><a href="#kits">Change</a></p>
       <div class="row">
         <div><label for="f-name">Name</label><input class="input" id="f-name" name="name" autocomplete="name" required></div>
         <div><label for="f-email">Email</label><input class="input" id="f-email" name="email" type="email" autocomplete="email" required></div>
@@ -1194,6 +1236,7 @@ footer p + p{margin-top:12px}
       </div>
       <div><label for="f-notes">Anything we should know? <span style="opacity:.6">(optional)</span></label><textarea class="input" id="f-notes" name="notes" rows="3" placeholder="Shade from trees or buildings, railing type, existing policies..."></textarea></div>
       <input type="hidden" name="kit" id="f-kit">
+      <input type="hidden" name="individual_parts" id="f-parts">
       <input type="hidden" name="kit_total" id="f-total">
       <input type="hidden" name="install_interest" id="f-install">
       <p class="err" id="formErr" role="alert"></p>
@@ -1220,7 +1263,7 @@ footer p + p{margin-top:12px}
       <p>Plug-in solar and HOA community standards for <span data-bind="brand.serviceArea">San Diego County</span>.</p>
       <p>Savings shown are estimates. Actual results vary with sunlight, placement, your electricity use and your rate plan.</p>
       <p>Whether a plug-in solar system may be used at a given address depends on state law, local electrical and building codes, your utility, and your lease or HOA rules. Installation is available on request. Nothing here is legal advice.</p>
-      <p>CraftStrom and Mango Power are trademarks of their respective owners. Product specs are from each manufacturer and may change.</p>
+      <p>CraftStrom is a trademark of its owner. Product specs are from the manufacturer and may change.</p>
       <p>&copy; <span id="yr"></span> Terrace Solar</p>
     </div>
   </div>
@@ -1371,7 +1414,7 @@ footer p + p{margin-top:12px}
           '<details class="box box-fold"' + (window.innerWidth >= 900 ? " open" : "") + '><summary>What\'s in the box</summary><ul class="box-list">' + s.contents.map(function(c){ return "<li>" + esc(c) + "</li>"; }).join("") + '</ul></details>' +
           battHtml +
           '<div class="kit-foot"><div><div class="price">' + money(totalFor(l.id)) + '</div><p class="price-note">Easy self-install, or professional installation from ' + money(C.install.startingPrice) + '</p></div>' +
-            '<button class="btn ' + (sel ? "btn-sun" : "btn-ghost") + '" type="button" data-select="' + l.id + '" aria-pressed="' + sel + '">' + (sel ? "Selected" : "Select this kit") + '</button></div>' +
+            (C.lines.length > 1 ? '<button class="btn ' + (sel ? "btn-sun" : "btn-ghost") + '" type="button" data-select="' + l.id + '" aria-pressed="' + sel + '">' + (sel ? "Selected" : "Select this kit") + '</button>' : '<a class="btn btn-sun js-check kit-verify" href="#check">Verify this kit for my home</a>') + '</div>' +
         '</div>';
       grid.appendChild(card);
     });
@@ -1380,6 +1423,7 @@ footer p + p{margin-top:12px}
       $$('input[name="bt-' + l.id + '"]').forEach(function(r){ r.addEventListener("change", function(){ state.battery[l.id] = +r.value; state.line = l.id; refresh(); }); });
     });
     $$("[data-select]").forEach(function(btn){ btn.addEventListener("click", function(){ state.line = btn.dataset.select; refresh(); }); });
+    $$(".kit-verify").forEach(function(a){ a.addEventListener("click", goCheck); });
   }
 
   function updateCard(id){
@@ -1443,134 +1487,99 @@ footer p + p{margin-top:12px}
     if (on) trackEvent("InstallRequest", { startingPrice: C.install.startingPrice });
   });
 
-  /* ---------- Savings estimator ----------
-     Production and home use come from an hourly simulation (tools/solar-model/build_model.py).
-     Only solar the home uses at that moment is valued; unused solar is not exported and is worth $0.
-     Each kWh is valued at the SDG&E TOU-DR1 price for its season and time of day. */
-  var K = C.calculator, M = null, calcTouched = false;
-  var LOAD_NOTES = {
-    low: "Away most weekdays. About 150 W during sunny weekday hours (fridge and standby), more on weekends.",
-    medium: "Home part of the day. About 300 to 450 W during sunny hours, more with summer cooling.",
-    high: "Home most days, with cooling in summer. About 550 W to 1 kW during sunny hours."
-  };
-  var sizeById = {}, lineBySize = {};
-  C.lines.forEach(function(l){ l.sizes.forEach(function(z){ sizeById[z.id] = z; lineBySize[z.id] = l; }); });
-  var cKit = $("#cKit"), cBatt = $("#cBatt"), cTilt = $("#cTilt");
-  cKit.innerHTML = C.lines.map(function(l){ return l.sizes.map(function(z){ return '<option value="' + z.id + '">' + esc(l.name + " " + z.label) + "</option>"; }).join(""); }).join("");
-  $("#cTax").innerHTML = K.salesTax.map(function(t){ return '<option value="' + t + '">' + (t * 100).toFixed(2).replace(/0$/, "") + "%</option>"; }).join("");
-  function fillBatt(){
-    var l = lineBySize[cKit.value];
-    $("#cBattWrap").hidden = !l.battery;
-    cBatt.innerHTML = '<option value="0">None</option>' + (l.battery ? l.battery.options.map(function(o){ return '<option value="' + o.kwh + '">' + o.kwh + " kWh (+" + money(o.price) + ")</option>"; }).join("") : "");
-  }
-  function syncCalcToKits(){
-    if (calcTouched) return;
-    cKit.value = state.size[state.line]; fillBatt();
-    cBatt.value = String(state.battery[state.line] || 0);
-    cTilt.value = state.line === "patio" ? "stand" : "upright";
-  }
-  cKit.addEventListener("change", function(){ calcTouched = true; fillBatt(); cTilt.value = lineBySize[cKit.value].battery ? "upright" : "stand"; calc(); });
-  ["cBatt", "cArea", "cTilt", "cTax", "cAbove", "cInstall"].forEach(function(id){ $("#" + id).addEventListener("change", function(){ calcTouched = true; }); });
-  fillBatt();
-
+  /* ---------- Savings calculator (simple) ----------
+     Looks like a bill slider, but the math is the hourly model in assets/data/solar-model.json:
+     production from a typical San Diego year, only solar the home uses at that moment is valued,
+     at SDG&E TOU-DR1 rates for its season and hour. The bill only picks a typical daytime-use pattern. */
+  var K = C.calculator, M = null;
+  var sizeById = {}; C.lines.forEach(function(l){ l.sizes.forEach(function(z){ sizeById[z.id] = z; }); });
+  var billEl = $("#bill"), fBill = $("#f-bill"), sliderMoved = false;
+  billEl.min = K.billMin; billEl.max = K.billMax; billEl.value = K.billDefault;
+  billEl.addEventListener("input", function(){ sliderMoved = true; });
+  fBill.addEventListener("input", function(){ fBill.dataset.touched = "1"; });
   fetch(K.dataUrl).then(function(r){ if (!r.ok) throw new Error(r.status); return r.json(); })
     .then(function(d){ M = d; calc(); })
-    .catch(function(){ $("#calcOut").innerHTML = '<p class="calc-msg"><strong>The estimator didn\'t load.</strong>Please refresh the page, or request a compatibility review and we\'ll estimate your savings for you.</p><div class="cta-row"><a class="btn btn-sun js-check" href="#check">Request a compatibility review</a></div>'; });
+    .catch(function(){ $("#calcOut").innerHTML = '<p class="calc-msg"><strong>The calculator didn\'t load.</strong>Please refresh the page, or request a compatibility review and we\'ll estimate your savings for you.</p>'; });
 
-  function radio(name){ var r = $('input[name="' + name + '"]:checked'); return r ? r.value : ""; }
-  function avoidedRate(rateKey, season, period, aboveBaseline){
-    var t = K.rates[rateKey === "care" ? "care" : "standard"];
-    var r = t[season][period] - (aboveBaseline ? 0 : t.baselineCredit);
-    if (rateKey === "fera") r = r * (1 - K.feraDiscount);
-    return Math.max(r, 0);
-  }
   function lookup(area, tilt, face, kw, shade, load, batt){
     var oi = M.orients.indexOf(area + "|" + tilt + "|" + face), ki = M.kw.indexOf(kw), si = M.shade.indexOf(shade), li = M.load.indexOf(load), bi = M.batt.indexOf(batt);
     if (oi < 0 || ki < 0 || si < 0 || li < 0 || bi < 0) return null;
     var i = ((((oi * M.kw.length + ki) * M.shade.length + si) * M.load.length + li) * M.batt.length + bi) * M.buckets.length;
-    return { buckets: M.avoid.slice(i, i + M.buckets.length), prodPerKw: M.prod[oi] };
+    return M.avoid.slice(i, i + M.buckets.length);
   }
-  function kwh(n){ return Math.round(n).toLocaleString("en-US") + " kWh"; }
+  function dollars(buckets, care, above){
+    var t = K.rates[care ? "care" : "standard"], sum = 0;
+    M.buckets.forEach(function(name, i){ var p = name.split("_"); sum += buckets[i] * Math.max(t[p[0]][p[1]] - (above ? 0 : t.baselineCredit), 0); });
+    return sum;
+  }
 
   function calc(){
-    syncCalcToKits();
-    var load = radio("cLoad");
-    $("#cLoadNote").textContent = LOAD_NOTES[load] || "";
+    var bill = +billEl.value;
+    $("#billVal").textContent = money(bill) + (bill >= K.billMax ? "+" : "");
+    if (sliderMoved && !fBill.dataset.touched) fBill.value = bill;
     if (!M) return;
     var out = $("#calcOut");
-    var z = sizeById[cKit.value], l = lineBySize[cKit.value];
-    var kw = z.watts / 1000, batt = l.battery ? +cBatt.value : 0;
-    var area = $("#cArea").value, tilt = cTilt.value, face = radio("cFace"), shade = radio("cShade"), rateKey = radio("cRate");
-    var above = $("#cAbove").checked;
-    var withB = lookup(area, tilt, face, kw, shade, load, batt), noB = lookup(area, tilt, face, kw, shade, load, 0);
-    if (!withB || !noB) { out.innerHTML = '<p class="calc-msg">We don\'t have an estimate for that combination yet. Request a compatibility review and we\'ll run it for you.</p>'; return; }
-    var prod = noB.prodPerKw * kw * (1 - K.shadeLoss[shade]);
-    var usedDirect = noB.buckets.reduce(function(a, b){ return a + b; }, 0);
-    var usedTotal = withB.buckets.reduce(function(a, b){ return a + b; }, 0);
-    var shifted = Math.max(usedTotal - usedDirect, 0);
-    var unused = Math.max(prod - usedDirect - shifted / M.battery.round_trip, 0);
-    var savings = 0;
-    M.buckets.forEach(function(name, i){ var p = name.split("_"); savings += withB.buckets[i] * avoidedRate(rateKey, p[0], p[1], above); });
-    var opt = batt ? batteryOpt(l, batt) : null;
-    var equip = z.price + (opt ? opt.price : 0);
-    var taxRate = +$("#cTax").value, tax = equip * taxRate;
-    var inst = $("#cInstall").checked ? C.install.startingPrice : 0;
-    var total = equip + tax + inst;
-    var payback = savings >= K.minSavingsForPayback ? total / savings : Infinity;
-    var usedPct = prod > 0 ? Math.round(usedDirect / prod * 100) : 0;
-
+    var space = ($('input[name="space"]:checked') || {}).value;
+    var wantsBatt = $("#calcBattery").checked, care = $("#care").checked;
+    var load = bill < K.billLowUse ? "low" : bill < K.billHighUse ? "medium" : "high";
+    var above = bill >= K.billAboveBaseline;
+    var lineId = "featherweight", sizeId = "fw-1200", tilt = "upright";
+    if (space === "window") { sizeId = "fw-800"; tilt = "steep"; }
+    var l = lineById[lineId], z = sizeById[sizeId], kw = z.watts / 1000, batt = wantsBatt ? 1 : 0;
+    // A typical sunny-side setup: average of south- and west-facing, coastal weather (the more conservative area).
+    var sav = 0, n = 0;
+    ["south", "west"].forEach(function(face){ var r = lookup("coastal", tilt, face, kw, "none", load, batt); if (r) { sav += dollars(r, care, above); n++; } });
+    if (!n) { out.innerHTML = '<p class="calc-msg">Request a compatibility review and we\'ll estimate your savings for you.</p>'; return; }
+    sav = sav / n;
+    var opt = batt ? batteryOpt(l, 1) : null;
+    var cost = z.price + (opt ? opt.price : 0);
+    var pb = sav >= K.minSavingsForPayback ? cost / sav : Infinity;
+    var spaceLabel = { balcony: "balcony", window: "window ledge", patio: "patio or yard" }[space] || space;
     var notes = "";
-    if (shade === "heavy") notes += '<p class="note">Heavy shade cuts production sharply. We recommend a compatibility review before buying.</p>';
-    if (face === "north") notes += '<p class="note">North-facing panels get little direct sun in San Diego, so they produce far less.</p>';
-    if (!batt && usedPct < 70 && l.battery) notes += '<p class="note">Your home can\'t use about ' + (100 - usedPct) + '% of this solar as it\'s made. A battery could save some of it for the evening.</p>';
-    if (!batt && usedPct < 70 && !l.battery) notes += '<p class="note">Your home can\'t use about ' + (100 - usedPct) + '% of this solar as it\'s made, so a smaller system or more daytime use would make better use of it.</p>';
-
-    var paybackHtml = payback <= K.paybackMaxYears
-      ? '<p class="payback"><b>Simple payback: about ' + Math.round(payback) + ' years</b><span>Upfront cost ' + money(total) + '</span></p>'
-      : '<p class="payback"><b>Doesn\'t pay back within ' + K.paybackMaxYears + ' years at these settings</b><span>This setup may not be a good financial fit</span></p>';
-
-    var costs = '<ul class="costs"><li><span>' + esc(l.name + " " + z.label) + ' kit</span><span>' + money(z.price) + '</span></li>' +
-      (opt ? '<li><span>' + opt.kwh + ' kWh battery</span><span>' + money(opt.price) + '</span></li>' : "") +
-      '<li><span>Sales tax (' + (taxRate * 100).toFixed(2).replace(/0$/, "") + '%)</span><span>' + money(tax) + '</span></li>' +
-      (inst ? '<li><span>Installation, starting price</span><span>' + money(inst) + '</span></li>' : "") +
-      '<li><span>Delivery</span><span>Not included yet</span></li></ul>';
-
-    var assume = '<details class="assume"><summary>Assumptions and sources</summary><ul>' +
-      '<li><b>Production:</b> hourly simulation of a typical weather year (' + esc(M.weather[area]) + ' weather file from the California Energy Commission), using pvlib\'s version of NREL\'s PVWatts method with 14% system losses. First-year output. Panel aging and any bifacial gain are not included.</li>' +
-      '<li><b>Shade:</b> "Some" removes 20% of production and "A lot" removes 45%. Real shading varies, which is why we review your space.</li>' +
-      '<li><b>Your use:</b> an illustrative hourly pattern for "' + load + '" daytime use, not your actual usage. Solar only counts when your home is using power at that moment.</li>' +
-      '<li><b>Zero-export:</b> solar your home can\'t use isn\'t sent to the grid and earns nothing.</li>' +
-      '<li><b>Prices:</b> SDG&amp;E Schedule TOU-DR1 total energy rates effective ' + esc(K.ratesEffective) + ', applied by season and time of day' + (above ? "" : ", including the baseline credit") + (rateKey === "care" ? ", using SDG&amp;E\'s CARE rates" : rateKey === "fera" ? ", minus the 18% FERA discount" : "") + '. Community Choice customers\' rates differ slightly.</li>' +
-      (batt ? '<li><b>Battery:</b> assumes ' + Math.round(M.battery.usable * 100) + '% usable capacity and about ' + Math.round(M.battery.round_trip * 100) + '% round-trip efficiency. It charges only from solar your home can\'t use and supplies your home from 4 pm to midnight, up to the kit\'s inverter capacity. Specs to be confirmed with the manufacturer.</li>' : "") +
-      '<li><b>Not included:</b> SDG&amp;E\'s Base Services Charge (' + money2(K.baseServicesChargePerDay) + ' a day, which solar doesn\'t reduce), delivery, financing, maintenance, panel aging and future rate changes.</li>' +
-      (C.pricesAreSamples ? '<li><b>Kit prices</b> are estimates until confirmed.</li>' : "") +
-      '</ul></details>';
-
+    if (batt) notes += '<p class="note">A battery holds midday solar your home can\'t use right away and supplies it in the evening, when SDG&amp;E prices are highest.</p>';
+    if (space === "patio") notes += '<p class="note">Patio or yard: we\'ll confirm the best mounting for your space during your compatibility review.</p>';
+    if (space === "window") notes += '<p class="note">Window ledge: the panels mount outside your window. We\'ll confirm the right size during your compatibility review.</p>';
+    if (care) notes += '<p class="note">You keep your CARE or FERA discount. Solar savings stack on top of it.</p>';
     out.innerHTML =
-      '<span class="tagline">Illustrative estimate, not a personalized forecast</span>' +
-      '<div class="kpis">' +
-        '<div class="kpi"><span>Solar produced per year</span><b>' + kwh(prod) + '</b></div>' +
-        '<div class="kpi"><span>Used in your home as it\'s made</span><b>' + kwh(usedDirect) + ' (' + usedPct + '%)</b></div>' +
-        (batt ? '<div class="kpi"><span>Used later from the battery</span><b>' + kwh(shifted) + '</b></div>' : "") +
-        '<div class="kpi dim"><span>Not used (not exported, earns $0)</span><b>' + kwh(unused) + '</b></div>' +
-      '</div>' +
-      '<p class="label">Estimated bill savings, first year</p>' +
-      '<p class="big">' + money(savings) + '<span class="per"> a year</span></p>' +
-      '<p class="sub">About ' + money(savings / 12) + ' a month on average.</p>' +
-      paybackHtml + costs + notes + assume +
-      '<p class="fine">Simple payback divides the upfront cost by first-year savings. It leaves out financing, maintenance, panel aging and future rate changes. For an estimate based on your actual usage, request a compatibility review and send us your SDG&amp;E usage data.</p>' +
-      '<div class="cta-row"><a class="btn btn-sun js-check-calc" href="#check">Request a compatibility review</a><button type="button" class="btn btn-ghost" id="useKit">Select this kit</button></div>';
-    $("#useKit").addEventListener("click", function(){
-      state.line = l.id; state.size[l.id] = z.id; if (l.battery) state.battery[l.id] = batt; refresh();
+      '<p class="label">Your estimated savings</p>' +
+      '<p class="big">About ' + money(sav) + '<span class="per"> a year</span></p>' +
+      '<p class="sub">That\'s about ' + money(sav / 12) + ' a month on average.</p>' +
+      (pb <= K.paybackMaxYears
+        ? '<p class="payback"><b>Pays for itself in about ' + Math.round(pb) + ' years</b><span>' + money(cost) + ' kit' + (opt ? ' with 1 kWh battery' : '') + '</span></p>'
+        : '<p class="payback"><b>Payback would be long at this bill size</b><span>A compatibility review can tell you if it\'s worth it</span></p>') +
+      notes + '<hr>' +
+      '<div class="rec"><div><p class="label">Your best match for a ' + spaceLabel + '</p><b>' + esc(l.name) + " " + z.label + (opt ? " + 1 kWh battery" : "") + '</b></div>' +
+      '<button type="button" class="btn btn-sun" id="pickRec">See this kit</button></div>' +
+      '<p class="fine">Estimate only, not actual savings. Based on a typical San Diego year of sun, SDG&amp;E rates effective ' + esc(K.ratesEffective) + ', and typical daytime use for your bill size. Your results depend on sun, shade, placement, when you use power and your rate plan. Price before tax and delivery.</p>';
+    $("#pickRec").addEventListener("click", function(){
+      state.line = lineId; state.size[lineId] = sizeId; if (l.battery) state.battery[lineId] = batt; refresh();
       $("#kits").scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" });
-    });
-    out.querySelector(".js-check-calc").addEventListener("click", function(){
-      state.line = l.id; state.size[l.id] = z.id; if (l.battery) state.battery[l.id] = batt; refresh();
-      $("#in-fit").checked = true; syncIntent();
-      trackEvent("CompatibilityReviewStart", { kit: kitName(state.line), source: "estimator" });
     });
   }
   ["input", "change"].forEach(function(ev){ $("#calcForm").addEventListener(ev, calc); });
+
+  /* ---------- Individual parts ---------- */
+  var partsChosen = [];
+  function syncParts(){
+    var names = C.products.filter(function(p){ return partsChosen.indexOf(p.id) > -1; }).map(function(p){ return p.name; });
+    $("#f-parts").value = names.join(", ");
+    var pp = $("#partsPick"); pp.hidden = !names.length; pp.textContent = names.length ? "Parts: " + names.join(", ") : "";
+    $$(".part").forEach(function(li){
+      var on = partsChosen.indexOf(li.dataset.part) > -1, b = li.querySelector(".btn");
+      li.classList.toggle("added", on); b.textContent = on ? "Added to request" : "Add to request"; b.setAttribute("aria-pressed", on);
+    });
+  }
+  $("#partsGrid").innerHTML = C.products.map(function(p){
+    var icon = p.img.indexOf("icon-") > -1;
+    return '<li class="part" data-part="' + p.id + '"><div class="part-fig"><img src="' + esc(p.img) + '" alt="' + esc(p.name) + '"' + (icon ? ' class="contain"' : '') + ' loading="lazy" decoding="async"></div>' +
+      '<div class="part-body"><h4>' + esc(p.name) + '</h4><p>' + esc(p.desc) + '</p><p class="part-price">' + esc(p.price || "Ask for pricing") + '</p>' +
+      '<button type="button" class="btn btn-ghost" aria-pressed="false">Add to request</button></div></li>';
+  }).join("");
+  $$(".part .btn").forEach(function(b){ b.addEventListener("click", function(){
+    var id = b.closest(".part").dataset.part, i = partsChosen.indexOf(id);
+    if (i > -1) partsChosen.splice(i, 1); else { partsChosen.push(id); trackEvent("PartAdded", { part: id }); }
+    syncParts();
+  }); });
 
   /* ---------- Order / HOA buttons ---------- */
   function goCheck(){
