@@ -41,8 +41,8 @@ window.SITE_CONFIG = {
   },
 
   purchase: {
-    ctaText: "Order",
-    ctaTextLong: "Order my kit",
+    ctaText: "Free fit check",
+    ctaTextLong: "Check if this kit fits",
     // false: orders come in through the form and you text the customer a payment link.
     // true: after the form, customers pay by card on a secure Stripe checkout page.
     onlineCheckout: false,
@@ -65,7 +65,7 @@ window.SITE_CONFIG = {
       maker: "CraftStrom",
       series: "CraftStrom Premium Line",
       imageBg: "#A7A3A5",
-      bestFor: "Balconies, railings, window ledges, condos and renters",
+      bestFor: "Balcony railings and window ledges",
       pitch: "Thin, semi-flexible panels with no heavy glass. Easy to carry, easy to hang, safer on a railing.",
       highlights: [
         "About 9 lbs per panel and under a quarter inch thick",
@@ -113,7 +113,7 @@ window.SITE_CONFIG = {
           contents: ["4 x 300 W solar panels with brackets", "4 x Mango Power S microinverters, one per panel", "Smart Gateway Lite with CT sensor", "4-in-1 PIPV cable", "Stand"] }
       ],
       battery: null,
-      batteryNote: "Pairs with whole-home batteries like Tesla Powerwall, Enphase and FranklinWH. Want plug-in storage you can carry? Featherweight offers 1 to 4 kWh batteries.",
+      batteryNote: "Mango Power says this kit is compatible with UL-certified home batteries, including Tesla Powerwall, Enphase and FranklinWH. Want plug-in storage you can carry? Featherweight offers 1 to 4 kWh batteries.",
       warranty: "25-year warranty.",
       certifications: [
         "CEC listed",
@@ -160,7 +160,7 @@ window.SITE_CONFIG = {
 </script>
 
 <title>Terrace Solar | Plug-in Solar for San Diego Condos, Renters and HOAs</title>
-<meta name="description" content="Plug-in solar for San Diego County condos, townhomes and renters, plus a free plug-in solar standards program for HOAs and property managers. Order your kit today.">
+<meta name="description" content="Plug-in solar for San Diego County condos, townhomes and renters, plus a free plug-in solar standards program for HOAs and property managers. Get a free fit check before you buy.">
 <link rel="canonical" href="https://www.terracesolar.com/">
 <link rel="icon" type="image/png" href="assets/brand/favicon-128.png">
 <link rel="preload" as="image" href="assets/video/terrace-hero-poster.jpg">
@@ -227,7 +227,7 @@ html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:18px;line-height:1.55;letter-spacing:-0.011em;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility;overflow-x:hidden}
 img,video{display:block;max-width:100%}
 a{color:inherit}
-button,input,select{font:inherit;color:inherit}
+button,input,select,textarea{font:inherit;color:inherit}
 :focus-visible{outline:3px solid var(--sun);outline-offset:3px;border-radius:6px}
 .wrap{width:100%;max-width:var(--max);margin:0 auto;padding:0 var(--gutter)}
 .skip{position:absolute;left:-999px;top:8px;background:var(--sun);color:var(--on-sun);padding:10px 14px;border-radius:8px;z-index:100}
@@ -472,14 +472,21 @@ fieldset{border:0;margin:0;padding:0;min-width:0}
 /* Trust */
 .trust-grid{display:grid;gap:0 56px}
 @media (min-width:960px){.trust-grid{grid-template-columns:repeat(3,1fr)}}
-.trust{padding:30px 0;border-top:1.5px solid var(--line)}
+.trust{padding:26px 0 8px;border-top:1.5px solid var(--line)}
 .trust h3{margin-bottom:12px}
 .trust p,.trust li{color:var(--muted)}
 .trust ul{margin:10px 0 0;padding-left:20px}
 .trust li{margin:4px 0}
 .trust li b{color:var(--ink)}
 .trust ul ul{margin:4px 0 10px;padding-left:20px;list-style:circle}
-#certList{padding-left:0;list-style:none}
+.cert-block{margin-top:clamp(28px,4vw,44px)}
+.cert-grid{display:grid;gap:16px;margin-top:16px}
+@media (min-width:800px){.cert-grid{grid-template-columns:1fr 1fr}}
+.cert-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px 24px}
+.cert-card b{display:block;margin-bottom:8px;font-family:var(--display);font-size:1.08rem;letter-spacing:-0.015em}
+.cert-card b span{font-family:var(--body);font-weight:500;font-size:.9rem;color:var(--muted);margin-left:6px;letter-spacing:0}
+.cert-card ul{margin:0;padding-left:20px;color:var(--muted)}
+.cert-card li{margin:4px 0}
 .badges{display:flex;flex-wrap:wrap;gap:12px;margin-top:40px}
 .badge{display:flex;align-items:center;gap:12px;border:1.5px solid var(--line);border-radius:var(--radius);padding:14px 18px;font-weight:700;background:var(--surface);font-size:.98rem}
 .badge img{height:28px;width:auto}
@@ -577,6 +584,12 @@ details .ans{padding:0 48px 24px 0;color:var(--muted);max-width:64ch}
 .form.sent > :not(.form-ok){display:none}
 .form.sent .form-ok{display:block}
 .err{color:#FF8E7E;font-size:.92rem;min-height:1.2em}
+.rows{display:grid;gap:inherit}
+.form textarea.input{min-height:96px;padding:12px 16px;resize:vertical;line-height:1.5}
+.form textarea.input::placeholder{color:#7D8796}
+.kit-pick{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;padding:12px 16px;border-radius:var(--radius-sm);background:#0B111C;border:1px solid #2A3547;color:#B8C0CC;font-size:.95rem}
+.kit-pick b{color:#fff}
+.kit-pick a{color:var(--sun);font-weight:600;margin-left:auto}
 
 /* Footer */
 footer{background:var(--night);color:#98A2B0;border-top:1px solid #222C3B;padding:56px 0 128px;font-size:.92rem;--logo-word:#FFFFFF}
@@ -709,7 +722,7 @@ footer p + p{margin-top:12px}
       <a href="#hoa">For HOAs</a>
       <a href="#faq">FAQ</a>
     </nav>
-    <a class="btn btn-sun btn-sm js-order" href="#order" data-cta="short">Order</a>
+    <a class="btn btn-sun btn-sm js-check" href="#check" data-cta="short">Free fit check</a>
   </div>
 </header>
 
@@ -726,10 +739,10 @@ footer p + p{margin-top:12px}
       <h1>Solar for <em class="em">renters,</em> <em class="em">condos</em> and <em class="em">HOA communities</em>.</h1>
       <p class="hero-sub" data-bind="hero.subhead">No roof needed. Plug-in solar mounts on a balcony, patio or yard and plugs into a standard outlet.</p>
       <div class="hero-ctas">
-        <a class="btn btn-sun" href="#kits">Find my kit</a>
+        <a class="btn btn-sun" href="#kits">Get a free fit check</a>
         <a class="btn btn-glass" href="#how">See how it works</a>
       </div>
-      <a class="hero-hoa" href="#hoa">Run an HOA or manage rentals? See our free community program</a>
+      <a class="hero-hoa" href="#hoa">Run an HOA or manage rentals? Request a free community assessment</a>
     </div>
   </div>
   <button class="vid-toggle" id="vidToggle" type="button" aria-label="Pause background video" hidden>
@@ -919,6 +932,7 @@ footer p + p{margin-top:12px}
     <div class="head">
       <p class="kicker">Choose your kit</p>
       <h2>Two lines. Pick the one that <em class="em">fits your space</em>.</h2>
+      <p class="lede">Choose a kit, then request a free fit check. We'll confirm it works for your space, outlet and HOA or landlord rules before you buy.</p>
       <p style="margin-top:18px"><span class="tag" id="sampleTag" hidden>Estimated pricing</span></p>
     </div>
     <div class="kit-grid" id="kitGrid"></div>
@@ -969,7 +983,7 @@ footer p + p{margin-top:12px}
     </div>
     <div class="install-cta">
       <p><b id="instKit">Featherweight 1,200 W</b><span id="instNote"></span></p>
-      <a class="btn btn-sun js-order" href="#order" data-cta="long">Order my kit</a>
+      <a class="btn btn-sun js-check" href="#check" data-cta="long">Check if this kit fits</a>
     </div>
   </div>
 </section>
@@ -997,7 +1011,7 @@ footer p + p{margin-top:12px}
           <li>A consistent look across the community</li>
           <li>Certified components with zero-export control</li>
         </ul>
-        <a class="btn btn-sun js-hoa" href="#order">Book a free HOA briefing</a>
+        <a class="btn btn-sun js-hoa" href="#check">Request a community assessment</a>
       </div>
     </div>
   </div>
@@ -1014,7 +1028,6 @@ footer p + p{margin-top:12px}
       <div class="trust">
         <h3>Certified components</h3>
         <p>Every kit is sold as a complete, matched system from one maker. We never mix panels and inverters from different brands.</p>
-        <ul id="certList"></ul>
       </div>
       <div class="trust">
         <h3>Zero-export protection</h3>
@@ -1024,6 +1037,10 @@ footer p + p{margin-top:12px}
         <h3>Real warranties</h3>
         <ul id="warrantyList"></ul>
       </div>
+    </div>
+    <div class="cert-block">
+      <h3>Certifications by kit</h3>
+      <div class="cert-grid" id="certList"></div>
     </div>
     <div class="badges" id="badges">
       <div class="badge"><span data-img="badge-craftstrom" data-badge="1"><i aria-hidden="true">&#10003;</i></span>Authorized CraftStrom Distributor</div>
@@ -1067,17 +1084,17 @@ footer p + p{margin-top:12px}
 </section>
 
 <!-- 12. FINAL CTA + LEAD FORM -->
-<section class="sec final" id="order">
+<section class="sec final" id="check">
   <div class="wrap final-grid">
       <div class="head">
-        <p class="kicker">Get started</p>
-        <h2>Order your kit <em class="em">today</em>.</h2>
-        <p class="lede">Three ways in. No pressure either way.</p>
+        <p class="kicker">Free fit check</p>
+        <h2>Make sure it fits <em class="em">before you buy</em>.</h2>
+        <p class="lede">Tell us about your space. We'll look at sun, mounting, your outlet and any HOA or landlord rules, then tell you honestly whether your kit is a good fit. Free, with no obligation.</p>
       </div>
       <div class="paths">
-        <div class="path"><i>1</i><div><b>Place your order</b><p id="orderPathNote">Send your order below. We'll confirm your kit and delivery, then text you a secure payment link.</p></div></div>
-        <div class="path"><i>2</i><div><b>Book a free 10-minute bill review</b><p>Send us your SDG&amp;E usage. We'll tell you honestly if plug-in solar makes sense.</p></div></div>
-        <div class="path"><i>3</i><div><b>HOA or property manager?</b><p>Book a free briefing on the community standards program for your board or team.</p></div></div>
+        <div class="path"><i>1</i><div><b>Free fit check</b><p>Pick a kit and tell us about your space. We'll confirm it works with your home before you pay anything.</p></div></div>
+        <div class="path"><i>2</i><div><b>HOA or property manager?</b><p>Request a free community assessment. We'll help your board or team evaluate a consistent approach.</p></div></div>
+        <div class="path"><i>3</i><div><b>Already sure?</b><p id="orderPathNote">Send your order. We'll confirm your kit and delivery, then text you a secure payment link.</p></div></div>
       </div>
     <form class="form" id="leadForm" name="lead" method="POST" data-netlify="true" netlify-honeypot="bot-field" novalidate>
       <input type="hidden" name="form-name" value="lead">
@@ -1085,11 +1102,12 @@ footer p + p{margin-top:12px}
       <fieldset>
         <legend class="sr">What would you like to do?</legend>
         <div class="seg">
-          <input type="radio" name="intent" id="in-ord" value="order" checked><label for="in-ord">Place an order</label>
-          <input type="radio" name="intent" id="in-rev" value="bill-review"><label for="in-rev">Free bill review</label>
-          <input type="radio" name="intent" id="in-hoa" value="hoa-briefing"><label for="in-hoa">HOA briefing</label>
+          <input type="radio" name="intent" id="in-fit" value="fit-check" checked><label for="in-fit">Free fit check</label>
+          <input type="radio" name="intent" id="in-hoa" value="community-assessment"><label for="in-hoa">HOA or community</label>
+          <input type="radio" name="intent" id="in-ord" value="order"><label for="in-ord">Ready to order</label>
         </div>
       </fieldset>
+      <p class="kit-pick" id="kitPick">Kit: <b id="kitPickName">Featherweight 1,200 W</b><a href="#kits">Change</a></p>
       <div class="row">
         <div><label for="f-name">Name</label><input class="input" id="f-name" name="name" autocomplete="name" required></div>
         <div><label for="f-email">Email</label><input class="input" id="f-email" name="email" type="email" autocomplete="email" required></div>
@@ -1098,26 +1116,48 @@ footer p + p{margin-top:12px}
         <div><label for="f-phone">Phone</label><input class="input" id="f-phone" name="phone" type="tel" autocomplete="tel" required></div>
         <div><label for="f-zip">ZIP code</label><input class="input" id="f-zip" name="zip" inputmode="numeric" autocomplete="postal-code" maxlength="5" required></div>
       </div>
-      <div class="row" id="rowResident">
-        <div><label for="f-bill">Monthly SDG&amp;E bill, $ <span style="opacity:.6">(optional)</span></label><input class="input" id="f-bill" name="monthly_bill" type="number" inputmode="numeric" min="0"></div>
-        <div><label for="f-space">Space type</label>
-          <select class="input" id="f-space" name="space">
-            <option value="balcony">Balcony</option><option value="window">Window ledge</option><option value="patio">Patio or yard</option><option value="not-sure">Not sure</option>
-          </select></div>
+      <div class="rows" id="rowsHome">
+        <div class="row">
+          <div><label for="f-own">Own or rent?</label>
+            <select class="input" id="f-own" name="own_or_rent"><option value="">Choose one</option><option value="own">Own</option><option value="rent">Rent</option></select></div>
+          <div><label for="f-space">Where would it go?</label>
+            <select class="input" id="f-space" name="space"><option value="balcony">Balcony</option><option value="window">Window ledge</option><option value="patio">Patio or yard</option><option value="other">Somewhere else</option><option value="not-sure">Not sure</option></select></div>
+        </div>
+        <div class="row">
+          <div><label for="f-facing">Which way does it face?</label>
+            <select class="input" id="f-facing" name="facing"><option value="not-sure">Not sure</option><option value="south">South</option><option value="west">West</option><option value="east">East</option><option value="north">North</option></select></div>
+          <div><label for="f-outlet">Outdoor outlet nearby?</label>
+            <select class="input" id="f-outlet" name="outlet"><option value="not-sure">Not sure</option><option value="yes">Yes</option><option value="no">No</option></select></div>
+        </div>
+        <div class="row">
+          <div><label for="f-approval">HOA or landlord approval?</label>
+            <select class="input" id="f-approval" name="approval"><option value="not-sure">Not sure</option><option value="not-needed">Not needed</option><option value="approved">Already approved</option><option value="needed">Needed, not yet</option></select></div>
+          <div><label for="f-bill">Monthly SDG&amp;E bill, $ <span style="opacity:.6">(optional)</span></label><input class="input" id="f-bill" name="monthly_bill" type="number" inputmode="numeric" min="0"></div>
+        </div>
       </div>
-      <div class="row" id="rowHoa" hidden>
-        <div><label for="f-community">Community or company</label><input class="input" id="f-community" name="community" autocomplete="organization"></div>
-        <div><label for="f-units">Number of units</label><input class="input" id="f-units" name="units" type="number" inputmode="numeric" min="1"></div>
+      <div class="rows" id="rowsHoa" hidden>
+        <div class="row">
+          <div><label for="f-community">Community name</label><input class="input" id="f-community" name="community" autocomplete="organization"></div>
+          <div><label for="f-role">Your role</label>
+            <select class="input" id="f-role" name="role"><option value="board">Board member</option><option value="manager">Property manager</option><option value="resident">Resident</option><option value="other">Other</option></select></div>
+        </div>
+        <div class="row">
+          <div><label for="f-units">Number of homes</label><input class="input" id="f-units" name="units" type="number" inputmode="numeric" min="1"></div>
+          <div><label for="f-concern">Main concern</label>
+            <select class="input" id="f-concern" name="concern"><option value="appearance">Appearance</option><option value="mounting">Mounting and railings</option><option value="electrical">Electrical safety</option><option value="demand">Resident demand</option><option value="other">Something else</option></select></div>
+        </div>
       </div>
+      <div><label for="f-notes">Anything we should know? <span style="opacity:.6">(optional)</span></label><textarea class="input" id="f-notes" name="notes" rows="3" placeholder="Shade from trees or buildings, railing type, existing policies..."></textarea></div>
       <input type="hidden" name="kit" id="f-kit">
       <input type="hidden" name="kit_total" id="f-total">
       <input type="hidden" name="install_interest" id="f-install">
       <p class="err" id="formErr" role="alert"></p>
-      <button class="btn btn-sun" type="submit" id="formBtn">Place my order</button>
-      <p class="fine">Prefer to text? Send us a message at <a class="js-sms" href="#">(619) 961-7234</a>. We'll only use your info to contact you about your request. No spam, ever.</p>
+      <button class="btn btn-sun" type="submit" id="formBtn">Request my free fit check</button>
+      <p class="fine">Have photos of your space? Text them to <a class="js-sms" href="#">(619) 961-7234</a>. If you send a bill, cover your account number first. We only use what you send to review your request and contact you about it. No spam, ever.</p>
+      <p class="fine" id="fitNote">A fit check is free, preliminary guidance. It isn't a guarantee of electrical, structural, landlord, HOA or regulatory approval.</p>
       <div class="form-ok" role="status">
-        <h3 id="okTitle">Order received.</h3>
-        <p style="color:#B8C0CC" id="okText">We'll text you within one business day to confirm your kit, delivery and payment.</p>
+        <h3 id="okTitle">Fit check requested.</h3>
+        <p style="color:#B8C0CC" id="okText">We'll review your space, follow up on anything we still need, and tell you whether this kit is a good fit before you buy.</p>
       </div>
     </form>
   </div>
@@ -1145,7 +1185,7 @@ footer p + p{margin-top:12px}
 <div class="buybar" id="buybar" aria-label="Your selected kit">
   <a class="icon-btn js-sms" href="#" aria-label="Text us at (619) 961-7234"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></a>
   <div class="bb-info"><div class="bb-name" id="bbName">Featherweight 1,200 W</div><div class="bb-total" id="bbTotal">$0</div></div>
-  <a class="btn btn-sun js-order" href="#order" data-cta="short">Order</a>
+  <a class="btn btn-sun js-check" href="#check" data-cta="short">Free fit check</a>
 </div>
 
 <script>
@@ -1330,10 +1370,11 @@ footer p + p{margin-top:12px}
     $("#sumPrice").textContent = money(total);
     $("#sumNote").textContent = C.purchase.onlineCheckout
       ? "Order online and pay securely by card. Delivered to homes in " + C.brand.serviceArea + "."
-      : "Order today. We'll confirm delivery to your home in " + C.brand.serviceArea + ".";
+      : "Next: a free fit check. We'll confirm this kit works for your space before you buy.";
     $("#bbName").textContent = name;
+    $("#kitPickName").textContent = name;
     $("#instKit").textContent = name + ": " + money(total);
-    $("#instNote").textContent = state.install ? "Professional installation added. We'll confirm the price with you." : "Order today. Installation is optional.";
+    $("#instNote").textContent = state.install ? "Professional installation added. We'll confirm the price with you." : "Free fit check before you buy. Installation is optional.";
     $("#bbTotal").textContent = money(total);
     $("#f-kit").value = name;
     $("#f-total").value = total;
@@ -1341,7 +1382,7 @@ footer p + p{margin-top:12px}
   }
 
   /* ---------- Certifications and warranty lists ---------- */
-  $("#certList").innerHTML = C.lines.map(function(l){ return "<li><b>" + esc(l.name) + "</b><ul>" + l.certifications.map(function(c){ return "<li>" + esc(c) + "</li>"; }).join("") + "</ul></li>"; }).join("");
+  $("#certList").innerHTML = C.lines.map(function(l){ return '<div class="cert-card"><b>' + esc(l.name) + " <span>" + esc(l.maker) + "</span></b><ul>" + l.certifications.map(function(c){ return "<li>" + esc(c) + "</li>"; }).join("") + "</ul></div>"; }).join("");
   $("#warrantyList").innerHTML = C.lines.map(function(l){ return "<li><b>" + esc(l.name) + ":</b> " + esc(l.warranty) + "</li>"; }).join("");
   $("#faqWarranty").textContent = C.lines.map(function(l){ return l.name + ": " + l.warranty; }).join(" ");
 
@@ -1425,11 +1466,11 @@ footer p + p{margin-top:12px}
   ["input", "change"].forEach(function(ev){ $("#calcForm").addEventListener(ev, calc); });
 
   /* ---------- Order / HOA buttons ---------- */
-  function goOrder(){
-    trackEvent("InitiateCheckout", { kit: kitName(state.line), value: totalFor(state.line) });
-    $("#in-ord").checked = true; syncIntent();
+  function goCheck(){
+    trackEvent("FitCheckStart", { kit: kitName(state.line) });
+    $("#in-fit").checked = true; syncIntent();
   }
-  $$(".js-order").forEach(function(a){ a.addEventListener("click", goOrder); });
+  $$(".js-check").forEach(function(a){ a.addEventListener("click", goCheck); });
   $$(".js-hoa").forEach(function(a){ a.addEventListener("click", function(e){
     if (isSet(C.hoa.briefingLink)) { e.preventDefault(); window.open(C.hoa.briefingLink, "_blank", "noopener"); return; }
     $("#in-hoa").checked = true; syncIntent();
@@ -1438,15 +1479,13 @@ footer p + p{margin-top:12px}
   /* ---------- Lead form ---------- */
   var form = $("#leadForm");
   function syncIntent(){
-    var rev = $("#in-rev").checked, hoa = $("#in-hoa").checked;
-    $("#formBtn").textContent = hoa ? "Book my HOA briefing" : rev ? "Book my free bill review" : C.purchase.onlineCheckout ? "Continue to secure checkout" : "Place my order";
-    $("#rowHoa").hidden = !hoa; $("#rowResident").hidden = hoa;
+    var ord = $("#in-ord").checked, hoa = $("#in-hoa").checked;
+    $("#formBtn").textContent = hoa ? "Request a community assessment" : ord ? (C.purchase.onlineCheckout ? "Continue to secure checkout" : "Place my order") : "Request my free fit check";
+    $("#rowsHoa").hidden = !hoa; $("#rowsHome").hidden = hoa || ord; $("#kitPick").hidden = hoa;
+    $("#fitNote").hidden = ord;
     $("#f-community").required = hoa; $("#f-units").required = hoa;
   }
   $$('input[name="intent"]').forEach(function(r){ r.addEventListener("change", syncIntent); });
-  if (isSet(C.purchase.billReviewLink)) {
-    $("#in-rev").addEventListener("change", function(){ window.open(C.purchase.billReviewLink, "_blank", "noopener"); });
-  }
   form.addEventListener("submit", function(e){
     e.preventDefault();
     var err = $("#formErr"); err.textContent = "";
@@ -1457,9 +1496,10 @@ footer p + p{margin-top:12px}
     var intent = data.get("intent");
     var done = function(){
       trackEvent("Lead", { intent: intent });
+      trackEvent(intent === "order" ? "OrderRequest" : intent === "community-assessment" ? "CommunityAssessmentRequest" : "FitCheckRequest", { kit: intent === "community-assessment" ? "" : kitName(state.line) });
       if (intent === "order" && C.purchase.onlineCheckout) { startCheckout(data); return; }
-      if (intent === "bill-review") { $("#okTitle").textContent = "Request received."; $("#okText").textContent = "We'll reach out within one business day."; }
-      if (intent === "hoa-briefing") { $("#okTitle").textContent = "Request received."; $("#okText").textContent = "We'll reach out within one business day to set up your briefing."; }
+      if (intent === "order") { $("#okTitle").textContent = "Order received."; $("#okText").textContent = "We'll text you to confirm your kit, delivery and payment."; }
+      if (intent === "community-assessment") { $("#okTitle").textContent = "Request received."; $("#okText").textContent = "We'll reach out to set up your community assessment."; }
       form.classList.add("sent");
     };
     var onNetlify = /terracesolar\.com$|netlify\.app$/.test(location.hostname);
@@ -1503,9 +1543,9 @@ footer p + p{margin-top:12px}
       $("#okText").textContent = "Payment received. We'll text you within one business day to schedule delivery.";
       form.classList.add("sent");
       trackEvent("Purchase", { currency: "USD" });
-      setTimeout(function(){ $("#order").scrollIntoView(); }, 300);
+      setTimeout(function(){ $("#check").scrollIntoView(); }, 300);
     } else if (q === "canceled") {
-      setTimeout(function(){ $("#order").scrollIntoView(); }, 300);
+      setTimeout(function(){ $("#check").scrollIntoView(); }, 300);
     }
   })();
 
@@ -1513,7 +1553,7 @@ footer p + p{margin-top:12px}
   var bar = $("#buybar"), heroGone = false, atEnd = false;
   var setBar = function(){ bar.classList.toggle("show", heroGone && !atEnd); };
   new IntersectionObserver(function(en){ heroGone = !en[0].isIntersecting; setBar(); }, { threshold: 0.05 }).observe(hero);
-  new IntersectionObserver(function(en){ atEnd = en[0].isIntersecting; setBar(); }, { threshold: 0.15 }).observe($("#order"));
+  new IntersectionObserver(function(en){ atEnd = en[0].isIntersecting; setBar(); }, { threshold: 0.15 }).observe($("#check"));
 
   /* ---------- Analytics: Meta Pixel + GA4 (load only if IDs are set) ---------- */
   if (isSet(C.analytics.metaPixelId)) {

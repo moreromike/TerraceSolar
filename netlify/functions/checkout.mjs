@@ -67,8 +67,8 @@ export default async (req) => {
   if (batt) item(1, `${line.battery.name}, ${batt.kwh} kWh`, line.battery.note, batt.price);
 
   p.set("mode", "payment");
-  p.set("success_url", `${origin}/?order=success#order`);
-  p.set("cancel_url", `${origin}/?order=canceled#order`);
+  p.set("success_url", `${origin}/?order=success#check`);
+  p.set("cancel_url", `${origin}/?order=canceled#check`);
   p.set("billing_address_collection", "required");
   p.set("shipping_address_collection[allowed_countries][0]", "US");
   p.set("phone_number_collection[enabled]", "true");
