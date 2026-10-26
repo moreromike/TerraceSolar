@@ -122,23 +122,31 @@ window.SITE_CONFIG = {
   calculator: {
     // Hourly production + home-use data: tools/solar-model/build_calc.py
     dataUrl: "assets/data/calc-model.json",
-    ratesEffective: "June 1, 2026",
-    // SDG&E total energy rates ($/kWh) effective 6/1/2026, from SDG&E's "Total Rates Table" for each schedule.
+    // SDG&E published rate tables, $/kWh, all-in energy prices (baseline credit already included).
+    // t1 = usage up to 130% of baseline; t2 = usage above 130% of baseline.
     // map: which price applies to each hour group (A 4-9 pm; B weekday 10-2 Mar/Apr; C weekend before 2 pm;
-    // D weekday 6 am-4 pm; E weekday midnight-6 am; F other hours). credit: SDG&E's "up to 130% of baseline" credit.
+    // D weekday 6 am-4 pm; E weekday midnight-6 am; F other hours).
     plans: {
       "TOU-DR1": { label: "TOU-DR1", note: "Most San Diego homes. Highest prices 4 to 9 pm, lowest overnight and weekend mornings.",
-        map: { A: "on", B: "super", C: "super", D: "off", E: "super", F: "off" }, credit: 0.10663,
-        rates: { s: { on: 0.68459, off: 0.46392, super: 0.37660 }, w: { on: 0.61014, off: 0.52843, super: 0.43767 } } },
+        map: { A: "on", B: "super", C: "super", D: "off", E: "super", F: "off" },
+        t1: { s: { on: 0.58433, off: 0.35719, super: 0.26731 }, w: { on: 0.58433, off: 0.35719, super: 0.26731 } },
+        t2: { s: { on: 0.69135, off: 0.46421, super: 0.37433 }, w: { on: 0.69135, off: 0.46421, super: 0.37433 } } },
       "TOU-DR2": { label: "TOU-DR2", note: "Two prices: a higher one 4 to 9 pm and a lower one all other hours.",
-        map: { A: "on", B: "off", C: "off", D: "off", E: "off", F: "off" }, credit: 0.10663,
-        rates: { s: { on: 0.68907, off: 0.41773 }, w: { on: 0.61014, off: 0.47316 } } },
-      "EV-TOU-5": { label: "EV-TOU-5", note: "For EV owners. Very cheap overnight power and no baseline credit, so daytime solar is worth a bit less.",
-        map: { A: "on", B: "super", C: "super", D: "off", E: "super", F: "off" }, credit: 0,
-        rates: { s: { on: 0.79321, off: 0.49613, super: 0.12852 }, w: { on: 0.52292, off: 0.46639, super: 0.12115 } } },
-      "DR": { label: "Tiered (DR)", note: "One price all day, with a higher price once you use more than 130% of your baseline.",
-        map: { A: "all", B: "all", C: "all", D: "all", E: "all", F: "all" }, credit: 0.10663,
-        rates: { s: { all: 0.51813 }, w: { all: 0.51813 } } }   // tier 2 price; tier 1 = 0.41150 (tier 2 minus the credit)
+        map: { A: "on", B: "off", C: "off", D: "off", E: "off", F: "off" },
+        t1: { s: { on: 0.58895, off: 0.30964 }, w: { on: 0.58895, off: 0.30964 } },
+        t2: { s: { on: 0.69597, off: 0.41666 }, w: { on: 0.69597, off: 0.41666 } } },
+      "TOU-ELEC": { label: "TOU-ELEC", note: "Highest prices 4 to 9 pm, lower prices the rest of the day, and the lowest overnight.",
+        map: { A: "on", B: "super", C: "super", D: "off", E: "super", F: "off" },
+        t1: { s: { on: 0.72589, off: 0.38885, super: 0.34450 }, w: { on: 0.72589, off: 0.38885, super: 0.34450 } },
+        t2: { s: { on: 0.72589, off: 0.38885, super: 0.34450 }, w: { on: 0.72589, off: 0.38885, super: 0.34450 } } },
+      "EV-TOU-5": { label: "EV-TOU-5", note: "For EV owners. Very cheap overnight power, so daytime solar is worth a bit less.",
+        map: { A: "on", B: "super", C: "super", D: "off", E: "super", F: "off" },
+        t1: { s: { on: 0.80205, off: 0.49627, super: 0.13090 }, w: { on: 0.80205, off: 0.49627, super: 0.13090 } },
+        t2: { s: { on: 0.80205, off: 0.49627, super: 0.13090 }, w: { on: 0.80205, off: 0.49627, super: 0.13090 } } },
+      "DR": { label: "Tiered (DR)", note: "One price for the first 130% of your baseline, and a higher price for usage above that.",
+        map: { A: "all", B: "all", C: "all", D: "all", E: "all", F: "all" },
+        t1: { s: { all: 0.41299 }, w: { all: 0.41299 } },
+        t2: { s: { all: 0.52000 }, w: { all: 0.52000 } } }
     },
     defaultPlan: "TOU-DR1",
     careFactor: 0.50,                // CARE energy prices are about half (SDG&E TOU-DR1 CARE table, 6/1/2026)
@@ -1579,15 +1587,18 @@ footer p + p{margin-top:12px}
     .catch(function(){ $("#calcOut").innerHTML = '<p class="calc-msg"><strong>The calculator didn\'t load.</strong>Please refresh the page, or request a compatibility review and we\'ll estimate your savings for you.</p>'; });
 
   function radio(n){ var r = $('input[name="' + n + '"]:checked'); return r ? r.value : ""; }
-  function priceFor(plan, key, disc){            // full price (before any baseline credit) for an hour group
-    var r = plan.rates[key.charAt(0)][plan.map[key.charAt(1)]];
-    return r * (disc === "care" ? K.careFactor : disc === "fera" ? 1 - K.feraDiscount : 1);
-  }
   function discFactor(disc){ return disc === "care" ? K.careFactor : disc === "fera" ? 1 - K.feraDiscount : 1; }
+  function priceFor(plan, key, disc, tier){     // $/kWh for an hour group in tier 1 (up to 130% of baseline) or tier 2
+    var r = plan[tier][key.charAt(0)][plan.map[key.charAt(1)]];
+    return r * discFactor(disc);
+  }
   function monthlyBill(i, plan, disc){            // estimated bill for usage level i on this plan
     var kwh = M.levels[i], energy = 0;
-    M.groups.forEach(function(k, g){ energy += M.load[i][g] / 12 * priceFor(plan, k, disc); });
-    energy -= Math.min(kwh, K.baselineKwh130) * plan.credit * discFactor(disc);
+    var t1Share = kwh > 0 ? Math.min(kwh, K.baselineKwh130) / kwh : 1;   // share of this month's use billed at tier 1
+    M.groups.forEach(function(k, g){
+      var monthlyKwh = M.load[i][g] / 12;
+      energy += monthlyKwh * (t1Share * priceFor(plan, k, disc, "t1") + (1 - t1Share) * priceFor(plan, k, disc, "t2"));
+    });
     return energy + K.baseServicesPerDay[disc === "none" ? "standard" : disc] * 30.4;
   }
   function lerp(a, b, t){ return a + (b - a) * t; }
@@ -1620,7 +1631,7 @@ footer p + p{margin-top:12px}
     var aboveKwh = Math.max(kwhMonth - K.baselineKwh130, 0) * 12;
     var fullShare = totalAvoided > 0 ? Math.min(aboveKwh, totalAvoided) / totalAvoided : 0;
     var sav = 0;
-    M.groups.forEach(function(k, g){ sav += avoided[g] * (priceFor(plan, k, disc) - plan.credit * discFactor(disc) * (1 - fullShare)); });
+    M.groups.forEach(function(k, g){ sav += avoided[g] * (fullShare * priceFor(plan, k, disc, "t2") + (1 - fullShare) * priceFor(plan, k, disc, "t1")); });
     var perKwh = totalAvoided > 0 ? sav / totalAvoided : 0;
     var usedShare = directUsed / setup.prodKwh;
     var opt = batt ? batteryOpt(l, batt) : null;
@@ -1633,6 +1644,7 @@ footer p + p{margin-top:12px}
     if (usedShare >= 0.97 && !batt) notes += '<p class="note">Your home uses all the power this kit makes, so a higher bill won\'t raise these savings further. ' + (z.watts >= 1200 ? "1,200 W is the largest plug-in size California allows per home." : "The 1,200 W kit makes more.") + '</p>';
     else if (usedShare < 0.7 && !batt) notes += '<p class="note">Your home can\'t use about ' + Math.round((1 - usedShare) * 100) + '% of this solar as it\'s made. A battery saves some of it for the evening.</p>';
     if (batt) notes += '<p class="note">The battery holds midday solar your home can\'t use right away and supplies it in the evening, when SDG&amp;E prices are highest.</p>';
+    if (planId === "TOU-ELEC") notes += '<p class="note">TOU-ELEC has no baseline credit, so solar savings are based on the full price of each kWh.</p>';
     if (planId === "EV-TOU-5") notes += '<p class="note">EV-TOU-5 has very cheap overnight power, so most of the value is from daytime and evening use.</p>';
     if (space === "patio") notes += '<p class="note">Patio or yard: we\'ll confirm the best mounting for your space during your compatibility review.</p>';
     if (disc !== "none") notes += '<p class="note">You keep your ' + disc.toUpperCase() + ' discount. Solar savings stack on top of it.</p>';
@@ -1647,7 +1659,7 @@ footer p + p{margin-top:12px}
       notes + '<hr>' +
       '<div class="rec"><div><p class="label">Your best match for a ' + spaceLabel + '</p><b>' + esc(l.name) + " " + z.label + (opt ? " + " + batt + " kWh battery" : "") + '</b></div>' +
       '<button type="button" class="btn btn-sun" id="pickRec">See this kit</button></div>' +
-      '<p class="fine">Estimate only, not actual savings. Based on a typical San Diego year of sun, SDG&amp;E ' + esc(plan.label) + ' prices effective ' + esc(K.ratesEffective) + ', and a typical daily usage pattern for your bill. Your results depend on sun, shade, placement, when you use power and your plan. Price before tax and delivery.</p>';
+      '<p class="fine">Estimate only, not actual savings. Based on a typical San Diego year of sun, SDG&amp;E ' + esc(plan.label) + ' published rate tables, and a typical daily usage pattern for your bill. Your results depend on sun, shade, placement, when you use power and your plan. Rates are the SDG&amp;E published energy prices. If your generation comes from San Diego Community Power or Clean Energy Alliance, your total price will differ. Price before tax and delivery.</p>';
     $("#pickRec").addEventListener("click", function(){
       state.line = "featherweight"; state.size.featherweight = sizeId; state.battery.featherweight = batt; kitPicked = true; refresh();
       $("#kits").scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" });
