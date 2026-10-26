@@ -153,6 +153,7 @@ window.SITE_CONFIG = {
     feraDiscount: 0.18,              // FERA: 18% off energy charges
     baseServicesPerDay: { standard: 0.79343, care: 0.19713, fera: 0.39688 },  // fixed daily charge; solar does not reduce it
     baselineKwh130: 390,             // approx. 130% of a typical San Diego baseline, kWh/month. Confirm with SDG&E's baseline calculator.
+    rateGrowth: 0.0464,              // average annual increase in SDG&E rates, 2006-2024 (CPUC data). Shown only when the visitor picks it.
     paybackMaxYears: 25,
     minSavingsForPayback: 25,
     billMin: 50, billMax: 600, billDefault: 250
@@ -475,6 +476,8 @@ fieldset{border:0;margin:0;padding:0;min-width:0}
 .calc-out .big .per{font-size:.45em;font-weight:600;letter-spacing:0;color:#D3D8DF}
 .calc-out .big{font-family:var(--display);font-weight:700;font-size:clamp(2rem,4.2vw,3.1rem);letter-spacing:-0.03em;line-height:1.05;margin:10px 0 10px}
 .calc-out .sub{color:#D3D8DF}
+.calc-out .grow{margin-top:14px;padding-top:12px;border-top:1px dashed var(--line)}
+.calc-out .grow .sub{margin-top:4px}
 .calc-out .payback{margin-top:18px;padding:14px 16px;border-radius:var(--radius-sm);background:rgba(244,174,58,.14);display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px 16px;align-items:baseline}
 .calc-out .payback b{color:#fff;font-size:1.05rem}
 .calc-out .payback span{color:#D3D8DF;font-size:.92rem}
@@ -1045,6 +1048,14 @@ footer p + p{margin-top:12px}
             <input type="radio" name="disc" id="dc-2" value="fera"><label for="dc-2">FERA</label>
           </div>
           <p class="fine">Not sure of your plan or discount? Both are printed on your SDG&amp;E bill.</p>
+        </fieldset>
+        <fieldset class="field">
+          <legend>Future rates</legend>
+          <div class="seg">
+            <input type="radio" name="esc" id="es-0" value="0" checked><label for="es-0">Flat rates</label>
+            <input type="radio" name="esc" id="es-1" value="1"><label for="es-1">Rates rise 4.64% a year</label>
+          </div>
+          <p class="fine">Rates have gone up on average over time, but they can also fall.</p>
         </fieldset>
       </form>
       <div class="calc-out" id="calcOut" aria-live="polite"><p class="calc-msg">Loading the estimate&hellip;</p></div>
@@ -1637,6 +1648,15 @@ footer p + p{margin-top:12px}
     var opt = batt ? batteryOpt(l, batt) : null;
     var cost = z.price + (opt ? opt.price : 0);
     var pb = sav >= K.minSavingsForPayback ? cost / sav : Infinity;
+    var growth = radio("esc") === "1" ? K.rateGrowth : 0, growBlock = "";
+    if (growth > 0 && sav > 0) {
+      var tenG = sav * (Math.pow(1 + growth, 10) - 1) / growth, twentyFiveG = sav * (Math.pow(1 + growth, 25) - 1) / growth;
+      var pbG = Math.log(1 + cost * growth / sav) / Math.log(1 + growth);
+      growBlock = '<div class="grow"><p class="label">If rates rise 4.64% a year</p>' +
+        '<p class="sub">About ' + money(tenG) + ' saved over 10 years (' + money(sav * 10) + ' at flat rates), and about ' + money(twentyFiveG) + ' over 25 years (' + money(sav * 25) + ' flat).</p>' +
+        '<p class="sub">Pays for itself in about ' + Math.round(pbG) + ' years, compared with ' + (pb <= K.paybackMaxYears ? Math.round(pb) + ' years' : 'a longer time') + ' at flat rates.</p>' +
+        '<p class="fine">Assumes SDG&amp;E rates rise 4.64% a year, the average increase from 2006 to 2024 (CPUC data). Rates can also fall, and your results will differ.</p></div>';
+    }
     var spaceLabel = { balcony: "balcony", window: "window ledge", patio: "patio or yard" }[space] || space;
 
     $("#billKwh").textContent = "About " + (Math.round(kwhMonth / 10) * 10).toLocaleString("en-US") + " kWh a month on " + plan.label;
@@ -1656,7 +1676,7 @@ footer p + p{margin-top:12px}
       (pb <= K.paybackMaxYears
         ? '<p class="payback"><b>Pays for itself in about ' + Math.round(pb) + ' years</b><span>' + money(cost) + ' kit' + (opt ? ' with ' + batt + ' kWh battery' : '') + '</span></p>'
         : '<p class="payback"><b>Payback would be long at this bill size</b><span>A compatibility review can tell you if it\'s worth it</span></p>') +
-      notes + '<hr>' +
+      growBlock + notes + '<hr>' +
       '<div class="rec"><div><p class="label">Your best match for a ' + spaceLabel + '</p><b>' + esc(l.name) + " " + z.label + (opt ? " + " + batt + " kWh battery" : "") + '</b></div>' +
       '<button type="button" class="btn btn-sun" id="pickRec">See this kit</button></div>' +
       '<p class="fine">Estimate only, not actual savings. Based on a typical San Diego year of sun, SDG&amp;E ' + esc(plan.label) + ' published rate tables, and a typical daily usage pattern for your bill. Your results depend on sun, shade, placement, when you use power and your plan. Rates are the SDG&amp;E published energy prices. If your generation comes from San Diego Community Power or Clean Energy Alliance, your total price will differ. Price before tax and delivery.</p>';
